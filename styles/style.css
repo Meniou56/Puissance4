@@ -1,0 +1,151 @@
+/* STYLE DE LA PAGE */
+    :root{
+
+        /*Définition des couleurs*/
+        --fond: rgb(232, 231, 245);
+        --couleurSupport: blue;
+        --ombre : rgb(125, 125, 125);
+        --couleurJ1 : red;
+        --couleurJ2 : yellow;
+    }
+
+    /*Style de la page*/
+        body {
+            background-color: var(--fond);
+            margin : 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+    /*Style du titre */
+        h1 {
+            text-align: center;
+            font-weight: bolder;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 4rem;
+            color: transparent;
+            background-image: linear-gradient(to right, red, blue);
+            text-shadow: 5px 5px 25px var(--ombre);
+            background-clip: text;
+            -webkit-background-clip: text;
+            display: inline;
+        }
+
+
+/* STYLE DU TABLEAU */
+    #tableauJeu {
+        background-color: var(--couleurSupport);
+        height: 77%;
+        width: 60%;
+        border-radius: 25px;
+        box-shadow: 5px 5px 20px 5px var(--ombre) ;
+        padding: 0.5vw;
+        display: flex;
+        overflow: auto;
+    }
+
+    table {
+        justify-content: space-between;
+        flex: 1;
+    }
+
+    td {
+        padding: 0.5vh;
+        z-index: 1;
+    }
+
+    /* Les cercles dans le tableau */
+    .circle {
+        width: 5vw;
+        height: 5vw;
+        border-radius: 50%;
+        background-color: var(--fond);
+        margin: auto;
+        box-shadow: inset -5px -5px 20px 1px var(--ombre);
+        z-index: 10;
+
+
+    }.circle-filled {
+        box-shadow: inset -2px -2px 15px 1px var(--ombre);
+    }
+
+    .circle:hover {
+        box-shadow: inset 2px 2px 10px black;
+    }
+
+/* STYLE DU POPUP CENTRAL */
+#popup {
+    position: fixed;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -80%);
+    height: auto;
+    width: auto;
+    max-width: 80%;
+    padding: 2rem;
+    background-color: rgb(123, 0, 31);
+    z-index: 10;
+    border-radius: 10px;
+    box-shadow: 5px 5px 20px 1px var(--ombre);
+    border: 3px solid rgba(142, 56, 56, 0.886);
+    display: none;
+    text-align: center;
+}
+
+#popup h3, #popup p{
+    color: navy;
+}
+
+#popup h3{
+    font-size: 2rem;
+    font-family:'Open sans', sans-serif;
+    font-weight: bolder;
+}
+
+#popup p, #popup h6{
+    font-size: 1.25rem;
+    font-weight: bold;
+    font-family: roboto;
+    /* Empecher la selection */
+    user-select: none;
+}
+
+#popup h6{
+    border: 2px solid black;
+    border-radius: 10px;
+    box-shadow: 5px 5px 20px 1px black;
+}
+
+    /* Style à la sélection et au clic */
+    #popup h6:hover, #popup h6:focus{
+        background-color: aliceblue;
+    }
+
+    #popup h6:active{
+        background-color: aliceblue;
+        box-shadow: inset 1px 4px 1px rgba(0,0,0,0.2);
+    }
+
+
+/* STYLE DU MESSAGE D'ALERTE */
+#message {
+    position: fixed;
+    padding: 0 5rem 0 5rem;
+    background-color: rgb(234, 8, 65);
+    border-radius: 10px;
+    box-shadow: 5px 5px 20px 1px var(--ombre);
+    border: 3px solid rgba(142, 56, 56, 0.886);
+    display: none;
+    text-align: center;
+}
+
+#message p{
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-family: roboto;
+    /* Empecher la selection */
+    user-select: none;
+}
