@@ -9,12 +9,13 @@
     /* On commence par créer le tableau de jeu JS*/
     let tablJeu = creationTableau()
 
-    /* Définir l'alternance des joueurs en commencant par le rouge */
+    /* Définir l'alternance des joueurs en commencant par le rouge et le compteur du nombre de coup */
     let aQuiLeTour = "--couleurJ1"
+    let coupJ1 = 0
+    let coupJ2 = 0
 
     /* On active la boucle principale */
     let gameOnOff = true
-
 
     /**********************
      * Boucle principale  *
@@ -164,8 +165,15 @@
     function changePlayer() {
         if (aQuiLeTour === "--couleurJ1"){
             aQuiLeTour = "--couleurJ2"
+
+            // On en profite pour compter un coup de plus pour le joueur 1
+            coupJ1++
+
         } else {
             aQuiLeTour = "--couleurJ1"
+
+            // On en profite pour compter un coup de plus pour le joueur 2
+            coupJ2++
         }
     }
 
@@ -296,7 +304,7 @@
 function playAgain() {
 
     /* On écoute le bouton rejouer */
-    const buttonReplayClic = document.querySelector("#popup .replay")
+    const buttonReplayClic = document.querySelector("#popup #replay")
         
         /* Le bouton a bien été récupéré ? */
         if (buttonReplayClic) {
@@ -320,23 +328,62 @@ function playAgain() {
 function saveScore() {
 
     /* On écoute le bouton enregistrer */
-    const buttonSaveClic = document.querySelector("#popup .save")
+    const buttonSaveClic = document.querySelector("#popup #save")
         
         /* Le bouton a bien été récupéré ? */
         if (buttonSaveClic) {
 
-            /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
+            /* S'il y a clic... on appel la fonction d'enregistrement du score' */
             buttonSaveClic.addEventListener("click", () => {
 
-                console.log("Bouton d'enrgistrement cliqué")
-                // Fonction d'enregistrement
+                scoreSaved()
+                console.log("score sauvegardé")
 
                 }
             )
         } else {
             console.log("Bouton sauvegarder n'ont récupéré")
         }
-    }               
+    }   
+    
+/*****************************
+ * FONCTIONS SUPPLEMENTAIRES *
+ *****************************/
+
+/* Fonction d'enregistrement du score */
+function scoreSaved() {
+
+    // On note le nom du vainqueur et la date
+    const namePlayerWinner = prompt("Quel est le nom du vainqueur ?")
+    
+    // On récupère la date
+    const actualTime = new Date()
+    const date = `${String(actualTime.getDate()).padStart(2, '0')}/${String(actualTime.getMonth() +1).padStart(2, '0')}/${String(actualTime.getFullYear()).padStart(2, '0')} @ ${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`
+
+    const newData = {
+        "date": date,
+        "user": namePlayerWinner,
+        "coup": coupJ1 //alternance à faire, ainsi que la réinitialisation, etc etc...
+    }
+
+    // On récupère le fichier des scores
+    initialiserFichierScore()
+    async function initialiserFichierScore() {
+        let scores = await chargerScores()
+
+        // On ajoute le nouveau score avec les autres scores
+        scores.push(newData)
+
+        // On transforme en chaine de texte
+        const newScores = JSON.stringify(scores)
+
+        // Il reste à écrire les nouvelles données
+        console.log(newScores)
+    }
+
+
+}
+
 
 /**************************
  * FONCTIONS DES MESSAGES *
@@ -413,3 +460,15 @@ function alertMessage(message) {
         fenetreMessage.style.display = "none"
     }, 3000)
 }
+
+
+/******************************************
+ * FONCTIONS DE CHARGEMENT DES RESSOURCES *
+ ******************************************/
+    // Fonctions de chargement des scores JSON
+        /* Fonction de chargement et conversion du fichier */
+        async function chargerScores() {
+            const data = await fetch("../data/scores.json")
+            const scores = await data.json()
+            return scores
+        }

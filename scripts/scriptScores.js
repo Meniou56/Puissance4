@@ -45,8 +45,6 @@ function creerTableauScores(scores) {
 
 
 //LANCEMENT ET APPELS
-//Appel de la fonction de chargement des scores
-scores = chargerScores()
 
 //Appel de la fonction d'initialisation du tableau
 initialiserTableau()
