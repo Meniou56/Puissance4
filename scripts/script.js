@@ -296,7 +296,7 @@
 function playAgain() {
 
     /* On écoute le bouton rejouer */
-    const buttonReplayClic = document.querySelector("#popup h6")
+    const buttonReplayClic = document.querySelector("#popup .replay")
         
         /* Le bouton a bien été récupéré ? */
         if (buttonReplayClic) {
@@ -316,6 +316,27 @@ function playAgain() {
         }
     }                
 
+/* Fonction d'enregistrement du score */
+function saveScore() {
+
+    /* On écoute le bouton enregistrer */
+    const buttonSaveClic = document.querySelector("#popup .save")
+        
+        /* Le bouton a bien été récupéré ? */
+        if (buttonSaveClic) {
+
+            /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
+            buttonSaveClic.addEventListener("click", () => {
+
+                console.log("Bouton d'enrgistrement cliqué")
+                // Fonction d'enregistrement
+
+                }
+            )
+        } else {
+            console.log("Bouton sauvegarder n'ont récupéré")
+        }
+    }               
 
 /**************************
  * FONCTIONS DES MESSAGES *
@@ -345,6 +366,9 @@ function messageVictoire (winnerPopup){
 
     /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
     playAgain ()
+
+    /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
+    saveScore ()
 
 }
 
