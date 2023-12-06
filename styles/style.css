@@ -150,3 +150,14 @@
     /* Empecher la selection */
     user-select: none;
 }
+
+/* STYLE TABLEAU DES SCORES */
+table, tr, td, th {
+    border: solid;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: antiquewhite;
+
+}

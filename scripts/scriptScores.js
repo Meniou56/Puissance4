@@ -6,12 +6,23 @@ async function chargerScores() {
 
 // Création du tableau des scores
 function creerTableauScores() {
-    let tableauBody = document.getElementId("tableauBody")
-    console.log(tableauBody)
-    //let tableau = document.createElement("tr>td")
-    //reste de la création de tableau
 
-    //document.body.appendChild(tbody)
+    // On récupère l'emplacement du tableau dans le html
+    let tableauBody = document.getElementById("tableauBody")
+    
+    // On crée une nouvelle ligne
+    let tr = document.createElement("tr")
+
+    //Boucle de création des cellules avec leur contenu
+    let tdText = ["Nom", 00]
+    for(i=0; i<2; i++) {
+        td = document.createElement("td")
+        td.innerText = tdText[i]
+        tr.appendChild(td)
+    }
+
+    // On incropore dans le html
+    tableauBody.appendChild(tr)
 }
 
 
