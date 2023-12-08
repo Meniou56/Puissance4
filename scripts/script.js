@@ -11,6 +11,8 @@
 
     /* Définir l'alternance des joueurs en commencant par le rouge et le compteur du nombre de coup */
     let aQuiLeTour = "--couleurJ1"
+
+    /* Définir les variables pour compter chaque coup */
     let coupJ1 = 0
     let coupJ2 = 0
 
@@ -51,6 +53,10 @@
 
             /* On vide le tableau JS */
             tablJeu = creationTableau()
+
+            /* Réinitialiser les variables pour compter chaque coup */
+            coupJ1 = 0
+            coupJ2 = 0
 
             /* On mets à jour l'affichage */
             for (let iRow=0; iRow<6; iRow++) {
