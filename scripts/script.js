@@ -366,10 +366,21 @@ function scoreFormat() {
     const actualTime = new Date()
     const date = `${String(actualTime.getDate()).padStart(2, '0')}/${String(actualTime.getMonth() +1).padStart(2, '0')}/${String(actualTime.getFullYear()).padStart(2, '0')} @ ${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`
 
+    // On check à quel joueur c'était le tour
+    if (coupJ1===coupJ2){
+
+        // Le J2 étant deuxième, s'il y a égalité du nombre de coup, c'est le J2 qui a gagné
+        coupPlayer=coupJ2
+
+        // Inversement, J1>J2, c'est donc le J1 qui a gagné
+    }else{
+        coupPlayer=coupJ1
+    }
+
     const newData = {
         "date": date,
         "user": namePlayerWinner,
-        "coup": coupJ1 //alternance à faire, ainsi que la réinitialisation, etc etc...
+        "coup": coupPlayer //alternance à faire, ainsi que la réinitialisation, etc etc...
     }
 
     // On récupère le fichier des scores
