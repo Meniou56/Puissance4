@@ -1,3 +1,6 @@
+// 11/12 20h20 : c'est génial d'avoir fait un formulaire pour le nom,
+// mais maintenant il faut pouvoir reconstruire le Popup d'origine
+
 /***********************
  * Boucle d'une partie *
  ***********************/
@@ -360,7 +363,7 @@ function saveScore() {
 function scoreFormat() {
 
     // On note le nom du vainqueur et la date
-    const namePlayerWinner = prompt("Quel est le nom du vainqueur ?")
+    const namePlayerWinner = formNomJoueur()
     
     // On récupère la date
     const actualTime = new Date()
@@ -430,6 +433,42 @@ function messageVictoire (winnerPopup){
 
     /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
     saveScore ()
+
+}
+
+/* Message-formulaire pour avoir le nom du vainqueur */
+function formNomJoueur(){
+
+    /* récuperer le popup, le titre, le paragraphe et les boutons */
+    let showPopup = document.getElementById("popup")
+    let h3Popup = showPopup.querySelector("h3")
+    let pPopup = showPopup.querySelector("p")
+    let replayButton = showPopup.querySelector("#replay")
+    let saveButton = showPopup.querySelector("#save")
+
+    /* supprimer les éléments inutiles s'ils existent */
+    if(h3Popup){showPopup.removeChild(h3Popup)}
+    if(pPopup){showPopup.removeChild(pPopup)}
+
+    /* Changement des boutons */
+    if(replayButton){replayButton.innerText = "Valider"}
+    if(saveButton){saveButton.innerText = "Annuler"}
+
+    /* Création du formulaire */
+    let form = document.createElement("form")
+    let label = document.createElement("label")
+    let br = document.createElement("br")
+    let input = document.createElement("input")
+
+    /* On ajoute les textes et attribut de ces nouveaux éléments */
+    label.innerText = "Entrer le nom du vainqueur"
+    input.name = "name"
+
+    /* Raccordement au DOM */
+    form.appendChild(label)
+    form.appendChild(br)
+    form.appendChild(input)
+    showPopup.insertBefore(form, replayButton)
 
 }
 
