@@ -328,7 +328,11 @@ function playAgain() {
         } else {
             console.log("Bouton rejouer n'ont récupéré")
         }
-    }                
+    }                  
+    
+/*************************************
+ * FONCTIONS ENREGISTREMENT DE SCORE *
+ *************************************/
 
 /* Fonction d'enregistrement du score */
 function saveScore() {
@@ -339,25 +343,21 @@ function saveScore() {
         /* Le bouton a bien été récupéré ? */
         if (buttonSaveClic) {
 
-            /* S'il y a clic... on appel la fonction d'enregistrement du score' */
-            buttonSaveClic.addEventListener("click", () => {
+            /* S'il y a clic... on appel la fonction d'enregistrement du score -> modification en .onclick pour éviter l'effet de boucle */
+            buttonSaveClic.onclick = () => {
 
-                scoreSaved()
+                scoreFormat()
                 console.log("score sauvegardé")
 
                 }
-            )
         } else {
             console.log("Bouton sauvegarder n'ont récupéré")
         }
-    }   
+    } 
     
-/*****************************
- * FONCTIONS SUPPLEMENTAIRES *
- *****************************/
 
-/* Fonction d'enregistrement du score */
-function scoreSaved() {
+/* Fonction de mise en forme nom et score */
+function scoreFormat() {
 
     // On note le nom du vainqueur et la date
     const namePlayerWinner = prompt("Quel est le nom du vainqueur ?")
@@ -373,23 +373,20 @@ function scoreSaved() {
     }
 
     // On récupère le fichier des scores
-    initialiserFichierScore()
-    async function initialiserFichierScore() {
-        let scores = await chargerScores()
-
-        // On ajoute le nouveau score avec les autres scores
-        scores.push(newData)
-
-        // On transforme en chaine de texte
-        const newScores = JSON.stringify(scores)
-
-        // Il reste à écrire les nouvelles données
-        console.log(newScores)
-    }
-
+    scoreSaved(newData)
 
 }
 
+// Initialisation fichier score
+async function scoreSaved(newData) {
+
+    // Ecriture des nouvelles données
+    await fetch("http://localhost:3000/api/scores", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify (newData)
+    })
+}
 
 /**************************
  * FONCTIONS DES MESSAGES *
@@ -466,15 +463,3 @@ function alertMessage(message) {
         fenetreMessage.style.display = "none"
     }, 3000)
 }
-
-
-/******************************************
- * FONCTIONS DE CHARGEMENT DES RESSOURCES *
- ******************************************/
-    // Fonctions de chargement des scores JSON
-        /* Fonction de chargement et conversion du fichier */
-        async function chargerScores() {
-            const data = await fetch("../data/scores.json")
-            const scores = await data.json()
-            return scores
-        }

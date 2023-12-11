@@ -1,6 +1,6 @@
 // Fonction de chargement des scores JSON
 async function chargerScores() {
-    const data = await fetch("../data/scores.json")
+    const data = await fetch("http://localhost:3000/api/scores")
     const scores = await data.json()
     return scores
 }
@@ -31,7 +31,7 @@ function creerTableauScores(scores) {
 
             // Pour chaque clé on dinque sa valeur dans une cellule
             for(let key in objet) {
-                td = document.createElement("td")
+                let td = document.createElement("td")
                 td.innerText = scores[iRow][key]
                 tr.appendChild(td)
             }
