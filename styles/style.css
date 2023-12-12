@@ -105,7 +105,7 @@
     font-weight: bolder;
 }
 
-#popup p, #popup h6{
+#popup p, #popup h6, #repla{
     font-size: 1.25rem;
     font-weight: bold;
     font-family: roboto;
@@ -178,3 +178,29 @@ form input{
 #tableauScore thead {
     background-color: antiquewhite;
 }
+
+/* Style bouton page scores */
+#replayPageScores{
+    font-size: 1.1rem;
+    font-family:'Open sans', sans-serif;
+    font-weight: 900;
+    padding: 0 5rem 0 5rem;
+    margin: 1.5rem;
+    background-color: rgb(234, 8, 65);
+    color: black;
+    border-radius: 10px;
+    box-shadow: 5px 5px 20px 1px var(--ombre);
+    border: 3px solid rgba(142, 56, 56, 0.886);
+    text-align: center;
+    text-decoration: none;
+}
+
+    /* Style à la sélection et au clic */
+    #replayPageScores:hover, #replayPageScores:focus{
+        background-color: aliceblue;
+    }
+
+    #replayPageScores:active{
+        background-color: aliceblue;
+        box-shadow: inset 1px 4px 1px rgba(0,0,0,0.2);
+    }
