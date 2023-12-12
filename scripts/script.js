@@ -1,5 +1,4 @@
-// 11/12 20h20 : c'est génial d'avoir fait un formulaire pour le nom,
-// mais maintenant il faut pouvoir reconstruire le Popup d'origine
+// 12/12 Bug de validation vide du nom à corriger
 
 /***********************
  * Boucle d'une partie *
@@ -56,6 +55,9 @@
 
             /* On vide le tableau JS */
             tablJeu = creationTableau()
+
+            /* On remet le J1 en 1er */
+            aQuiLeTour = "--couleurJ1"
 
             /* Réinitialiser les variables pour compter chaque coup */
             coupJ1 = 0
@@ -294,6 +296,9 @@
                         /* Est-on arrivé à 4 jetons d'affilés ? */
                         if (compteurJetonWinner === 4){
 
+                            /* On enregistre le nomre de coup du vainqueur */
+                            coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])
+
                             /* On a un winner, on lui envoie un message */
                             messageVictoire (tablJeu[iRow][iCol])
                         }
@@ -312,6 +317,7 @@
 /* Fonction de relance d'une partie */
 function playAgain() {
 
+
     /* On écoute le bouton rejouer */
     const buttonReplayClic = document.querySelector("#popup #replay")
         
@@ -324,6 +330,9 @@ function playAgain() {
                 /* on appel la fonction de réinitialisation de la partie */
                 reinitiateGame()
 
+                /* On réinitialise le menu */
+                eraseMessage()
+
                 /* Puis on cache la fenetre */
                 hidePopup()
                 }
@@ -334,30 +343,39 @@ function playAgain() {
     }  
 
 /* Enregistrement du nom via form */
-function validerNom(form, validerbutton, input) {
+function validerNom(form, validerButton, input) {
 
-    /* Input existant & saisie ? */
-    if(input && input!=="") {
+    /* Et on le met sur écoute via "entrée" */
+    form.addEventListener("submit", (event) => {
 
-        /* Et on le met sur écoute via "entrée" */
-        form.addEventListener("submit", (event) => {
+        /*On prévient le rafraichissement de la page */
+        event.preventDefault()
 
-            /*On prévient le rafraichissement de la page */
-            event.preventDefault()
+        /* On appel la fonction de validation du nom */
+        valideName(input.value)
+    })
 
-            /* On renvoie la valeur de l'input (le nom saisie) */
-            return(input.value)
-        })
+    /* Et on le met sur écoute via le clic sur valider */
+    validerButton.addEventListener("click", () => {
 
-        /* Et on le met sur écoute via le clic sur valider */
-        validerbutton.addEventListener("click", (event) => {
-
-            /* On renvoie la valeur de l'input (le nom saisie) */
-            return(input.value)
-        })
-
-    }else{console.log("form non récupéré")}
+        /* On renvoie la valeur de l'input (le nom saisie) */
+        valideName(input.value)
+    })
 }
+
+// Fonction qui renvoie le nom au formatage du score */
+function valideName(nomJoueur){
+    if(nomJoueur && nomJoueur!==""){
+
+        /* On renvoie la valeur de l'input (le nom saisie) */
+        scoreFormat(nomJoueur)
+    }else{
+        console.log("veuillez saisir au moins un caractère")
+    }
+}
+        
+
+
     
 /* Bouton annuler */
 function annuler(cancelButton) {
@@ -403,17 +421,12 @@ function saveScore() {
 
     /* On écoute le bouton enregistrer */
     const buttonSaveClic = document.querySelector("#popup #save")
-        
+
         /* Le bouton a bien été récupéré ? */
         if (buttonSaveClic) {
 
-            /* S'il y a clic... on appel la fonction d'enregistrement du score -> modification en .onclick pour éviter l'effet de boucle */
-            buttonSaveClic.onclick = () => {
-
-                scoreFormat()
-                console.log("score sauvegardé")
-
-                }
+            /* S'il y a clic... on appel la fonction d'enregistrement du nom */
+            buttonSaveClic.onclick = () => {formNomJoueur()}
         } else {
             console.log("Bouton sauvegarder n'ont récupéré")
         }
@@ -421,34 +434,27 @@ function saveScore() {
     
 
 /* Fonction de mise en forme nom et score */
-function scoreFormat() {
-
-    // On note le nom du vainqueur et la date
-    const namePlayerWinner = formNomJoueur()
+function scoreFormat(winnerName) {
     
     // On récupère la date
     const actualTime = new Date()
     const date = `${String(actualTime.getDate()).padStart(2, '0')}/${String(actualTime.getMonth() +1).padStart(2, '0')}/${String(actualTime.getFullYear()).padStart(2, '0')} @ ${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`
-
-    // On check à quel joueur c'était le tour
-    if (coupJ1===coupJ2){
-
-        // Le J2 étant deuxième, s'il y a égalité du nombre de coup, c'est le J2 qui a gagné
-        coupPlayer=coupJ2
-
-        // Inversement, J1>J2, c'est donc le J1 qui a gagné
-    }else{
-        coupPlayer=coupJ1
-    }
-
+    
+    /* Construvtion de la charge utile */
     const newData = {
         "date": date,
-        "user": namePlayerWinner,
+        "user": winnerName,
         "coup": coupPlayer //alternance à faire, ainsi que la réinitialisation, etc etc...
     }
 
     // On récupère le fichier des scores
     scoreSaved(newData)
+
+    // On efface le Popup
+    eraseMessage()
+
+    // Puis on redirige vers la page des scores
+    window.location.assign("scores.html")
 
 }
 
@@ -512,10 +518,10 @@ function messageVictoire (winnerPopup){
     showPopup.style.display = "block"
 
     /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
-    playAgain ()
+    playAgain()
 
     /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
-    saveScore ()
+    saveScore()
 
 }
 
@@ -617,3 +623,22 @@ if(winnerPopup === "red"){
     return "Jaune"
 }
 }
+
+/* Fonction pour connaitre le nombre de coup du vainqueur */
+  function nbCoupWinner(winnerColor) {
+
+    // On check à quel joueur c'était le tour
+    if (winnerColor==="yellow"){
+
+        // Le J2 étant deuxième, s'il y a égalité du nombre de coup, c'est le J2 qui a gagné
+        let coupPlayer=coupJ2
+
+        // Inversement, J1>J2, c'est donc le J1 qui a gagné
+    }else if(winnerColor==="red"){
+        coupPlayer=coupJ1
+    }else{
+        coupPlayer="le vainqueur n'a pas été déterminé"
+    }
+    return coupPlayer
+  } 
+
