@@ -331,7 +331,68 @@ function playAgain() {
         } else {
             console.log("Bouton rejouer n'ont récupéré")
         }
-    }                  
+    }  
+
+/* Enregistrement du nom via form */
+function validerNom(form, validerbutton, input) {
+
+    /* Input existant & saisie ? */
+    if(input && input!=="") {
+
+        /* Et on le met sur écoute via "entrée" */
+        form.addEventListener("submit", (event) => {
+
+            /*On prévient le rafraichissement de la page */
+            event.preventDefault()
+
+            /* On renvoie la valeur de l'input (le nom saisie) */
+            return(input.value)
+        })
+
+        /* Et on le met sur écoute via le clic sur valider */
+        validerbutton.addEventListener("click", (event) => {
+
+            /* On renvoie la valeur de l'input (le nom saisie) */
+            return(input.value)
+        })
+
+    }else{console.log("form non récupéré")}
+}
+    
+/* Bouton annuler */
+function annuler(cancelButton) {
+        
+    /* Le bouton a bien été récupéré ? */
+    if (cancelButton) {
+
+        /* S'il y a clic... on annule */
+        cancelButton.addEventListener("click", () => {
+
+            /* on efface le message */
+            eraseMessage()
+
+            /* Puis on reviens au menu précédent */
+            messageVictoire()
+            }
+        )
+    } else {
+        console.log("Bouton annuler n'a pas été récupéré")
+    }
+}
+
+/* Fonction d'effacement du contenu des messages */
+function eraseMessage(){
+
+    /* On récupèe showPopup */
+    let showPopup = document.getElementById("popup")
+
+    /* Pour mieux le supprimer */
+    if(showPopup){
+        while (showPopup.firstChild) {
+            showPopup.removeChild(showPopup.firstChild)
+        }
+    }
+}
     
 /*************************************
  * FONCTIONS ENREGISTREMENT DE SCORE *
@@ -419,11 +480,33 @@ function messageVictoire (winnerPopup){
     let showPopup = document.getElementById("popup")
     let h3Popup = showPopup.querySelector("h3")
     let pPopup = showPopup.querySelector("p")
+    let replayButton = showPopup.querySelector("#replay")
+    let saveButton = showPopup.querySelector("#save")
+
+    /* Chargement des zones de textes et boutons */
+    if(!h3Popup){h3Popup = document.createElement("h3")}
+    if(!pPopup){pPopup = document.createElement("p")}
+    if(!replayButton){
+        replayButton = document.createElement("h6")
+        replayButton.id = "replay"
+    }
+    if(!saveButton){
+        saveButton = document.createElement("h6")
+        saveButton.id = "save"
+    }
+
+    /* Raccordement au DOM */
+    showPopup.appendChild(h3Popup)
+    showPopup.appendChild(pPopup)
+    showPopup.appendChild(replayButton)
+    showPopup.appendChild(saveButton)
 
     /* Incorporer les nouveaux textes et couleur */
     showPopup.style.backgroundColor = winnerPopup
     h3Popup.innerText = "Victoire"
     pPopup.innerText = `${couleurWinner} a aligné 4 jetons`
+    replayButton.innerText = "Rejouer"
+    saveButton.innerText = "Enregistrer"
 
     /*Afficher le popup*/
     showPopup.style.display = "block"
@@ -450,9 +533,23 @@ function formNomJoueur(){
     if(h3Popup){showPopup.removeChild(h3Popup)}
     if(pPopup){showPopup.removeChild(pPopup)}
 
-    /* Changement des boutons */
-    if(replayButton){replayButton.innerText = "Valider"}
-    if(saveButton){saveButton.innerText = "Annuler"}
+    /* Chargement des boutons */
+    if(!replayButton){
+        let replayButton = document.createElement("h6")
+        replayButton.id = "replay"
+        showPopup.appendChild(replayButton)
+    }
+
+
+    if(!saveButton){
+        let saveButton = document.createElement("h6")
+        saveButton.id = "save"
+        showPopup.appendChild(saveButton)
+    }
+
+    /* Changement du texte des boutons */
+    replayButton.innerText = "Valider"
+    saveButton.innerText = "Annuler"
 
     /* Création du formulaire */
     let form = document.createElement("form")
@@ -470,6 +567,9 @@ function formNomJoueur(){
     form.appendChild(input)
     showPopup.insertBefore(form, replayButton)
 
+    /* Action possible */
+    annuler(saveButton)
+    validerNom(form, replayButton, input)   
 }
 
 /* cacher le message de victoire */
@@ -482,18 +582,7 @@ function hidePopup() {
     if (hidePopup){
         hidePopup.style.display = "none"
     }
-}
-
-    /* Fonction de traduction des couleurs en français */
-    function changeNameOfColor(winnerPopup){
-        couleurWinner=winnerPopup
-
-    if(winnerPopup === "red"){
-        return "Rouge"
-    } else {
-        return "Jaune"
-    }
-    } 
+} 
 
 /* Message si colonne déjà pleine */
 function alertMessage(message) {
@@ -512,4 +601,19 @@ function alertMessage(message) {
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
     }, 3000)
+}
+
+/*********************
+ * FONCTIONS ANNEXES *
+ ******************* */
+
+/* Fonction de traduction des couleurs en français */
+function changeNameOfColor(winnerPopup){
+    couleurWinner=winnerPopup
+
+if(winnerPopup === "red"){
+    return "Rouge"
+} else {
+    return "Jaune"
+}
 }
