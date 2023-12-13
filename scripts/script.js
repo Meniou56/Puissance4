@@ -11,12 +11,13 @@
     /* On commence par créer le tableau de jeu JS*/
     let tablJeu = creationTableau()
 
-    /* Définir l'alternance des joueurs en commencant par le rouge et le compteur du nombre de coup */
+    /* Définir l'alternance des joueurs en commencant par le rouge */
     let aQuiLeTour = "--couleurJ1"
 
-    /* Définir les variables pour compter chaque coup */
+    /* Définir les variables globales pour compter chaque coup*/
     let coupJ1 = 0
     let coupJ2 = 0
+    let coupPlayer = 0
 
     /* On active la boucle principale */
     let gameOnOff = true
@@ -62,6 +63,7 @@
             /* Réinitialiser les variables pour compter chaque coup */
             coupJ1 = 0
             coupJ2 = 0
+            coupPlayer = 0
 
             /* On mets à jour l'affichage */
             for (let iRow=0; iRow<6; iRow++) {
@@ -142,6 +144,7 @@
 
                             /* On vérifie s'il y a un gagnant */
                             winnerIs()
+
                             break// Sortie de la boucle après insertion du pion
                         }
                     
@@ -620,7 +623,7 @@ if(winnerPopup === "red"){
     if (winnerColor==="yellow"){
 
         // Le J2 étant deuxième, s'il y a égalité du nombre de coup, c'est le J2 qui a gagné
-        let coupPlayer=coupJ2
+        coupPlayer=coupJ2
 
         // Inversement, J1>J2, c'est donc le J1 qui a gagné
     }else if(winnerColor==="red"){
