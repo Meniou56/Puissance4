@@ -1,3 +1,5 @@
+// 12/12 Bug de validation vide du nom à corriger
+
 /***********************
  * Boucle d'une partie *
  ***********************/
@@ -9,12 +11,15 @@
     /* On commence par créer le tableau de jeu JS*/
     let tablJeu = creationTableau()
 
-    /* Définir l'alternance des joueurs en commencant par le rouge */
+    /* Définir l'alternance des joueurs en commencant par le rouge et le compteur du nombre de coup */
     let aQuiLeTour = "--couleurJ1"
+
+    /* Définir les variables pour compter chaque coup */
+    let coupJ1 = 0
+    let coupJ2 = 0
 
     /* On active la boucle principale */
     let gameOnOff = true
-
 
     /**********************
      * Boucle principale  *
@@ -50,6 +55,13 @@
 
             /* On vide le tableau JS */
             tablJeu = creationTableau()
+
+            /* On remet le J1 en 1er */
+            aQuiLeTour = "--couleurJ1"
+
+            /* Réinitialiser les variables pour compter chaque coup */
+            coupJ1 = 0
+            coupJ2 = 0
 
             /* On mets à jour l'affichage */
             for (let iRow=0; iRow<6; iRow++) {
@@ -164,8 +176,15 @@
     function changePlayer() {
         if (aQuiLeTour === "--couleurJ1"){
             aQuiLeTour = "--couleurJ2"
+
+            // On en profite pour compter un coup de plus pour le joueur 1
+            coupJ1++
+
         } else {
             aQuiLeTour = "--couleurJ1"
+
+            // On en profite pour compter un coup de plus pour le joueur 2
+            coupJ2++
         }
     }
 
@@ -277,6 +296,9 @@
                         /* Est-on arrivé à 4 jetons d'affilés ? */
                         if (compteurJetonWinner === 4){
 
+                            /* On enregistre le nomre de coup du vainqueur */
+                            coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])
+
                             /* On a un winner, on lui envoie un message */
                             messageVictoire (tablJeu[iRow][iCol])
                         }
@@ -295,8 +317,9 @@
 /* Fonction de relance d'une partie */
 function playAgain() {
 
+
     /* On écoute le bouton rejouer */
-    const buttonReplayClic = document.querySelector("#popup h6")
+    const buttonReplayClic = document.querySelector("#popup #replay")
         
         /* Le bouton a bien été récupéré ? */
         if (buttonReplayClic) {
@@ -307,15 +330,137 @@ function playAgain() {
                 /* on appel la fonction de réinitialisation de la partie */
                 reinitiateGame()
 
+                /* On réinitialise le menu */
+                eraseMessage()
+
                 /* Puis on cache la fenetre */
                 hidePopup()
                 }
             )
         } else {
-            console.log("Bouton rejouer n'ont récupéré")
+            alertMessage("Erreur : bouton rejouer n'ont récupéré")
         }
-    }                
+    }  
 
+/* Enregistrement du nom via form */
+function validerNom(form, validerButton, input) {
+
+    /* Et on le met sur écoute via "entrée" */
+    form.addEventListener("submit", (event) => {
+
+        /*On prévient le rafraichissement de la page */
+        event.preventDefault()
+
+        /* On appel la fonction de validation du nom */
+        valideName(input.value)
+    })
+}
+
+// Fonction qui renvoie le nom au formatage du score */
+function valideName(nomJoueur){
+    if(nomJoueur.trim()){
+
+        /* On renvoie la valeur de l'input (le nom saisie) */
+        scoreFormat(nomJoueur)
+    }else{
+        alertMessage("veuillez saisir au moins un caractère")
+    }
+}
+        
+
+
+    
+/* Bouton annuler */
+function annuler(cancelButton) {
+        
+    /* Le bouton a bien été récupéré ? */
+    if (cancelButton) {
+
+        /* S'il y a clic... on annule */
+        cancelButton.addEventListener("click", () => {
+
+            /* on efface le message */
+            eraseMessage()
+
+            /* Puis on reviens au menu précédent */
+            messageVictoire()
+            }
+        )
+    } else {
+        alertMessage("Erreur : bouton annuler n'a pas été récupéré")
+    }
+}
+
+/* Fonction d'effacement du contenu des messages */
+function eraseMessage(){
+
+    /* On récupèe showPopup */
+    let showPopup = document.getElementById("popup")
+
+    /* Pour mieux le supprimer */
+    if(showPopup){
+        while (showPopup.firstChild) {
+            showPopup.removeChild(showPopup.firstChild)
+        }
+    }
+}
+    
+/*************************************
+ * FONCTIONS ENREGISTREMENT DE SCORE *
+ *************************************/
+
+/* Fonction d'enregistrement du score */
+function saveScore() {
+
+    /* On écoute le bouton enregistrer */
+    const buttonSaveClic = document.querySelector("#popup #save")
+
+        /* Le bouton a bien été récupéré ? */
+        if (buttonSaveClic) {
+
+            /* S'il y a clic... on appel la fonction d'enregistrement du nom */
+            buttonSaveClic.onclick = () => {formNomJoueur()}
+        } else {
+            alertMessage("Erreur : Bouton sauvegarder n'ont récupéré")
+        }
+    } 
+    
+
+/* Fonction de mise en forme nom et score */
+function scoreFormat(winnerName) {
+    
+    // On récupère la date
+    const actualTime = new Date()
+    const date = `${String(actualTime.getDate()).padStart(2, '0')}/${String(actualTime.getMonth() +1).padStart(2, '0')}/${String(actualTime.getFullYear()).padStart(2, '0')} @ ${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`
+    
+    /* Construvtion de la charge utile */
+    const newData = {
+        "date": date,
+        "user": winnerName,
+        "coup": coupPlayer //alternance à faire, ainsi que la réinitialisation, etc etc...
+    }
+
+    // On récupère le fichier des scores
+    scoreSaved(newData)
+
+    // On efface le Popup
+    eraseMessage()
+
+    // Puis on redirige vers la page des scores
+    window.location.assign("scores.html")
+
+}
+
+// Initialisation fichier score
+async function scoreSaved(newData) {
+
+    // Ecriture des nouvelles données
+    await fetch("http://localhost:3000/api/scores", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify (newData)
+    })
+}
 
 /**************************
  * FONCTIONS DES MESSAGES *
@@ -334,18 +479,91 @@ function messageVictoire (winnerPopup){
     let showPopup = document.getElementById("popup")
     let h3Popup = showPopup.querySelector("h3")
     let pPopup = showPopup.querySelector("p")
+    let replayButton = showPopup.querySelector("#replay")
+    let saveButton = showPopup.querySelector("#save")
+
+    /* Chargement des zones de textes et boutons */
+    if(!h3Popup){h3Popup = document.createElement("h3")}
+    if(!pPopup){pPopup = document.createElement("p")}
+    if(!replayButton){
+        replayButton = document.createElement("button")
+        replayButton.id = "replay"
+    }
+    if(!saveButton){
+        saveButton = document.createElement("button")
+        saveButton.id = "save"
+    }
+
+    /* Raccordement au DOM */
+    showPopup.appendChild(h3Popup)
+    showPopup.appendChild(pPopup)
+    showPopup.appendChild(replayButton)
+    showPopup.appendChild(saveButton)
 
     /* Incorporer les nouveaux textes et couleur */
-    showPopup.style.backgroundColor = winnerPopup
     h3Popup.innerText = "Victoire"
     pPopup.innerText = `${couleurWinner} a aligné 4 jetons`
+    replayButton.innerText = "Rejouer"
+    saveButton.innerText = "Enregistrer"
 
     /*Afficher le popup*/
     showPopup.style.display = "block"
 
     /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
-    playAgain ()
+    playAgain()
 
+    /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
+    saveScore()
+
+}
+
+/* Message-formulaire pour avoir le nom du vainqueur */
+function formNomJoueur(){
+
+    /* On efface tout */
+    eraseMessage()
+
+    /* récuperer le popup, le titre, le paragraphe et les boutons */
+    let showPopup = document.getElementById("popup")
+    let validerButton = showPopup.querySelector("#validerButton")
+    let cancelButton = showPopup.querySelector("#cancelButton")
+
+    /* Chargement des boutons */
+    if(!validerButton){
+        validerButton = document.createElement("button")
+        validerButton.id = "valider"
+        validerButton.type ="submit"
+        validerButton.innerText = "Valider"
+    }
+
+
+    if(!cancelButton){
+        cancelButton = document.createElement("button")
+        cancelButton.id = "cancel"
+        cancelButton.innerText = "Annuler"
+    }
+
+    /* Création du formulaire */
+    let form = document.createElement("form")
+    let label = document.createElement("label")
+    let br = document.createElement("br")
+    let input = document.createElement("input")
+
+    /* On ajoute les textes et attribut de ces nouveaux éléments */
+    label.innerText = "Entrer le nom du vainqueur"
+    input.name = "name"
+
+    /* Raccordement au DOM */
+    form.appendChild(label)
+    form.appendChild(br)
+    form.appendChild(input)
+    form.appendChild(validerButton)
+    form.appendChild(cancelButton)
+    showPopup.appendChild(form)
+
+    /* Action possible */
+    annuler(cancelButton)
+    validerNom(form, validerButton, input)   
 }
 
 /* cacher le message de victoire */
@@ -358,18 +576,7 @@ function hidePopup() {
     if (hidePopup){
         hidePopup.style.display = "none"
     }
-}
-
-    /* Fonction de traduction des couleurs en français */
-    function changeNameOfColor(winnerPopup){
-        couleurWinner=winnerPopup
-
-    if(winnerPopup === "red"){
-        return "Rouge"
-    } else {
-        return "Jaune"
-    }
-    } 
+} 
 
 /* Message si colonne déjà pleine */
 function alertMessage(message) {
@@ -383,9 +590,44 @@ function alertMessage(message) {
     /* Et on l'affiche dans la fenetre */
     let fenetreMessage = document.getElementById("message")
     fenetreMessage.style.display = "block"
+    fenetreMessage.style.zIndex = "11"
 
     /*Après 3 secondes on cache à nouveau la fenetre*/
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
-    }, 3000)
+    }, 2500)
 }
+
+/*********************
+ * FONCTIONS ANNEXES *
+ ******************* */
+
+/* Fonction de traduction des couleurs en français */
+function changeNameOfColor(winnerPopup){
+    couleurWinner=winnerPopup
+
+if(winnerPopup === "red"){
+    return "Rouge"
+} else {
+    return "Jaune"
+}
+}
+
+/* Fonction pour connaitre le nombre de coup du vainqueur */
+  function nbCoupWinner(winnerColor) {
+
+    // On check à quel joueur c'était le tour
+    if (winnerColor==="yellow"){
+
+        // Le J2 étant deuxième, s'il y a égalité du nombre de coup, c'est le J2 qui a gagné
+        let coupPlayer=coupJ2
+
+        // Inversement, J1>J2, c'est donc le J1 qui a gagné
+    }else if(winnerColor==="red"){
+        coupPlayer=coupJ1
+    }else{
+        coupPlayer="le vainqueur n'a pas été déterminé"
+    }
+    return coupPlayer
+  } 
+
