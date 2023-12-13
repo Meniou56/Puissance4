@@ -18,7 +18,7 @@ function creerTableauScores(scores) {
     let tableauBody = document.getElementById("tableauBody")
 
     // Boucle de creation des lignes (en fonction du nombre d'entrées dans scores)
-    for (iRow=0; iRow<scores.length; iRow++) {
+    for (iRow=scores.length-1; iRow>-1; iRow--) {
 
         // creation d'une ligne
         let tr = document.createElement("tr")
@@ -29,7 +29,7 @@ function creerTableauScores(scores) {
             const objet = scores[iRow]
             const key = Object.keys(objet)
 
-            // Pour chaque clé on dinque sa valeur dans une cellule
+            // Pour chaque clé on indique sa valeur dans une cellule
             for(let key in objet) {
                 let td = document.createElement("td")
                 td.innerText = scores[iRow][key]

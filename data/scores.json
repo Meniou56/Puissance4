@@ -1,20 +1,5 @@
 [
   {
-    "date": "06/12/2023 @ 15:43",
-    "user": "Germain",
-    "coup": 5
-  },
-  {
-    "date": "26/11/2023 @ 14:03",
-    "user": "Germaine",
-    "coup": 4
-  },
-  {
-    "date": "01/12/2023 @ 10:43",
-    "user": "Patrick",
-    "coup": 8
-  },
-  {
     "date": "11/12/2023 @ 17:25",
     "user": "Koala",
     "coup": 8
@@ -28,20 +13,5 @@
     "date": "13/12/2023 @ 17:49",
     "user": "Koala",
     "coup": 17
-  },
-  {
-    "date": "13/12/2023 @ 20:33",
-    "user": "Meniou",
-    "coup": 8
-  },
-  {
-    "date": "13/12/2023 @ 20:33",
-    "user": "Koalours",
-    "coup": 8
-  },
-  {
-    "date": "13/12/2023 @ 21:01",
-    "user": "swdxfg",
-    "coup": 4
   }
 ]
