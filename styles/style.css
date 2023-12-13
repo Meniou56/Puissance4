@@ -2,18 +2,31 @@
     :root{
 
         /*Définition des couleurs*/
-        --fond: rgb(232, 231, 245);
-        --couleurSupport: rgb(13, 68, 197);
-        --couleurMenu:RGB(205, 179, 128);
-        --couleurMenuBorder:RGBA(185, 159, 108, 0.8);
-        --couleurButtonBorder:RGBA(100, 90, 75, 0.8);
-        --couleurButton:RGB(255, 248, 220);
-        --couleurButtonHover:RGB(235, 209, 158);
-        --couleurButtonActive:RGB(204, 132, 67);
-        --ombre : rgb(125, 125, 125);
-        --texteFonce : RGB(55, 37, 12);
-        --couleurJ1 : red;
-        --couleurJ2 : yellow;
+
+            /* Fond */
+            --fond: rgb(232, 231, 245);
+
+            /* Jeu */
+            --couleurSupport: rgb(13, 68, 197);
+            --couleurJ1 : red;
+            --couleurJ2 : yellow;
+
+            /* Menu */
+            --couleurMenu:RGB(205, 179, 128);
+            --couleurMenuAlerte:RGBA(255, 50, 50, 0.87);
+            --couleurMenuBorder:RGBA(185, 159, 108, 0.8);
+
+            /* Boutons */
+            --couleurButtonBorder:RGBA(100, 90, 75, 0.8);
+            --couleurButton:RGB(255, 248, 220);
+            --couleurButtonHover:RGB(235, 209, 158);
+            --couleurButtonActive:RGB(204, 132, 67);
+
+            /* Effet */
+            --ombre : rgb(125, 125, 125);
+
+            /* Texte */
+            --texteFonce : RGB(55, 37, 12);
     }
 
     /*Style de la page*/
@@ -163,7 +176,7 @@ form input{
 #message {
     position: fixed;
     padding: 0 5rem 0 5rem;
-    background-color: var(--couleurMenu);
+    background-color: var(--couleurMenuAlerte);
     border-radius: 10px;
     box-shadow: 5px 5px 20px 1px var(--ombre);
     border: 3px solid var(--couleurMenuBorder);

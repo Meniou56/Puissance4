@@ -338,7 +338,7 @@ function playAgain() {
                 }
             )
         } else {
-            console.log("Bouton rejouer n'ont récupéré")
+            alertMessage("Erreur : bouton rejouer n'ont récupéré")
         }
     }  
 
@@ -354,23 +354,16 @@ function validerNom(form, validerButton, input) {
         /* On appel la fonction de validation du nom */
         valideName(input.value)
     })
-
-    /* Et on le met sur écoute via le clic sur valider */
-    validerButton.addEventListener("click", () => {
-
-        /* On renvoie la valeur de l'input (le nom saisie) */
-        valideName(input.value)
-    })
 }
 
 // Fonction qui renvoie le nom au formatage du score */
 function valideName(nomJoueur){
-    if(nomJoueur && nomJoueur!==""){
+    if(nomJoueur.trim()){
 
         /* On renvoie la valeur de l'input (le nom saisie) */
         scoreFormat(nomJoueur)
     }else{
-        console.log("veuillez saisir au moins un caractère")
+        alertMessage("veuillez saisir au moins un caractère")
     }
 }
         
@@ -394,7 +387,7 @@ function annuler(cancelButton) {
             }
         )
     } else {
-        console.log("Bouton annuler n'a pas été récupéré")
+        alertMessage("Erreur : bouton annuler n'a pas été récupéré")
     }
 }
 
@@ -428,7 +421,7 @@ function saveScore() {
             /* S'il y a clic... on appel la fonction d'enregistrement du nom */
             buttonSaveClic.onclick = () => {formNomJoueur()}
         } else {
-            console.log("Bouton sauvegarder n'ont récupéré")
+            alertMessage("Erreur : Bouton sauvegarder n'ont récupéré")
         }
     } 
     
@@ -527,34 +520,28 @@ function messageVictoire (winnerPopup){
 /* Message-formulaire pour avoir le nom du vainqueur */
 function formNomJoueur(){
 
+    /* On efface tout */
+    eraseMessage()
+
     /* récuperer le popup, le titre, le paragraphe et les boutons */
     let showPopup = document.getElementById("popup")
-    let h3Popup = showPopup.querySelector("h3")
-    let pPopup = showPopup.querySelector("p")
-    let replayButton = showPopup.querySelector("#replay")
-    let saveButton = showPopup.querySelector("#save")
-
-    /* supprimer les éléments inutiles s'ils existent */
-    if(h3Popup){showPopup.removeChild(h3Popup)}
-    if(pPopup){showPopup.removeChild(pPopup)}
+    let validerButton = showPopup.querySelector("#validerButton")
+    let cancelButton = showPopup.querySelector("#cancelButton")
 
     /* Chargement des boutons */
-    if(!replayButton){
-        let replayButton = document.createElement("button")
-        replayButton.id = "replay"
-        showPopup.appendChild(replayButton)
+    if(!validerButton){
+        validerButton = document.createElement("button")
+        validerButton.id = "valider"
+        validerButton.type ="submit"
+        validerButton.innerText = "Valider"
     }
 
 
-    if(!saveButton){
-        let saveButton = document.createElement("button")
-        saveButton.id = "save"
-        showPopup.appendChild(saveButton)
+    if(!cancelButton){
+        cancelButton = document.createElement("button")
+        cancelButton.id = "cancel"
+        cancelButton.innerText = "Annuler"
     }
-
-    /* Changement du texte des boutons */
-    replayButton.innerText = "Valider"
-    saveButton.innerText = "Annuler"
 
     /* Création du formulaire */
     let form = document.createElement("form")
@@ -570,11 +557,13 @@ function formNomJoueur(){
     form.appendChild(label)
     form.appendChild(br)
     form.appendChild(input)
-    showPopup.insertBefore(form, replayButton)
+    form.appendChild(validerButton)
+    form.appendChild(cancelButton)
+    showPopup.appendChild(form)
 
     /* Action possible */
-    annuler(saveButton)
-    validerNom(form, replayButton, input)   
+    annuler(cancelButton)
+    validerNom(form, validerButton, input)   
 }
 
 /* cacher le message de victoire */
@@ -601,6 +590,7 @@ function alertMessage(message) {
     /* Et on l'affiche dans la fenetre */
     let fenetreMessage = document.getElementById("message")
     fenetreMessage.style.display = "block"
+    fenetreMessage.style.zIndex = "11"
 
     /*Après 3 secondes on cache à nouveau la fenetre*/
     setTimeout( ()=> {
