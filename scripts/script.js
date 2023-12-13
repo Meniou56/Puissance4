@@ -11,3 +11,4 @@ document.querySelector("#soloMode").disabled = true
 document.querySelector("#duoMode").onclick = function(){window.location.href = "jeu.html"}
 document.querySelector("#online").disabled = true
 document.querySelector("#configuration").disabled = true
+document.querySelector("#scoresPage").onclick = function(){window.location.href = "scores.html"}
