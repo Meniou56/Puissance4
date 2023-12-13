@@ -493,11 +493,11 @@ function messageVictoire (winnerPopup){
     if(!h3Popup){h3Popup = document.createElement("h3")}
     if(!pPopup){pPopup = document.createElement("p")}
     if(!replayButton){
-        replayButton = document.createElement("h6")
+        replayButton = document.createElement("button")
         replayButton.id = "replay"
     }
     if(!saveButton){
-        saveButton = document.createElement("h6")
+        saveButton = document.createElement("button")
         saveButton.id = "save"
     }
 
@@ -508,7 +508,6 @@ function messageVictoire (winnerPopup){
     showPopup.appendChild(saveButton)
 
     /* Incorporer les nouveaux textes et couleur */
-    showPopup.style.backgroundColor = winnerPopup
     h3Popup.innerText = "Victoire"
     pPopup.innerText = `${couleurWinner} a aligné 4 jetons`
     replayButton.innerText = "Rejouer"
@@ -541,14 +540,14 @@ function formNomJoueur(){
 
     /* Chargement des boutons */
     if(!replayButton){
-        let replayButton = document.createElement("h6")
+        let replayButton = document.createElement("button")
         replayButton.id = "replay"
         showPopup.appendChild(replayButton)
     }
 
 
     if(!saveButton){
-        let saveButton = document.createElement("h6")
+        let saveButton = document.createElement("button")
         saveButton.id = "save"
         showPopup.appendChild(saveButton)
     }
@@ -606,7 +605,7 @@ function alertMessage(message) {
     /*Après 3 secondes on cache à nouveau la fenetre*/
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
-    }, 3000)
+    }, 2500)
 }
 
 /*********************

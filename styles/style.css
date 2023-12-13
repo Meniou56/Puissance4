@@ -3,8 +3,15 @@
 
         /*Définition des couleurs*/
         --fond: rgb(232, 231, 245);
-        --couleurSupport: blue;
+        --couleurSupport: rgb(13, 68, 197);
+        --couleurMenu:RGB(205, 179, 128);
+        --couleurMenuBorder:RGBA(185, 159, 108, 0.8);
+        --couleurButtonBorder:RGBA(100, 90, 75, 0.8);
+        --couleurButton:RGB(255, 248, 220);
+        --couleurButtonHover:RGB(235, 209, 158);
+        --couleurButtonActive:RGB(204, 132, 67);
         --ombre : rgb(125, 125, 125);
+        --texteFonce : RGB(55, 37, 12);
         --couleurJ1 : red;
         --couleurJ2 : yellow;
     }
@@ -77,7 +84,7 @@
     }
 
 /* STYLE DU POPUP CENTRAL */
-#popup {
+#popup{
     position: fixed;
     top: 50%;
     left:50%;
@@ -86,17 +93,17 @@
     width: auto;
     max-width: 80%;
     padding: 2rem;
-    background-color: rgb(123, 0, 31);
+    background-color: var(--couleurMenu);
     z-index: 10;
     border-radius: 10px;
     box-shadow: 5px 5px 20px 1px var(--ombre);
-    border: 3px solid rgba(142, 56, 56, 0.886);
+    border: 3px solid var(--couleurMenuBorder);
     display: none;
     text-align: center;
 }
 
 #popup h3, #popup p{
-    color: navy;
+    color: var(--texteFonce);
 }
 
 #popup h3{
@@ -105,7 +112,7 @@
     font-weight: bolder;
 }
 
-#popup p, #popup h6, #repla{
+#popup p, #replay, button{
     font-size: 1.25rem;
     font-weight: bold;
     font-family: roboto;
@@ -113,20 +120,25 @@
     user-select: none;
 }
 
-#popup h6{
-    border: 2px solid black;
+button{
+    display: block;
+    width: 100%;
+    color: var(--texteFonce);
+    background-color: var(--couleurButton);
+    border: 2px solid var(--couleurButtonBorder);
     border-radius: 10px;
-    box-shadow: 3px 3px 10px 1px black;
-    margin : 15px 0;
+    box-shadow: 3px 3px 5px 0px black;
+    margin: 15px auto;
+    padding: 10px;
 }
 
     /* Style à la sélection et au clic */
-    #popup h6:hover, #popup h6:focus{
-        background-color: aliceblue;
+    button:hover, button:focus{
+        background-color: var(--couleurButtonHover);
     }
 
-    #popup h6:active{
-        background-color: aliceblue;
+    button:active{
+        background-color: var(--couleurButtonActive);
         box-shadow: inset 1px 4px 1px rgba(0,0,0,0.2);
     }
 
@@ -151,10 +163,10 @@ form input{
 #message {
     position: fixed;
     padding: 0 5rem 0 5rem;
-    background-color: rgb(234, 8, 65);
+    background-color: var(--couleurMenu);
     border-radius: 10px;
     box-shadow: 5px 5px 20px 1px var(--ombre);
-    border: 3px solid rgba(142, 56, 56, 0.886);
+    border: 3px solid var(--couleurMenuBorder);
     display: none;
     text-align: center;
 }
@@ -186,21 +198,21 @@ form input{
     font-weight: 900;
     padding: 0 5rem 0 5rem;
     margin: 1.5rem;
-    background-color: rgb(234, 8, 65);
-    color: black;
+    background-color: var(--couleurMenu);
+    color: var(--texteFonce);
     border-radius: 10px;
     box-shadow: 5px 5px 20px 1px var(--ombre);
-    border: 3px solid rgba(142, 56, 56, 0.886);
+    border: 3px solid var(--couleurMenuBorder);
     text-align: center;
     text-decoration: none;
 }
 
     /* Style à la sélection et au clic */
     #replayPageScores:hover, #replayPageScores:focus{
-        background-color: aliceblue;
+        background-color: var(--couleurButtonHover);
     }
 
     #replayPageScores:active{
-        background-color: aliceblue;
+        background-color: var(--couleurButtonActive);
         box-shadow: inset 1px 4px 1px rgba(0,0,0,0.2);
     }
