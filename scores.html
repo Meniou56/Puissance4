@@ -14,21 +14,35 @@
 <!--Titre-->
 <h1>Puissance 4</h1>
 
-<!--En tête du tableau de score-->
-<table id="tableauScore">
-    <thead>       
-        <tr>
-            <th>Date</th>
-            <th>Nom</th>
-            <th>Score</th>
-        </tr>
-    </thead>
-    <tbody id="tableauBody">
+<div class="flexColumn">
+    <!--Bouton de tri-->
+    <select id="triScores">
+        <option disabled selected>Trier par :</option>
+        <option value="chrono">Plus récents en premier</option>
+        <option value="anteChrono">Plus anciens en premier</option>
+        <option value="alphabetique">Ordre alphabétique</option>
+        <option value="anteAlphabetique">Ordre alphabétique inversé</option>
+        <option value="highScores">Scores élevés en premier</option>
+        <option value="lowScores">Scores minimum en premier</option>
+    </select>
+    <br>  
 
-            <!--C'est ici que vont être inséré les résultats-->
+    <!--En tête du tableau de score-->
+    <table id="tableauScore">
+        <thead>     
+            <tr>
+                <th>Date</th>
+                <th>Nom</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody id="tableauBody">
 
-    </tbody>
-</table>
+                <!--C'est ici que vont être inséré les résultats-->
+
+        </tbody>
+    </table>
+</div>
 
 <!--Bouton-->
 <div class="divButtonPageScores">
