@@ -555,6 +555,8 @@ function formNomJoueur(){
     /* On ajoute les textes et attribut de ces nouveaux éléments */
     label.innerText = "Entrer le nom du vainqueur"
     input.name = "name"
+    input.minLength = "1"
+    input.maxLength = "20"
 
     /* Raccordement au DOM */
     form.appendChild(label)
