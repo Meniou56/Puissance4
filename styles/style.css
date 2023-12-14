@@ -262,6 +262,13 @@ form input{
     padding: 0.4rem 5rem;
 }
 
+        /* Si petit écran */
+        @media screen and (max-width: 899px){
+            #tableauScore, #tableauBody, #tableauScore tr, #tableauScore td, #tableauScore th {
+                padding: 0.6vh 1.3vw;
+            }
+        }
+
 #tableauScore thead {
     background-color: antiquewhite;
 }
