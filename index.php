@@ -14,78 +14,23 @@
 <!-- header -->
 <?php include 'pages/header.php'; ?>
 
+
+
 <!--Message d'alerte-->
 <div id="message">
     <p>Paragraphe</p>
     </div> 
 
-<!--Tableau de jeu-->
-<div id="tableauJeu">
-    <table>
-        <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-        </tr>
-        <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-        </tr>
-        <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-        </tr>
-        <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-        </tr>
-        <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-        </tr>
-        <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-        </tr>
-    </table>
-
-</div>
 
 <!--POPUP PRINCIPAL-->
-   <div id="popup">
-    <h3>Titre</h3>
-    <p>Paragraphe</p>
-    <h6>Rejouer</h6>
-    </div> 
+<div id="popup">
+    <!--Contenu du pop-up-->
+    <button id="soloMode" title="Contre l'ordinateur">Mode Solo</button>
+    <button id="duoMode" title="À deux derrière un écran">Mode deux joueurs</button>
+    <button id="online" title="À deux via internet">Mode online</button>
+    <button id="configuration" title="Pour changer les paramètres">Configuration</button>
+    <button id="scoresPage" title="Pour consulter les scores">Scores</button>
+</div> 
 
 
 <!--Chargement du JS-->
