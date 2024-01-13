@@ -11,8 +11,8 @@
 </head>
 <body>
     
-<!--Titre-->
-<h1>Puissance 4</h1>
+<!-- header -->
+<?php include 'pages/header.php'; ?>
 
 <!--Message d'alerte-->
 <div id="message">

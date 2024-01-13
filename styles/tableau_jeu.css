@@ -1,0 +1,67 @@
+#tableauJeu {
+    background-color: var(--couleurSupport);
+    height: 77%;
+    width: 60%;
+    border-radius: 25px;
+    box-shadow: 5px 5px 20px 5px var(--ombre) ;
+    padding: 0.5vw;
+    display: flex;
+    overflow: auto;
+}
+
+#tableauJeu {
+    background-color: var(--couleurSupport);
+    height: 77%;
+    width: 60%;
+    border-radius: 25px;
+    box-shadow: 5px 5px 20px 5px var(--ombre) ;
+    padding: 0.5vw;
+    display: flex;
+    overflow: auto;
+}
+
+#tableauJeu table {
+    justify-content: space-between;
+    flex: 1;
+}
+
+#tableauJeu td {
+    padding: 0.5vh;
+}
+
+/* Les cercles dans le tableau */
+.circle {
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50%;
+    background-color: var(--fond);
+    margin: auto;
+    box-shadow: inset -5px -5px 20px 1px var(--ombre);
+}
+
+@keyframes pionArrive {
+    0% {
+        transform: translateY(-60vh) rotate(520deg);
+    }
+    50% {
+        transform: translateY(0vh) rotate(0deg);
+    }
+    70% {
+        transform: translateY(-2vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(0vh) rotate(0deg);
+    }
+}
+
+.circle-animate {
+    animation: pionArrive 600ms ease-in-out forwards;
+}
+
+.circle-filled {
+    box-shadow: inset -2px -2px 15px 1px var(--ombre);
+}
+
+.circle:hover {
+    box-shadow: inset 2px 2px 10px black;
+}
