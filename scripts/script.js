@@ -15,7 +15,7 @@ function configurationMenu(){
     document.querySelector("#duoMode").onclick = function(){window.location.href = "jeu.php"}
     document.querySelector("#online").disabled = true
     document.querySelector("#configuration").disabled = true
-    document.querySelector("#scoresPage").onclick = function(){window.location.href = "scores.php"}
+    document.querySelector("#scoresPage").onclick = function(){window.location.href = "pages/scores.php"}
 }
 
 /**********************
