@@ -317,6 +317,11 @@ function playAgain() {
     }                
 
 
+/**********************
+* LANCEMENT ET APPELS *
+***********************/
+chargementMenu()
+configurationMenu()
 /**************************
  * FONCTIONS DES MESSAGES *
  **************************/
