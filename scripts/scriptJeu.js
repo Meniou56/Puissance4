@@ -461,7 +461,7 @@ function scoreFormat(winnerName) {
     eraseMessage()
 
     // Puis on redirige vers la page des scores
-    window.location.assign("scores.php")
+    window.location.assign("pages/scores.php")
 
 }
 
