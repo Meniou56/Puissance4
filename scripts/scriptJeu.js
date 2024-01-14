@@ -331,14 +331,17 @@ function playAgain() {
             /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
             buttonReplayClic.addEventListener("click", () => {
 
+                /*Mise en rechargement de la page en cas de "rejouer"*/
+                location.reload()
+
                 /* on appel la fonction de réinitialisation de la partie */
-                reinitiateGame()
+                /*reinitiateGame()*/
 
                 /* On réinitialise le menu */
-                eraseMessage()
+                /*eraseMessage()*/
 
                 /* Puis on cache la fenetre */
-                hidePopup()
+                /*hidePopup()*/
                 }
             )
         } else {
