@@ -76,6 +76,7 @@
 
 .circle-filled {
     box-shadow: inset -2px -2px 15px 1px var(--ombre);
+    pointer-events: none;
 }
 
 .circle:hover {

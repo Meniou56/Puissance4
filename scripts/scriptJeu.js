@@ -165,11 +165,18 @@
         let targetRow = document.querySelectorAll("tr")[row]
         let cell = targetRow.querySelectorAll("td")[col]
         let pion = cell.querySelector(".circle")
+        let carreCell = cell.querySelector("div")
+
+        /* Création d'un nouveau pion pour un arriere plan cohérent*/
+        let newPion = document.createElement("div")
+        newPion.classList.add("circle")
+        newPion.classList.add("circle-filled")
+        carreCell.appendChild(newPion)
 
         /* Et on change la couleur */
         pion.style.backgroundColor = couleur
+        pion.style.boxShadow = "none"
         pion.classList.add("circle-animate")
-        pion.classList.add("circle-filled")
     }
 
     /**********************************
