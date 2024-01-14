@@ -59,6 +59,12 @@
     70% {
         transform: translateY(-2vh) rotate(360deg);
     }
+    85% {
+        transform: translateY(0vh) rotate(0deg);
+    }
+    90% {
+        transform: translateY(-0.5vh) rotate(90deg);
+    }
     100% {
         transform: translateY(0vh) rotate(0deg);
     }
