@@ -23,58 +23,268 @@
 <div id="tableauJeu">
     <table>
         <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
         </tr>
         <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
         </tr>
         <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
         </tr>
         <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
         </tr>
         <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
         </tr>
         <tr>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
-            <td><div class="circle"></div></td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
+            <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
+            </td>
         </tr>
     </table>
 
