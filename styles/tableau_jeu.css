@@ -6,7 +6,7 @@
     border-radius: 25px;
     box-shadow: 5px 5px 20px 5px var(--ombre);
     position: relative;
-    margin-top: 4vw;
+    margin-top: 3vw;
     padding: 1vw;
 }
 
@@ -60,7 +60,7 @@
 /* Fleche de selection bug de placement responsive à corriger*/
 #tableauJeu .flecheSelection {
     position: absolute;
-    top: -6vw;
+    top: calc(-8vw - (110vw - 1024px) * -0.05);
     color: red;
     font-size: xxx-large;
     display: none;
@@ -69,9 +69,12 @@
 }
 
 /*Adaptation des dimensions selon le format d'écran */
-/*@media screen and (min-aspect-ratio: 4/3){
-
-}*/
+@media screen and (max-width: 649px){
+    #tableauJeu .flecheSelection {
+        font-size: x-large;
+        top: calc(-7vw - (110vw - 1024px) * -0.01);
+    }  
+}
 
 @keyframes flecheAnimation {
     0% {
