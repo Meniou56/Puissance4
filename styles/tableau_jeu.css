@@ -4,8 +4,26 @@
     height: auto;
     width: auto;
     border-radius: 25px;
+    box-shadow: 5px 5px 20px 5px var(--ombre);
+    position: relative;
+    margin-top: 4vw;
+    padding: 1vw;
+}
+
+#tableauJeu::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 2vw);
+    height: calc(100% - 2vw);
+    transform: translate(-1vw, -1vw);
+    background-color: transparent;
+    pointer-events: none;
     box-shadow: 5px 5px 20px 5px var(--ombre) ;
-    padding: 2vw;
+    border: solid 2vw var(--couleurSupport);
+    z-index: 2;
+    border-radius: 4vw;
 }
 
 #tableauJeu table {
@@ -17,6 +35,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    margin: -1px;
 }
 
 #tableauJeu table tr {
@@ -62,7 +81,7 @@
     width: 100%;
     height: 100%;
     background: radial-gradient(circle, transparent 60%, var(--couleurSupport) 50%);
-    z-index: 2;
+    z-index: 3;
     pointer-events: none;
 }
 
@@ -102,7 +121,7 @@
 }
 
 .circle-animate {
-    animation: pionArrive 800ms ease-in-out forwards;
+    animation: pionArrive 1000ms ease-in-out forwards;
 }
 
 .circle-filled {

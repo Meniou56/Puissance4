@@ -684,7 +684,7 @@ if(winnerPopup === "red"){
         setTimeout( ()=> {
             fleche.style.display = "none"
             flecheAffiche = false
-        }, 500)
+        }, 7500)
     }
 
     /*Fonction pour faire disparaitre les flèches*/
