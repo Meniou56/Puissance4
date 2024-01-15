@@ -1,26 +1,37 @@
 #tableauJeu {
     background-color: var(--couleurSupport);
-    height: 77%;
-    width: 60%;
+    height: auto;
+    width: auto;
     border-radius: 25px;
     box-shadow: 5px 5px 20px 5px var(--ombre) ;
-    padding: 0.5vw;
-    display: flex;
+    padding: 2vw;
 }
 
 #tableauJeu table {
-    justify-content: space-between;
     flex: 1;
     border-collapse: collapse;
 }
 
+#tableauJeu table tbody{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+#tableauJeu table tr{
+    display: flex;
+    justify-content: space-around;
+}
+
 #tableauJeu td {
     padding: 0;
+    display: flex;
+    justify-content: space-around;
 }
 
 .carre_centre {
-    height: 5rem;
-    width: 5rem;
+    height: 11vw;
+    width: 11vw;
     position: relative;
     background-color: var(--fond);
 }
@@ -39,34 +50,35 @@
 /* Les cercles dans le tableau */
 .circle {
     position: absolute;
-    top: 0.7rem;
-    left: 0.7rem;
-    width: 3.6rem;
-    height: 3.6rem;
+    top: 50%;
+    left: 50%;
+    width: 72%;
+    height: 72%;
     background-color: transparent;
     border-radius: 50%;
     z-index: 1;
     box-shadow: inset -5px -5px 20px 1px var(--ombre);
+    transform: translate(-50%, -50%);
 }
 
 @keyframes pionArrive {
     0% {
-        transform: translateY(-60vh) rotate(520deg);
+        transform: translate(-50%, -50%) translateY(-60vh) rotate(520deg);
     }
     50% {
-        transform: translateY(0vh) rotate(0deg);
+        transform: translate(-50%, -50%) translateY(0vh) rotate(0deg);
     }
     70% {
-        transform: translateY(-2vh) rotate(360deg);
+        transform: translate(-50%, -50%) translateY(-2vh) rotate(360deg);
     }
     85% {
-        transform: translateY(0vh) rotate(0deg);
+        transform: translate(-50%, -50%) translateY(0vh) rotate(0deg);
     }
     90% {
-        transform: translateY(-0.5vh) rotate(90deg);
+        transform: translate(-50%, -50%) translateY(-0.5vh) rotate(90deg);
     }
     100% {
-        transform: translateY(0vh) rotate(0deg);
+        transform: translate(-50%, -50%) rotate(0deg);
     }
 }
 

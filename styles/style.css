@@ -4,6 +4,14 @@
  /* PAGE SCORES */
  @import url('./page_scores.css');
 
+
+/* Initialisation des réglages */
+html {
+    margin: 2vh;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* STYLE DES PAGES */
     :root{
 
