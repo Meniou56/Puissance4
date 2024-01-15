@@ -88,7 +88,7 @@
         function bouclePrincipal(){
 
             /*Détection du clic*/
-            let mouseClick = document.querySelectorAll(".circle")
+            let mouseClick = document.querySelectorAll("td")
 
                 /* Détection de la cellule cliqué */
                 for (let i=0; i<mouseClick.length; i++) {
