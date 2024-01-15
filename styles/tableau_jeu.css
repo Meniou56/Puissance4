@@ -57,7 +57,7 @@
     background-color: var(--fond_Jetons);
 }
 
-/* Fleche de selection */
+/* Fleche de selection bug de placement responsive à corriger*/
 #tableauJeu .flecheSelection {
     position: absolute;
     top: -6vw;
@@ -67,6 +67,11 @@
     text-shadow: 2px 2px 10px var(--ombre);
     animation: flecheAnimation 500ms ease-in-out forwards;
 }
+
+/*Adaptation des dimensions selon le format d'écran */
+/*@media screen and (min-aspect-ratio: 4/3){
+
+}*/
 
 @keyframes flecheAnimation {
     0% {
