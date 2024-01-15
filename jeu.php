@@ -24,6 +24,7 @@
     <table>
         <tr>
             <td>
+                <div class="flecheSelection">&dArr;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>

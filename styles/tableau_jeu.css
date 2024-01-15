@@ -1,3 +1,4 @@
+/*MEP générale du tableau */
 #tableauJeu {
     background-color: var(--couleurSupport);
     height: auto;
@@ -23,7 +24,8 @@
     justify-content: space-around;
 }
 
-#tableauJeu td {
+#tableauJeu table td {
+    position: relative;
     padding: 0;
     display: flex;
     justify-content: space-around;
@@ -36,13 +38,16 @@
     background-color: var(--fond);
 }
 
-/*Adaptation des dimensions selon le format d'écran */
-@media screen and (max-aspect-ratio: 3/4){
-    .carre_centre {
-        margin: 1vh 0;
-    }
+/* Fleche de selection */
+#tableauJeu .flecheSelection {
+    position: absolute;
+    top: -5vw;
+    color: red;
+    font-size: xx-large;
+    display: none;
 }
 
+/*Adaptation des dimensions selon le format d'écran */
 @media screen and (min-aspect-ratio: 4/3){
     .carre_centre {
         margin: 0 2vw;
@@ -57,7 +62,7 @@
     height: 100%;
     background: radial-gradient(circle, transparent 60%, var(--couleurSupport) 50%);
     z-index: 2;
-    pointer-events: none; 
+    pointer-events: none;
 }
 
 /* Les cercles dans le tableau */

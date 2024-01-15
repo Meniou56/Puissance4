@@ -87,23 +87,49 @@
         /* Boucle principale (détection des clics sur les cellules) */
         function bouclePrincipal(){
 
-            /*Détection du clic*/
+            /*Détection du clic ou survole*/
             let mouseClick = document.querySelectorAll("td")
 
-                /* Détection de la cellule cliqué */
+                /* Détection de la cellule*/
                 for (let i=0; i<mouseClick.length; i++) {
-                    mouseClick[i].addEventListener ("click", (event) => { 
-                    let td = event.target.closest("td")
 
-                    /*On recherche le numéro de colonne*/
-                    let colIndex = td.cellIndex
+                    /*détection du sorvol*/
+                    mouseClick[i].addEventListener("mouseover", (event) => {
+                    
+                    /*On détermine la colonne*/
+                    let colIndex = detectionColonne(event)
+
+                    /*On affiche la flèche correspondante */
+                    if(gameOnOff){afficherFlecheSelection(colIndex)}
+                })
+
+                    /*détection du clic*/
+                    mouseClick[i].addEventListener ("click", (event) => { 
+                    
+                    /* On appel la fonction pour déterminer la colonne concernée */
+                    let colIndex = detectionColonne(event)
 
                     /* On appel la fonction pour faire glisser le pion, si le jeu est en cours */
                     if(gameOnOff){insererPionColonne(colIndex)}
-
                 })
             }
         }
+
+        /* Fonction de fléchage à faire puis à déplacer*/
+        function afficherFlecheSelection(colIndex){
+            let couleurJoueur = getCouleurJoueurActuel()
+        }
+
+    /***************************
+    * Fonction évenementielles *
+    ****************************/
+    // Fonction de détection de colonne ou survient un événement */
+    function detectionColonne(event) {
+        let td = event.target.closest("td")
+    
+        /*On recherche le numéro de colonne*/
+        return td.cellIndex
+    }
 
     /* Fonction pour "glisser" le pion dans la colonne
     * Gère l'insertion d'un pion dans la colonne sélectionnée.
@@ -113,9 +139,9 @@
 
         function insererPionColonne (colonne) {
 
-            /* On défini la couleur du futur pion (futur fonction ça !) */
-            let nouvelleCouleur = getComputedStyle(document.documentElement).getPropertyValue(aQuiLeTour)
-            
+            /* On défini la couleur du futur pion*/
+            let nouvelleCouleur = getCouleurJoueurActuel()
+
             /*On test toutes les cases de la colonne dans le tableau JS*/
             for (let i=5; i>-2; i--){
 
@@ -151,8 +177,6 @@
                 }
             }
         } 
-     
-
 
     /**********************************
      * FONCTION DE GESTION DU TABLEAU *
@@ -177,6 +201,7 @@
         pion.style.backgroundColor = couleur
         pion.style.boxShadow = "none"
         pion.classList.add("circle-animate")
+
     }
 
     /**********************************
@@ -199,6 +224,10 @@
         }
     }
 
+    /* Retourne la couleur du joueur actuel */
+    function getCouleurJoueurActuel() {
+        return getComputedStyle(document.documentElement).getPropertyValue(aQuiLeTour);
+    }
 
     /***************************************************************
      * FONCTIONS DE DETECTION D'ALIGNEMENT DE JETONS & DE VICTOIRE *
@@ -217,8 +246,8 @@
                 if(tablJeu[iRow][iCol] !== "") {
                     
                     /* détection de 4 jetons alignés */
-                    detectionRow (iRow, iCol)
-                    detectionCol (iRow, iCol)
+                    detectionRowPlayed (iRow, iCol)
+                    detectionColPlayed (iRow, iCol)
                     detectionDiagonales(iRow, iCol, +1)
                     detectionDiagonales(iRow, iCol, -1)
 
@@ -228,7 +257,7 @@
     }
 
         /* Fonction de détection des lignes */
-        function detectionRow(iRow, iCol){
+        function detectionRowPlayed(iRow, iCol){
 
             let compteurJetonWinner = 1
             let nextCellRow = iRow
@@ -248,7 +277,7 @@
 
 
         /* Fonction de détection des colonnes */
-        function detectionCol(iRow, iCol){
+        function detectionColPlayed(iRow, iCol){
 
             let compteurJetonWinner = 1
             let nextCellCol = iCol
@@ -617,6 +646,8 @@ function alertMessage(message) {
 /*********************
  * FONCTIONS ANNEXES *
  ******************* */
+
+/* Fonction pour mettre en pause à faire */
 
 /* Fonction de traduction des couleurs en français */
 function changeNameOfColor(winnerPopup){
