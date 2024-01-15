@@ -24,53 +24,53 @@
     <table>
         <tr>
             <td>
+                <div class="carre_centre">
+                    <div class="circle"></div>
+                    <div class="fondBleu"></div>
+    	        </div>
                 <div class="flecheSelection">&#x27A7;</div>
-                <div class="carre_centre">
-                    <div class="circle"></div>
-                    <div class="fondBleu"></div>
-    	        </div>
             </td>
             <td>
-            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
+                <div class="flecheSelection">&#x27A7;</div>
             </td>
             <td>
-            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
+                <div class="flecheSelection">&#x27A7;</div>
             </td>
             <td>
-            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
+                <div class="flecheSelection">&#x27A7;</div>
             </td>
             <td>
-            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
+                <div class="flecheSelection">&#x27A7;</div>
             </td>
             <td>
-            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
+                <div class="flecheSelection">&#x27A7;</div>
             </td>
             <td>
-            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
+                <div class="flecheSelection">&#x27A7;</div>
             </td>
         </tr>
         <tr>
