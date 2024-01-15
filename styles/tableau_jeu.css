@@ -64,9 +64,27 @@
     color: red;
     font-size: xxx-large;
     display: none;
-    transform: rotate(90deg);
     text-shadow: 2px 2px 10px var(--ombre);
+    animation: flecheAnimation 500ms ease-in-out forwards;
 }
+
+@keyframes flecheAnimation {
+    0% {
+        transform: translateY(-1vw) rotate(90deg);
+        opacity: 0.1;
+    }
+    25% {
+        transform: translateY(0) rotate(90deg);
+        opacity: 0.5;
+    }
+    75% {
+        transform: translateY(-0.75vw) rotate(90deg);      
+    }
+    100% {
+        transform: translateY(0) rotate(90deg);
+    }
+}
+
 
 /*Adaptation des dimensions selon le format d'écran */
 @media screen and (min-aspect-ratio: 4/3){
