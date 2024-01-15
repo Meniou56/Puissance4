@@ -99,7 +99,9 @@
                     /*On détermine la colonne*/
                     let colIndex = detectionColonne(event)
 
-                    /*On affiche la flèche correspondante */
+
+                    /*On affiche la flèche correspondante après avoir supprimé les anciennes */
+                    eraseAllArrow()
                     if(gameOnOff){afficherFlecheSelection(colIndex)}
                 })
 
@@ -114,22 +116,6 @@
                 })
             }
         }
-
-        /* Fonction de fléchage à faire puis à déplacer*/
-        function afficherFlecheSelection(colIndex){
-            let couleurJoueur = getCouleurJoueurActuel()
-        }
-
-    /***************************
-    * Fonction évenementielles *
-    ****************************/
-    // Fonction de détection de colonne ou survient un événement */
-    function detectionColonne(event) {
-        let td = event.target.closest("td")
-    
-        /*On recherche le numéro de colonne*/
-        return td.cellIndex
-    }
 
     /* Fonction pour "glisser" le pion dans la colonne
     * Gère l'insertion d'un pion dans la colonne sélectionnée.
@@ -185,7 +171,7 @@
     /* Fonction de rafrichaissement du tableau de jeu */
     function rafraichirTablJeu(row, col, couleur) {
 
-        /* On vise la ligne puis la colonne puis le cercle */
+        /* On vise la ligne puis la colonne puis le cercle et enfin la div */
         let targetRow = document.querySelectorAll("tr")[row]
         let cell = targetRow.querySelectorAll("td")[col]
         let pion = cell.querySelector(".circle")
@@ -637,7 +623,7 @@ function alertMessage(message) {
     fenetreMessage.style.display = "block"
     fenetreMessage.style.zIndex = "11"
 
-    /*Après 3 secondes on cache à nouveau la fenetre*/
+    /*Après X secondes on cache à nouveau la fenetre*/
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
     }, 2500)
@@ -677,4 +663,51 @@ if(winnerPopup === "red"){
     }
     return coupPlayer
   } 
+  /***********************************
+  /* FONCTION CONCERNANT LE FLECHAGE */
+  /***********************************/
+    /* Fonction de fléchage des colonnes visées */
+    function afficherFlecheSelection(colIndex){
+
+        /*On récupère la couleur*/
+        let couleurJoueur = getCouleurJoueurActuel()
+
+        /*On récupère la flèche */
+        let targetRow = document.querySelectorAll("tr")[0]
+        let cell = targetRow.querySelectorAll("td")[colIndex]
+        let fleche = cell.querySelector(".flecheSelection")
+        fleche.style.color = couleurJoueur
+        fleche.style.display = "block"
+        flecheAffiche = true
+
+        /* Après X ms on cache la flèche */
+        setTimeout( ()=> {
+            fleche.style.display = "none"
+            flecheAffiche = false
+        }, 500)
+    }
+
+    /*Fonction pour faire disparaitre les flèches*/
+    function eraseAllArrow() {
+
+        /*On récupère chaque flèche et son état*/
+        for(i=0; i<7; i++){
+            const targetRow = document.querySelectorAll("tr")[0]
+            let cell = targetRow.querySelectorAll("td")[i]
+            const arrow = cell.querySelector(".flecheSelection")
+            const style = window.getComputedStyle(arrow)
+
+            /* S'il est affiché, on le passe en display none*/
+            if(style.getPropertyValue("display")!== "none") {
+                arrow.style.display = "none"
+            }
+        }
+    }
+
+    // Fonction de détection de colonne ou survient un événement */
+    function detectionColonne(event) {
+
+        let td = event.target.closest("td")
+        return td.cellIndex
+    }
 

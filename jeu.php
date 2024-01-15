@@ -24,43 +24,49 @@
     <table>
         <tr>
             <td>
-                <div class="flecheSelection">&dArr;</div>
+                <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
             </td>
             <td>
+            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
             </td>
             <td>
+            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
             </td>
             <td>
+            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
             </td>
             <td>
+            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
             </td>
             <td>
+            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>
     	        </div>
             </td>
             <td>
+            <div class="flecheSelection">&#x27A7;</div>
                 <div class="carre_centre">
                     <div class="circle"></div>
                     <div class="fondBleu"></div>

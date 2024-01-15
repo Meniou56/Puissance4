@@ -41,10 +41,11 @@
 /* Fleche de selection */
 #tableauJeu .flecheSelection {
     position: absolute;
-    top: -5vw;
+    top: -6vw;
     color: red;
-    font-size: xx-large;
+    font-size: xxx-large;
     display: none;
+    transform: rotate(90deg);
 }
 
 /*Adaptation des dimensions selon le format d'écran */
