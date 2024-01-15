@@ -18,7 +18,7 @@
     justify-content: space-around;
 }
 
-#tableauJeu table tr{
+#tableauJeu table tr {
     display: flex;
     justify-content: space-around;
 }
@@ -30,10 +30,23 @@
 }
 
 .carre_centre {
-    height: 11vw;
-    width: 11vw;
+    height: 6vw;
+    width: 6vw;
     position: relative;
     background-color: var(--fond);
+}
+
+/*Adaptation des dimensions selon le format d'écran */
+@media screen and (max-aspect-ratio: 3/4){
+    .carre_centre {
+        margin: 1vh 0;
+    }
+}
+
+@media screen and (min-aspect-ratio: 4/3){
+    .carre_centre {
+        margin: 0 2vw;
+    }
 }
 
 .fondBleu {
