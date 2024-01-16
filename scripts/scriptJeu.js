@@ -189,7 +189,7 @@
         pion.classList.add("circle-animate")
 
         /* On désactice l'utilisation de la souris, donc du jeu */
-        desactiverSouris(800)
+        desactiverSouris(500)
 
     }
 
@@ -409,7 +409,10 @@ function annuler(cancelButton) {
     if (cancelButton) {
 
         /* S'il y a clic... on annule */
-        cancelButton.addEventListener("click", () => {
+        cancelButton.addEventListener("click", (event) => {
+
+            /*On prévient le rafraichissement de la page */
+            event.preventDefault()
 
             /* on efface le message */
             eraseMessage()
