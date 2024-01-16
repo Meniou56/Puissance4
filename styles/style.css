@@ -124,14 +124,14 @@ html {
 }
 
 /*Popup plus bas sur les moyens écrans*/
-@media screen and (min-width:650px) and (max-width: 999px){
+@media screen and (min-width:600px) and (max-width: 1199px){
     #popup{
         transform: translate(-50%, -5vh);      
     }
 }
 
 /*Popup plus bas sur les petits portables*/
-@media screen and (max-width: 649px){
+@media screen and (max-width: 599px){
     #popup{
         transform: translate(-50%, 5vh);      
     }
