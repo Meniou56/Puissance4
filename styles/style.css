@@ -121,8 +121,12 @@ html {
     display: none;
     text-align: center;
     margin-top: 1rem;
-    animation: showingOnLoadMenu 800ms both;
     overflow: hidden;
+
+}
+
+#popup.animate {
+    animation: showingOnLoadMenu 800ms both;
     animation-delay: 1200ms;
 }
 
@@ -164,6 +168,9 @@ button{
     margin: 15px auto;
     padding: 10px;
     overflow: hidden;
+}
+
+button.animate {
     animation: showingOnLoadButton 600ms both;
     animation-delay: 600ms;
 }
