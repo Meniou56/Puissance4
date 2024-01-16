@@ -417,9 +417,6 @@ function annuler(cancelButton) {
             /* on efface le message */
             eraseMessage()
 
-            /*On fait disparaitre la div du message*/
-            displayNoneId("popup")
-
             /* Puis on reviens au menu précédent */
             messageVictoire()
             }
@@ -503,10 +500,7 @@ async function scoreSaved(newData) {
 /************************/
 /* FONCTIONS AFFICHAGES */
 /************************/
-function displayNoneId(element) {
-    element = getElementById(element);
-    element.style.display = "none";
-}
+
 
 /**************************
  * FONCTIONS DES MESSAGES *
@@ -515,11 +509,11 @@ function displayNoneId(element) {
 /* Message en cas de victoire */
 async function messageVictoire (winnerPopup){
 
+    /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
+    if(gameOnOff===true){await paused(1000)}
+
     /* On désactive la possibilité de continuer à jouer */
     gameOnOff = false
-
-    /*Après X secondes on affiche le message (le temps que le jeton soit tombé*/
-    await paused(1000)
 
     /* Changer le nom de la couleur en français */
     let couleurWinner = changeNameOfColor(winnerPopup)
