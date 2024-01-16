@@ -1,61 +1,155 @@
+/*MEP générale du tableau */
 #tableauJeu {
     background-color: var(--couleurSupport);
-    height: 77%;
-    width: 60%;
+    height: auto;
+    width: auto;
     border-radius: 25px;
-    box-shadow: 5px 5px 20px 5px var(--ombre) ;
-    padding: 0.5vw;
-    display: flex;
-    overflow: auto;
+    box-shadow: 5px 5px 20px 5px var(--ombre);
+    position: relative;
+    margin-top: 3vw;
+    padding: 1vw;
 }
 
-#tableauJeu {
-    background-color: var(--couleurSupport);
-    height: 77%;
-    width: 60%;
-    border-radius: 25px;
+#tableauJeu::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 2vw);
+    height: calc(100% - 2vw);
+    transform: translate(-1vw, -1vw);
+    background-color: transparent;
+    pointer-events: none;
     box-shadow: 5px 5px 20px 5px var(--ombre) ;
-    padding: 0.5vw;
-    display: flex;
-    overflow: auto;
+    border: solid 2vw var(--couleurSupport);
+    z-index: 2;
+    border-radius: 4vw;
 }
 
 #tableauJeu table {
-    justify-content: space-between;
     flex: 1;
+    border-collapse: collapse;
 }
 
-#tableauJeu td {
-    padding: 0.5vh;
+#tableauJeu table tbody{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: -1px;
+}
+
+#tableauJeu table tr {
+    display: flex;
+    justify-content: space-around;
+}
+
+#tableauJeu table td {
+    position: relative;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.carre_centre {
+    height: 6vw;
+    width: 6vw;
+    position: relative;
+    background-color: var(--fond_Jetons);
+}
+
+/* Fleche de selection bug de placement responsive à corriger*/
+#tableauJeu .flecheSelection {
+    position: absolute;
+    top: calc(-8vw - (110vw - 1024px) * -0.05);
+    color: red;
+    font-size: xxx-large;
+    display: none;
+    text-shadow: 2px 2px 10px var(--ombre);
+    animation: flecheAnimation 500ms ease-in-out forwards;
+}
+
+/*Adaptation des dimensions selon le format d'écran */
+@media screen and (max-width: 649px){
+    #tableauJeu .flecheSelection {
+        font-size: x-large;
+        top: calc(-7vw - (110vw - 1024px) * -0.01);
+    }  
+}
+
+/*pour une animation z il faut un pt de vu*/
+@keyframes flecheAnimation {
+    0% {
+        transform: translateY(-1vw) rotate(90deg);
+        opacity: 0.1;
+    }
+    25% {
+        transform: translateY(0) rotate(90deg);
+        opacity: 0.5;
+    }
+    75% {
+        transform: translateY(-0.75vw) rotate(90deg);      
+    }
+    100% {
+        transform: translateY(0) rotate(90deg);
+    }
+}
+
+
+/*Adaptation des dimensions selon le format d'écran */
+@media screen and (min-aspect-ratio: 4/3){
+    .carre_centre {
+        margin: 0 2vw;
+    }
+}
+
+.fondBleu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 60%, var(--couleurSupport) 50%);
+    z-index: 3;
+    pointer-events: none;
 }
 
 /* Les cercles dans le tableau */
 .circle {
-    width: 5vw;
-    height: 5vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 88%;
+    height: 88%;
+    background-color: transparent;
     border-radius: 50%;
-    background-color: var(--fond);
-    margin: auto;
+    z-index: 1;
     box-shadow: inset -5px -5px 20px 1px var(--ombre);
+    transform: translate(-50%, -50%);
 }
 
 @keyframes pionArrive {
     0% {
-        transform: translateY(-60vh) rotate(520deg);
+        transform: translate(-50%, -50%) translateY(-60vh) rotate(520deg);
     }
     50% {
-        transform: translateY(0vh) rotate(0deg);
+        transform: translate(-50%, -50%) translateY(0vh) rotate(0deg);
     }
     70% {
-        transform: translateY(-2vh) rotate(0deg);
+        transform: translate(-50%, -50%) translateY(-2vh) rotate(360deg);
+    }
+    85% {
+        transform: translate(-50%, -50%) translateY(0vh) rotate(0deg);
+    }
+    90% {
+        transform: translate(-50%, -50%) translateY(-0.5vh) rotate(90deg);
     }
     100% {
-        transform: translateY(0vh) rotate(0deg);
+        transform: translate(-50%, -50%) rotate(0deg);
     }
 }
 
 .circle-animate {
-    animation: pionArrive 600ms ease-in-out forwards;
+    animation: pionArrive 800ms ease-in-out forwards;
 }
 
 .circle-filled {

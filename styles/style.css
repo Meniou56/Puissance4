@@ -4,13 +4,22 @@
  /* PAGE SCORES */
  @import url('./page_scores.css');
 
+
+/* Initialisation des réglages */
+html {
+    margin: 2vh;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* STYLE DES PAGES */
     :root{
 
         /*Définition des couleurs*/
 
             /* Fond */
-            --fond: rgb(232, 231, 245);
+            --fond_Jetons: rgb(228, 227, 238);
+            --fond: rgb(225, 225, 237);
 
             /* Jeu */
             --couleurSupport: rgb(13, 68, 197);

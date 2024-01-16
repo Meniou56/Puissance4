@@ -87,20 +87,32 @@
         /* Boucle principale (détection des clics sur les cellules) */
         function bouclePrincipal(){
 
-            /*Détection du clic*/
-            let mouseClick = document.querySelectorAll(".circle")
+            /*Détection du clic ou survole*/
+            let mouseClick = document.querySelectorAll("td")
 
-                /* Détection de la cellule cliqué */
+                /* Détection de la cellule*/
                 for (let i=0; i<mouseClick.length; i++) {
-                    mouseClick[i].addEventListener ("click", (event) => { 
-                    let td = event.target.closest("td")
 
-                    /*On recherche le numéro de colonne*/
-                    let colIndex = td.cellIndex
+                    /*détection du sorvol*/
+                    mouseClick[i].addEventListener("mouseover", (event) => {
+                    
+                    /*On détermine la colonne*/
+                    let colIndex = detectionColonne(event)
+
+
+                    /*On affiche la flèche correspondante après avoir supprimé les anciennes */
+                    eraseAllArrow()
+                    if(gameOnOff){afficherFlecheSelection(colIndex)}
+                })
+
+                    /*détection du clic*/
+                    mouseClick[i].addEventListener ("click", (event) => { 
+                    
+                    /* On appel la fonction pour déterminer la colonne concernée */
+                    let colIndex = detectionColonne(event)
 
                     /* On appel la fonction pour faire glisser le pion, si le jeu est en cours */
                     if(gameOnOff){insererPionColonne(colIndex)}
-
                 })
             }
         }
@@ -113,9 +125,9 @@
 
         function insererPionColonne (colonne) {
 
-            /* On défini la couleur du futur pion (futur fonction ça !) */
-            let nouvelleCouleur = getComputedStyle(document.documentElement).getPropertyValue(aQuiLeTour)
-            
+            /* On défini la couleur du futur pion*/
+            let nouvelleCouleur = getCouleurJoueurActuel()
+
             /*On test toutes les cases de la colonne dans le tableau JS*/
             for (let i=5; i>-2; i--){
 
@@ -151,8 +163,6 @@
                 }
             }
         } 
-     
-
 
     /**********************************
      * FONCTION DE GESTION DU TABLEAU *
@@ -161,15 +171,26 @@
     /* Fonction de rafrichaissement du tableau de jeu */
     function rafraichirTablJeu(row, col, couleur) {
 
-        /* On vise la ligne puis la colonne puis le cercle */
+        /* On vise la ligne puis la colonne puis le cercle et enfin la div */
         let targetRow = document.querySelectorAll("tr")[row]
         let cell = targetRow.querySelectorAll("td")[col]
         let pion = cell.querySelector(".circle")
+        let carreCell = cell.querySelector("div")
+
+        /* Création d'un nouveau pion pour un arriere plan cohérent*/
+        let newPion = document.createElement("div")
+        newPion.classList.add("circle")
+        newPion.classList.add("circle-filled")
+        carreCell.appendChild(newPion)
 
         /* Et on change la couleur */
         pion.style.backgroundColor = couleur
+        pion.style.boxShadow = "none"
         pion.classList.add("circle-animate")
-        pion.classList.add("circle-filled")
+
+        /* On désactice l'utilisation de la souris, donc du jeu */
+        desactiverSouris(500)
+
     }
 
     /**********************************
@@ -192,6 +213,10 @@
         }
     }
 
+    /* Retourne la couleur du joueur actuel */
+    function getCouleurJoueurActuel() {
+        return getComputedStyle(document.documentElement).getPropertyValue(aQuiLeTour);
+    }
 
     /***************************************************************
      * FONCTIONS DE DETECTION D'ALIGNEMENT DE JETONS & DE VICTOIRE *
@@ -210,8 +235,8 @@
                 if(tablJeu[iRow][iCol] !== "") {
                     
                     /* détection de 4 jetons alignés */
-                    detectionRow (iRow, iCol)
-                    detectionCol (iRow, iCol)
+                    detectionRowPlayed (iRow, iCol)
+                    detectionColPlayed (iRow, iCol)
                     detectionDiagonales(iRow, iCol, +1)
                     detectionDiagonales(iRow, iCol, -1)
 
@@ -221,7 +246,7 @@
     }
 
         /* Fonction de détection des lignes */
-        function detectionRow(iRow, iCol){
+        function detectionRowPlayed(iRow, iCol){
 
             let compteurJetonWinner = 1
             let nextCellRow = iRow
@@ -241,7 +266,7 @@
 
 
         /* Fonction de détection des colonnes */
-        function detectionCol(iRow, iCol){
+        function detectionColPlayed(iRow, iCol){
 
             let compteurJetonWinner = 1
             let nextCellCol = iCol
@@ -331,14 +356,17 @@ function playAgain() {
             /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
             buttonReplayClic.addEventListener("click", () => {
 
+                /*Mise en rechargement de la page en cas de "rejouer"*/
+                location.reload()
+
                 /* on appel la fonction de réinitialisation de la partie */
-                reinitiateGame()
+                /*reinitiateGame()*/
 
                 /* On réinitialise le menu */
-                eraseMessage()
+                /*eraseMessage()*/
 
                 /* Puis on cache la fenetre */
-                hidePopup()
+                /*hidePopup()*/
                 }
             )
         } else {
@@ -381,7 +409,10 @@ function annuler(cancelButton) {
     if (cancelButton) {
 
         /* S'il y a clic... on annule */
-        cancelButton.addEventListener("click", () => {
+        cancelButton.addEventListener("click", (event) => {
+
+            /*On prévient le rafraichissement de la page */
+            event.preventDefault()
 
             /* on efface le message */
             eraseMessage()
@@ -451,7 +482,7 @@ function scoreFormat(winnerName) {
     eraseMessage()
 
     // Puis on redirige vers la page des scores
-    window.location.assign("scores.php")
+    window.location.assign("pages/scores.php")
 
 }
 
@@ -466,12 +497,20 @@ async function scoreSaved(newData) {
     })
 }
 
+/************************/
+/* FONCTIONS AFFICHAGES */
+/************************/
+
+
 /**************************
  * FONCTIONS DES MESSAGES *
  **************************/
 
 /* Message en cas de victoire */
-function messageVictoire (winnerPopup){
+async function messageVictoire (winnerPopup){
+
+    /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
+    if(gameOnOff===true){await paused(1000)}
 
     /* On désactive la possibilité de continuer à jouer */
     gameOnOff = false
@@ -598,7 +637,7 @@ function alertMessage(message) {
     fenetreMessage.style.display = "block"
     fenetreMessage.style.zIndex = "11"
 
-    /*Après 3 secondes on cache à nouveau la fenetre*/
+    /*Après X secondes on cache à nouveau la fenetre*/
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
     }, 2500)
@@ -607,6 +646,34 @@ function alertMessage(message) {
 /*********************
  * FONCTIONS ANNEXES *
  ******************* */
+
+/* Fonction de chrono */
+function paused(duration) {
+    return new Promise(resolve => setTimeout(resolve, duration));
+}
+
+/* Fonction pour mettre en pause souris/clavier */
+function desactiverSouris(duration) {
+    document.addEventListener('click', desactiverClics, true);
+    document.addEventListener('keydown', desactiverTouches, true);
+
+    setTimeout(() => {
+        document.removeEventListener('click', desactiverClics, true);
+        document.removeEventListener('keydown', desactiverTouches, true);
+    }, duration);
+}
+
+    /*Sous fonction pour la souris*/
+    function desactiverClics(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    /*Sous fonction pour le clavier*/
+    function desactiverTouches(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
 /* Fonction de traduction des couleurs en français */
 function changeNameOfColor(winnerPopup){
@@ -636,4 +703,51 @@ if(winnerPopup === "red"){
     }
     return coupPlayer
   } 
+  /***********************************
+  /* FONCTION CONCERNANT LE FLECHAGE */
+  /***********************************/
+    /* Fonction de fléchage des colonnes visées */
+    function afficherFlecheSelection(colIndex){
+
+        /*On récupère la couleur*/
+        let couleurJoueur = getCouleurJoueurActuel()
+
+        /*On récupère la flèche */
+        let targetRow = document.querySelectorAll("tr")[0]
+        let cell = targetRow.querySelectorAll("td")[colIndex]
+        let fleche = cell.querySelector(".flecheSelection")
+        fleche.style.color = couleurJoueur
+        fleche.style.display = "block"
+        flecheAffiche = true
+
+        /* Après X ms on cache la flèche */
+        setTimeout( ()=> {
+            fleche.style.display = "none"
+            flecheAffiche = false
+        }, 1500)
+    }
+
+    /*Fonction pour faire disparaitre les flèches*/
+    function eraseAllArrow() {
+
+        /*On récupère chaque flèche et son état*/
+        for(i=0; i<7; i++){
+            const targetRow = document.querySelectorAll("tr")[0]
+            let cell = targetRow.querySelectorAll("td")[i]
+            const arrow = cell.querySelector(".flecheSelection")
+            const style = window.getComputedStyle(arrow)
+
+            /* S'il est affiché, on le passe en display none*/
+            if(style.getPropertyValue("display")!== "none") {
+                arrow.style.display = "none"
+            }
+        }
+    }
+
+    // Fonction de détection de colonne ou survient un événement */
+    function detectionColonne(event) {
+
+        let td = event.target.closest("td")
+        return td.cellIndex
+    }
 
