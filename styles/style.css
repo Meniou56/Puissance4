@@ -108,11 +108,11 @@ html {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -80%);
+    transform: translate(-50%, -20vh);
     height: auto;
     width: auto;
     max-width: 80%;
-    padding: 2rem;
+    padding: 0 2rem 1rem 2rem;
     background-color: var(--couleurMenu);
     z-index: 10;
     border-radius: 10px;
@@ -121,6 +121,20 @@ html {
     display: none;
     text-align: center;
     margin-top: 1rem;
+}
+
+/*Popup plus bas sur les moyens écrans*/
+@media screen and (min-width:650px) and (max-width: 999px){
+    #popup{
+        transform: translate(-50%, -5vh);      
+    }
+}
+
+/*Popup plus bas sur les petits portables*/
+@media screen and (max-width: 649px){
+    #popup{
+        transform: translate(-50%, 5vh);      
+    }
 }
 
 #popup.animate {
@@ -165,7 +179,7 @@ button{
     box-shadow: 3px 3px 5px 0px black;
     margin: 15px auto;
     padding: 10px;
-
+    width: 100%;
 }
 
 button.animate {
