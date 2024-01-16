@@ -96,10 +96,10 @@ html {
 /*******************
  * STYLES GENERAUX *
  *******************/
-.flexColumn {
+/*.flexColumn {
     display: flex;
     flex-direction: column;
-}
+}*/
 
 
 
@@ -121,11 +121,10 @@ html {
     display: none;
     text-align: center;
     margin-top: 1rem;
-    overflow: hidden;
-
 }
 
 #popup.animate {
+    overflow: hidden;
     animation: showingOnLoadMenu 800ms both;
     animation-delay: 1200ms;
 }
@@ -159,7 +158,6 @@ html {
 
 button{
     display: block;
-    white-space: nowrap;
     color: var(--texteFonce);
     background-color: var(--couleurButton);
     border: 2px solid var(--couleurButtonBorder);
@@ -167,10 +165,12 @@ button{
     box-shadow: 3px 3px 5px 0px black;
     margin: 15px auto;
     padding: 10px;
-    overflow: hidden;
+
 }
 
 button.animate {
+    white-space: nowrap;
+    overflow: hidden;
     animation: showingOnLoadButton 600ms both;
     animation-delay: 600ms;
 }
