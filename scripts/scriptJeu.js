@@ -417,6 +417,9 @@ function annuler(cancelButton) {
             /* on efface le message */
             eraseMessage()
 
+            /*On fait disparaitre la div du message*/
+            displayNoneId("popup")
+
             /* Puis on reviens au menu précédent */
             messageVictoire()
             }
@@ -495,6 +498,14 @@ async function scoreSaved(newData) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify (newData)
     })
+}
+
+/************************/
+/* FONCTIONS AFFICHAGES */
+/************************/
+function displayNoneId(element) {
+    element = getElementById(element);
+    element.style.display = "none";
 }
 
 /**************************
