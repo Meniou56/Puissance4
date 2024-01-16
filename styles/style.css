@@ -121,6 +121,18 @@ html {
     display: none;
     text-align: center;
     margin-top: 1rem;
+    animation: showingOnLoadMenu 800ms both;
+    overflow: hidden;
+    animation-delay: 1200ms;
+}
+
+@keyframes showingOnLoadMenu {
+    0% {
+        opacity: 0.2;
+    }
+    100% {
+        opacity: 1;
+    } 
 }
 
 #popup h3, #popup p{
@@ -143,7 +155,7 @@ html {
 
 button{
     display: block;
-    width: 100%;
+    white-space: nowrap;
     color: var(--texteFonce);
     background-color: var(--couleurButton);
     border: 2px solid var(--couleurButtonBorder);
@@ -151,6 +163,24 @@ button{
     box-shadow: 3px 3px 5px 0px black;
     margin: 15px auto;
     padding: 10px;
+    overflow: hidden;
+    animation: showingOnLoadButton 600ms both;
+    animation-delay: 600ms;
+}
+
+@keyframes showingOnLoadButton {
+    0% {
+        opacity: 0;
+        height: 0;
+        width: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        width: 100%;
+        height: 100%;
+    } 
 }
 
     /* Style à la sélection et au clic */
@@ -206,6 +236,7 @@ form input{
 
 /*Animation menu principal*/
 #menuPrincipal{
+    opacity: 0;
     transform: translateZ(-1000px);
     animation: tourne360 800ms ease-in-out forwards;
 }
