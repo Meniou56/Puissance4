@@ -149,7 +149,7 @@
 }
 
 .circle-animate {
-    animation: pionArrive 1000ms ease-in-out forwards;
+    animation: pionArrive 800ms ease-in-out forwards;
 }
 
 .circle-filled {

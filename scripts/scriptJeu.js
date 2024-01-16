@@ -188,6 +188,9 @@
         pion.style.boxShadow = "none"
         pion.classList.add("circle-animate")
 
+        /* On désactice l'utilisation de la souris, donc du jeu */
+        desactiverSouris(800)
+
     }
 
     /**********************************
@@ -633,7 +636,28 @@ function alertMessage(message) {
  * FONCTIONS ANNEXES *
  ******************* */
 
-/* Fonction pour mettre en pause à faire */
+/* Fonction pour mettre en pause souris/clavier */
+function desactiverSouris(duration) {
+    document.addEventListener('click', desactiverClics, true);
+    document.addEventListener('keydown', desactiverTouches, true);
+
+    setTimeout(() => {
+        document.removeEventListener('click', desactiverClics, true);
+        document.removeEventListener('keydown', desactiverTouches, true);
+    }, duration);
+}
+
+    /*Sous fonction pour la souris*/
+    function desactiverClics(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    /*Sous fonction pour le clavier*/
+    function desactiverTouches(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
 /* Fonction de traduction des couleurs en français */
 function changeNameOfColor(winnerPopup){
@@ -684,7 +708,7 @@ if(winnerPopup === "red"){
         setTimeout( ()=> {
             fleche.style.display = "none"
             flecheAffiche = false
-        }, 7500)
+        }, 1500)
     }
 
     /*Fonction pour faire disparaitre les flèches*/
