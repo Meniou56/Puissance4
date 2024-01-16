@@ -499,10 +499,13 @@ async function scoreSaved(newData) {
  **************************/
 
 /* Message en cas de victoire */
-function messageVictoire (winnerPopup){
+async function messageVictoire (winnerPopup){
 
     /* On désactive la possibilité de continuer à jouer */
     gameOnOff = false
+
+    /*Après X secondes on affiche le message (le temps que le jeton soit tombé*/
+    await paused(1000)
 
     /* Changer le nom de la couleur en français */
     let couleurWinner = changeNameOfColor(winnerPopup)
@@ -635,6 +638,11 @@ function alertMessage(message) {
 /*********************
  * FONCTIONS ANNEXES *
  ******************* */
+
+/* Fonction de chrono */
+function paused(duration) {
+    return new Promise(resolve => setTimeout(resolve, duration));
+}
 
 /* Fonction pour mettre en pause souris/clavier */
 function desactiverSouris(duration) {
