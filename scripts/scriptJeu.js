@@ -162,10 +162,10 @@ function desactiverSouris(duration) {
     * met à jour le tableau de jeu et vérifie s'il y a un gagnant.
     */ 
 
-    function startComputerPlaying() {
+    async function startComputerPlaying() {
 
         /* On désactive les possibilités d'action du joueur humain*/
-
+        await paused(800)
 
         /*On insère un pion pour l'ordinateur*/
         const colonne = getRandomInt(1,8)
