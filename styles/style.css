@@ -54,6 +54,7 @@ html {
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            perspective: 1000px;
         }
 
     /*Style du titre */
@@ -107,11 +108,11 @@ html {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -80%);
+    transform: translate(-50%, -20vh);
     height: auto;
     width: auto;
     max-width: 80%;
-    padding: 2rem;
+    padding: 0 2rem 1rem 2rem;
     background-color: var(--couleurMenu);
     z-index: 10;
     border-radius: 10px;
@@ -120,6 +121,35 @@ html {
     display: none;
     text-align: center;
     margin-top: 1rem;
+}
+
+/*Popup plus bas sur les moyens écrans*/
+@media screen and (min-width:600px) and (max-width: 1199px){
+    #popup{
+        transform: translate(-50%, -5vh);      
+    }
+}
+
+/*Popup plus bas sur les petits portables*/
+@media screen and (max-width: 599px){
+    #popup{
+        transform: translate(-50%, 5vh);      
+    }
+}
+
+#popup.animate {
+    overflow: hidden;
+    animation: showingOnLoadMenu 800ms both;
+    animation-delay: 1200ms;
+}
+
+@keyframes showingOnLoadMenu {
+    0% {
+        opacity: 0.2;
+    }
+    100% {
+        opacity: 1;
+    } 
 }
 
 #popup h3, #popup p{
@@ -142,7 +172,6 @@ html {
 
 button{
     display: block;
-    width: 100%;
     color: var(--texteFonce);
     background-color: var(--couleurButton);
     border: 2px solid var(--couleurButtonBorder);
@@ -150,6 +179,29 @@ button{
     box-shadow: 3px 3px 5px 0px black;
     margin: 15px auto;
     padding: 10px;
+    width: 100%;
+}
+
+button.animate {
+    white-space: nowrap;
+    overflow: hidden;
+    animation: showingOnLoadButton 600ms both;
+    animation-delay: 600ms;
+}
+
+@keyframes showingOnLoadButton {
+    0% {
+        opacity: 0;
+        height: 0;
+        width: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        width: 100%;
+        height: 100%;
+    } 
 }
 
     /* Style à la sélection et au clic */
@@ -203,4 +255,23 @@ form input{
     user-select: none;
 }
 
- 
+/*Animation menu principal*/
+#menuPrincipal{
+    opacity: 0;
+    transform: translateZ(-1000px);
+    animation: tourne360 800ms ease-in-out forwards;
+}
+
+@keyframes tourne360 {
+    0% {
+        transform: rotateY(700deg) translateZ(-1000px);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.75;
+    } 
+    100% {
+        transform: rotateY(0) translateZ(0);
+        opacity: 1;
+    } 
+}

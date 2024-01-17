@@ -29,7 +29,7 @@
 
     <!--En tête du tableau de score-->
     <table id="tableauScore">
-        <thead>     
+        <thead>    
             <tr>
                 <th>Date</th>
                 <th>Nom</th>

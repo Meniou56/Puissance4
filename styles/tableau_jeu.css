@@ -57,6 +57,13 @@
     background-color: var(--fond_Jetons);
 }
 
+/*Adaptation des dimensions selon le format d'écran */
+@media screen and (min-aspect-ratio: 4/3){
+    .carre_centre {
+        margin: 0 2vw;
+    }
+}
+
 /* Fleche de selection bug de placement responsive à corriger*/
 #tableauJeu .flecheSelection {
     position: absolute;
@@ -91,14 +98,6 @@
     }
     100% {
         transform: translateY(0) rotate(90deg);
-    }
-}
-
-
-/*Adaptation des dimensions selon le format d'écran */
-@media screen and (min-aspect-ratio: 4/3){
-    .carre_centre {
-        margin: 0 2vw;
     }
 }
 

@@ -468,33 +468,42 @@ function scoreFormat(winnerName) {
     const actualTime = new Date()
     const date = `${String(actualTime.getDate()).padStart(2, '0')}/${String(actualTime.getMonth() +1).padStart(2, '0')}/${String(actualTime.getFullYear()).padStart(2, '0')} @ ${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`
     
-    /* Construvtion de la charge utile */
+    /* Construction de la charge utile */
     const newData = {
         "date": date,
         "user": winnerName,
         "coup": coupPlayer //alternance à faire, ainsi que la réinitialisation, etc etc...
     }
 
-    // On récupère le fichier des scores
+    // On récupère le fichier des scores et on écrit dedans
     scoreSaved(newData)
 
     // On efface le Popup
     eraseMessage()
-
-    // Puis on redirige vers la page des scores
-    window.location.assign("pages/scores.php")
-
 }
 
 // Initialisation fichier score
 async function scoreSaved(newData) {
 
-    // Ecriture des nouvelles données
-    await fetch("http://localhost:3000/api/scores", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify (newData)
-    })
+    try {
+        // Ecriture des nouvelles données
+        const reponse = await fetch('./data/databasewrite.php', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData)
+        })
+
+        // Vérification
+        if (!reponse.ok) {
+            throw new Error(`Erreur HTTP: ${reponse.status}`)
+        }
+
+        // Puis on redirige vers la page des scores
+        window.location.assign("pages/scores.php")
+
+    } catch (erreur) {
+        console.error('Erreur lors de l\'envoie des données', erreur)
+    }
 }
 
 /************************/
@@ -750,4 +759,3 @@ if(winnerPopup === "red"){
         let td = event.target.closest("td")
         return td.cellIndex
     }
-
