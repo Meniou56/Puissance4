@@ -3,9 +3,22 @@
 *************************************/
 // Fonction de chargement des scores JSON
 async function chargerScores() {
-    const data = await fetch("http://localhost:3000/api/scores")
-    const scores = await data.json()
-    return scores
+        try {
+
+            // Chargement des données de l'API
+            const response = await fetch('../databaseconnect.php')
+            if(!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`)
+            }
+
+            // Transformation en JSON
+            const scores = await response.json()
+            return scores
+    
+            // Si erreur :
+        } catch (erreur) {
+            console.error('Erreur lors du chargement des données', erreur)
+        }
 }
 
 // Fonction pour attendre que les scores soient effectivement chargées avant de passer au chargement du tableau

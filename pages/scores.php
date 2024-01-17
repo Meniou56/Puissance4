@@ -1,19 +1,3 @@
-<?php
-require_once(__DIR__ . '/../config/mysql.php');
-require_once(__DIR__ . '/../databaseconnect.php');
-?>
-
-<?php $sql = "SELECT * FROM scores";
-$scores = $mysqlClient->prepare($sql);
-$scores->execute();
-?>
-
-<!--foreach ($scores as $row) {
-    echo "Nom : " . $row['nom'] . "<br>";
-    echo "Date : " . $row['date'] . "<br>";
-    echo "Scores : " . $row['score'] . "<br>";
-}-->
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -51,22 +35,6 @@ $scores->execute();
                 <th>Nom</th>
                 <th>Score</th>
             </tr>
-
-        <!-- Tableau des scores -->
-        <?php foreach ($scores as $row): 
-            
-            /*Transformation de la date*/
-            $fullDate = $row['date'];
-            $date = new DateTime($fullDate);
-            $displayDate = $date->format('Y-m-d H:i');
-
-            ?>
-            <tr>
-                <td><?php echo $displayDate?></td>
-                <td><?php echo $row['nom']?></td>
-                <td><?php echo $row['score']?></td>
-        <?php endforeach ?>
-
         </thead>
         <tbody id="tableauBody">
 
@@ -84,7 +52,7 @@ $scores->execute();
 
 
 <!--Chargement du JS-->
-<!--<script src="../scripts/scriptScores.js"></script>-->
+<script src="../scripts/scriptScores.js"></script>
 
 </body>
 </html>
