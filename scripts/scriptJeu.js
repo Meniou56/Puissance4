@@ -403,7 +403,7 @@ function playAgain() {
 
 
     /* On écoute le bouton rejouer */
-    const ReplayClic = document.querySelector("#popup #replay")
+    const buttonReplayClic = document.querySelector("#popup #replay")
         
         /* Le bouton a bien été récupéré ? */
         if (buttonReplayClic) {
