@@ -18,18 +18,17 @@
     let coupPlayer = 0
 
     // Définir si mode solo actif
-    let modeSolo = true
+    let modeSolo = false
 
     /* On active la boucle principale */
     let gameOnOff = true
 
     /**********************
-     * Boucle principale  *
+     * Démarrage  *
      **********************/
 
-    /* Appel de la boucle principale si active*/
-    bouclePrincipal()
-
+    /* Appel des écoutes pour pouvoir jouer */
+    activeClickOver()
 
 /*******************
  *Fonction initiale* 
@@ -78,41 +77,41 @@
 
         }
 
-
-/********************
- * Fonctions en jeu *
- ********************/
-
-
-    /* Fonction de la boucle principale */
-        /* Boucle principale (détection des clics sur les cellules) */
-        function bouclePrincipal() {
-
-            // On vérifie si c'est à un joueur humain de jouer
-            if (modeSolo && coupJ1 <= coupJ2) {
-                console.log("humain")
-        
-                // Détection du clic ou survol
-                let mouseClick = document.querySelectorAll("td")
-        
-                // Détection de la cellule
-                for (let i = 0; i < mouseClick.length; i++) {
-        
-                    // détection du survol
-                    mouseClick[i].addEventListener("mouseover", handleMouseOver)
-        
-                    // détection du clic
-                    mouseClick[i].addEventListener("click", handleMouseClick)
-                }
-            } else {
-                console.log("ordinateur");
-            }
-        }
-
 /***************************************/
 /* FONCTIONS DE GESTION SOURIS/CLAVIER */
 /***************************************/
-    function handleMouseOver (event) {
+
+/* Activation click/over sur le jeu */
+function activeClickOver() {
+    // Détection du clic ou survol
+let mouseClick = document.querySelectorAll("td")
+
+    // Détection de la cellule
+    for (let i = 0; i < mouseClick.length; i++) {
+
+        // activation
+        mouseClick[i].addEventListener("mouseover", handleMouseOver)
+        mouseClick[i].addEventListener("click", handleMouseClick)
+    }
+}
+
+
+/* Désactivation click/over sur le jeu */
+function desactiveClickOver() {
+        /* On désactive l'écoute d'événement sur le jeu*/
+    let mouseClick = document.querySelectorAll("td")
+
+    // Détection de chaque cellule
+    for (let i = 0; i < mouseClick.length; i++) {
+
+        // désactivation
+        mouseClick[i].removeEventListener("mouseover", handleMouseOver)
+        mouseClick[i].removeEventListener("click", handleMouseClick)
+    }
+}
+
+    /* Pour chaque flèche*/
+    function handleMouseOver(event) {
             // On détermine la colonne
             let colIndex = detectionColonne(event)
 
@@ -123,6 +122,7 @@
             }
     }
 
+    /* Pour les jetons*/
     function handleMouseClick(event) {
         // On appelle la fonction pour déterminer la colonne concernée
         let colIndex = detectionColonne(event)
@@ -138,6 +138,9 @@
     * La fonction vérifie si la colonne est pleine, trouve la première case vide,
     * met à jour le tableau de jeu et vérifie s'il y a un gagnant.
     */ 
+    function startComputerPlaying() {
+        desactiveClickOver()
+    }
 
         function insererPionColonne (colonne) {
 
@@ -172,6 +175,11 @@
 
                             /* On vérifie s'il y a un gagnant */
                             winnerIs()
+
+                            /* Check if it's to computer to play */
+                            if(modeSolo && coupJ1>coupJ2){
+                                startComputerPlaying()
+                            }
 
                             break// Sortie de la boucle après insertion du pion
                         }
