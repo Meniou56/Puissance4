@@ -1,7 +1,10 @@
 <?php
 
+// Script de communication avec données JSON
+header('Content-Type: application/json');
+
 // On récupère la configuration
-require_once(__DIR__ . '/config/mysql.php');
+require_once(__DIR__ . '/../config/mysql.php');
 
 // Connexion à la BDD...
 try {

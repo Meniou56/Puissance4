@@ -6,7 +6,7 @@ async function chargerScores() {
         try {
 
             // Chargement des données de l'API
-            const response = await fetch('../databaseconnect.php')
+            const response = await fetch('../data/databaseread.php')
             if(!response.ok) {
                 throw new Error(`Erreur HTTP: ${response.status}`)
             }

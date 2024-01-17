@@ -27,12 +27,6 @@
      **********************/
 
     /* Appel de la boucle principale si active*/
-    async function loadloadload() {
-        const essai = await chargerScores()
-        console.log(essai)
-    }
-
-    loadloadload()
     bouclePrincipal()
 
 
@@ -483,25 +477,33 @@ function scoreFormat(winnerName) {
 
     // On récupère le fichier des scores et on écrit dedans
     scoreSaved(newData)
-    console.log(newData)
 
     // On efface le Popup
     eraseMessage()
-
-    // Puis on redirige vers la page des scores
-    //window.location.assign("pages/scores.php")
-
 }
 
 // Initialisation fichier score
 async function scoreSaved(newData) {
 
-    // Ecriture des nouvelles données
-    await fetch('./databaseconnect.php', {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify (newData)
-    })
+    try {
+        // Ecriture des nouvelles données
+        const reponse = await fetch('./data/databasewrite.php', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData)
+        })
+
+        // Vérification
+        if (!reponse.ok) {
+            throw new Error(`Erreur HTTP: ${reponse.status}`)
+        }
+
+        // Puis on redirige vers la page des scores
+        window.location.assign("pages/scores.php")
+
+    } catch (erreur) {
+        console.error('Erreur lors de l\'envoie des données', erreur)
+    }
 }
 
 /************************/
@@ -757,25 +759,3 @@ if(winnerPopup === "red"){
         let td = event.target.closest("td")
         return td.cellIndex
     }
-
-
-    //A SUPPRIMER 
-// Fonction de chargement des scores JSON
-async function chargerScores() {
-    try {
-
-        // Chargement des données de l'API
-        const response = await fetch('../databaseconnect.php')
-        if(!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`)
-        }
-
-        // Transformation en JSON
-        const scores = await response.json()
-        return scores
-
-        // Si erreur :
-    } catch (erreur) {
-        console.error('Erreur lors du chargement des données', erreur)
-    }
-}
