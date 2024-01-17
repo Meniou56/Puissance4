@@ -27,6 +27,12 @@
      **********************/
 
     /* Appel de la boucle principale si active*/
+    async function loadloadload() {
+        const essai = await chargerScores()
+        console.log(essai)
+    }
+
+    loadloadload()
     bouclePrincipal()
 
 
@@ -468,21 +474,22 @@ function scoreFormat(winnerName) {
     const actualTime = new Date()
     const date = `${String(actualTime.getDate()).padStart(2, '0')}/${String(actualTime.getMonth() +1).padStart(2, '0')}/${String(actualTime.getFullYear()).padStart(2, '0')} @ ${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`
     
-    /* Construvtion de la charge utile */
+    /* Construction de la charge utile */
     const newData = {
         "date": date,
         "user": winnerName,
         "coup": coupPlayer //alternance à faire, ainsi que la réinitialisation, etc etc...
     }
 
-    // On récupère le fichier des scores
+    // On récupère le fichier des scores et on écrit dedans
     scoreSaved(newData)
+    console.log(newData)
 
     // On efface le Popup
     eraseMessage()
 
     // Puis on redirige vers la page des scores
-    window.location.assign("pages/scores.php")
+    //window.location.assign("pages/scores.php")
 
 }
 
@@ -490,7 +497,7 @@ function scoreFormat(winnerName) {
 async function scoreSaved(newData) {
 
     // Ecriture des nouvelles données
-    await fetch("http://localhost:3000/api/scores", {
+    await fetch('./databaseconnect.php', {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify (newData)
@@ -751,3 +758,24 @@ if(winnerPopup === "red"){
         return td.cellIndex
     }
 
+
+    //A SUPPRIMER 
+// Fonction de chargement des scores JSON
+async function chargerScores() {
+    try {
+
+        // Chargement des données de l'API
+        const response = await fetch('../databaseconnect.php')
+        if(!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`)
+        }
+
+        // Transformation en JSON
+        const scores = await response.json()
+        return scores
+
+        // Si erreur :
+    } catch (erreur) {
+        console.error('Erreur lors du chargement des données', erreur)
+    }
+}

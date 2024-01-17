@@ -1,8 +1,3 @@
-<?php
-require_once(__DIR__ . '/config/mysql.php');
-require_once(__DIR__ . '/databaseconnect.php');
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
