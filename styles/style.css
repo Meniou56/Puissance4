@@ -101,7 +101,13 @@ html {
     flex-direction: column;
 }
 
+form {
+    padding-top: 1rem;
+}
 
+#popup form input {
+    margin: 1rem 0;
+}
 
 /* STYLE DU POPUP CENTRAL */
 #popup{
