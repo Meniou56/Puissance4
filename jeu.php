@@ -297,6 +297,11 @@
 
 </div>
 
+<!--Bouton-->
+<div>
+    <a href="index.php" id="buttonPageScores">Quitter</a>
+</div>
+
 <!--POPUP PRINCIPAL-->
    <div id="popup">
     <!--Contenu du pop-up-->
