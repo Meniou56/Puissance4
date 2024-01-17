@@ -18,7 +18,7 @@
     let coupPlayer = 0
 
     // Définir si mode solo actif
-    let modeSolo = false
+    let modeSolo = true
 
     /* On active la boucle principale */
     let gameOnOff = true
@@ -97,18 +97,18 @@ let mouseClick = document.querySelectorAll("td")
 
 
 /* Désactivation click/over sur le jeu */
-function desactiveClickOver() {
+//function desactiveClickOver() {
         /* On désactive l'écoute d'événement sur le jeu*/
-    let mouseClick = document.querySelectorAll("td")
+ //   let mouseClick = document.querySelectorAll("td")
 
     // Détection de chaque cellule
-    for (let i = 0; i < mouseClick.length; i++) {
+  //  for (let i = 0; i < mouseClick.length; i++) {
 
         // désactivation
-        mouseClick[i].removeEventListener("mouseover", handleMouseOver)
-        mouseClick[i].removeEventListener("click", handleMouseClick)
-    }
-}
+   //     mouseClick[i].removeEventListener("mouseover", handleMouseOver)
+   //     mouseClick[i].removeEventListener("click", handleMouseClick)
+   // }
+//}
 
     /* Pour chaque flèche*/
     function handleMouseOver(event) {
@@ -133,13 +133,44 @@ function desactiveClickOver() {
         }
     }
 
+/* Fonction pour mettre en pause souris/clavier */
+function desactiverSouris(duration) {
+    document.addEventListener('click', desactiverClics, true);
+    document.addEventListener('keydown', desactiverTouches, true);
+
+    setTimeout(() => {
+        document.removeEventListener('click', desactiverClics, true);
+        document.removeEventListener('keydown', desactiverTouches, true);
+    }, duration);
+}
+
+    /*Sous fonction pour la souris*/
+    function desactiverClics(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    /*Sous fonction pour le clavier*/
+    function desactiverTouches(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     /* Fonction pour "glisser" le pion dans la colonne
     * Gère l'insertion d'un pion dans la colonne sélectionnée.
     * La fonction vérifie si la colonne est pleine, trouve la première case vide,
     * met à jour le tableau de jeu et vérifie s'il y a un gagnant.
     */ 
+
     function startComputerPlaying() {
-        desactiveClickOver()
+
+        /* On désactive les possibilités d'action du joueur humain*/
+
+
+        /*On insère un pion pour l'ordinateur*/
+        const colonne = getRandomInt(1,8)
+        insererPionColonne(colonne)
+
     }
 
         function insererPionColonne (colonne) {
@@ -177,7 +208,7 @@ function desactiveClickOver() {
                             winnerIs()
 
                             /* Check if it's to computer to play */
-                            if(modeSolo && coupJ1>coupJ2){
+                            if(modeSolo && nouvelleCouleur === "red"){
                                 startComputerPlaying()
                             }
 
@@ -372,7 +403,7 @@ function playAgain() {
 
 
     /* On écoute le bouton rejouer */
-    const buttonReplayClic = document.querySelector("#popup #replay")
+    const ReplayClic = document.querySelector("#popup #replay")
         
         /* Le bouton a bien été récupéré ? */
         if (buttonReplayClic) {
@@ -679,34 +710,15 @@ function alertMessage(message) {
 /*********************
  * FONCTIONS ANNEXES *
  ******************* */
+/* Fonction de génération aléatoire */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min) + min)
+}
 
 /* Fonction de chrono */
 function paused(duration) {
     return new Promise(resolve => setTimeout(resolve, duration));
 }
-
-/* Fonction pour mettre en pause souris/clavier */
-function desactiverSouris(duration) {
-    document.addEventListener('click', desactiverClics, true);
-    document.addEventListener('keydown', desactiverTouches, true);
-
-    setTimeout(() => {
-        document.removeEventListener('click', desactiverClics, true);
-        document.removeEventListener('keydown', desactiverTouches, true);
-    }, duration);
-}
-
-    /*Sous fonction pour la souris*/
-    function desactiverClics(event) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
-
-    /*Sous fonction pour le clavier*/
-    function desactiverTouches(event) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
 
 /* Fonction de traduction des couleurs en français */
 function changeNameOfColor(winnerPopup){
@@ -736,6 +748,7 @@ if(winnerPopup === "red"){
     }
     return coupPlayer
   } 
+
   /***********************************
   /* FONCTION CONCERNANT LE FLECHAGE */
   /***********************************/
