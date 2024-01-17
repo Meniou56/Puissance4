@@ -1,5 +1,3 @@
-// 12/12 Bug de validation vide du nom à corriger
-
 /***********************
  * Boucle d'une partie *
  ***********************/
@@ -18,6 +16,9 @@
     let coupJ1 = 0
     let coupJ2 = 0
     let coupPlayer = 0
+
+    // Définir si mode solo actif
+    let modeSolo = true
 
     /* On active la boucle principale */
     let gameOnOff = true
@@ -85,37 +86,52 @@
 
     /* Fonction de la boucle principale */
         /* Boucle principale (détection des clics sur les cellules) */
-        function bouclePrincipal(){
+        function bouclePrincipal() {
 
-            /*Détection du clic ou survole*/
-            let mouseClick = document.querySelectorAll("td")
-
-                /* Détection de la cellule*/
-                for (let i=0; i<mouseClick.length; i++) {
-
-                    /*détection du sorvol*/
-                    mouseClick[i].addEventListener("mouseover", (event) => {
-                    
-                    /*On détermine la colonne*/
-                    let colIndex = detectionColonne(event)
-
-
-                    /*On affiche la flèche correspondante après avoir supprimé les anciennes */
-                    eraseAllArrow()
-                    if(gameOnOff){afficherFlecheSelection(colIndex)}
-                })
-
-                    /*détection du clic*/
-                    mouseClick[i].addEventListener ("click", (event) => { 
-                    
-                    /* On appel la fonction pour déterminer la colonne concernée */
-                    let colIndex = detectionColonne(event)
-
-                    /* On appel la fonction pour faire glisser le pion, si le jeu est en cours */
-                    if(gameOnOff){insererPionColonne(colIndex)}
-                })
+            // On vérifie si c'est à un joueur humain de jouer
+            if (modeSolo && coupJ1 <= coupJ2) {
+                console.log("humain")
+        
+                // Détection du clic ou survol
+                let mouseClick = document.querySelectorAll("td")
+        
+                // Détection de la cellule
+                for (let i = 0; i < mouseClick.length; i++) {
+        
+                    // détection du survol
+                    mouseClick[i].addEventListener("mouseover", handleMouseOver)
+        
+                    // détection du clic
+                    mouseClick[i].addEventListener("click", handleMouseClick)
+                }
+            } else {
+                console.log("ordinateur");
             }
         }
+
+/***************************************/
+/* FONCTIONS DE GESTION SOURIS/CLAVIER */
+/***************************************/
+    function handleMouseOver (event) {
+            // On détermine la colonne
+            let colIndex = detectionColonne(event)
+
+            // On affiche la flèche correspondante après avoir supprimé les anciennes
+            eraseAllArrow()
+            if (gameOnOff) {
+                afficherFlecheSelection(colIndex)
+            }
+    }
+
+    function handleMouseClick(event) {
+        // On appelle la fonction pour déterminer la colonne concernée
+        let colIndex = detectionColonne(event)
+
+        // On appelle la fonction pour faire glisser le pion, si le jeu est en cours
+        if (gameOnOff) {
+            insererPionColonne(colIndex)
+        }
+    }
 
     /* Fonction pour "glisser" le pion dans la colonne
     * Gère l'insertion d'un pion dans la colonne sélectionnée.
