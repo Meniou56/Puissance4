@@ -270,16 +270,15 @@ function desactiverSouris(duration) {
     }
 
     function isNextRed(row, col) {
-        let proba = 0
+        let proba = 2
         console.log("ligne : ", row, "colonne : ", col)
 
-        if(col<6 && tablJeu[row][col+1]==="red"){proba=proba+getRandomInt(0,11)}
-        if(col>0 && tablJeu[row][col-1]==="red"){proba=proba+getRandomInt(0,11)}
-        if(row<5 && tablJeu[row+1][col]==="red"){proba=proba+getRandomInt(0,11)}
-        console.log("proba est : ", proba)
+        if(col<6 && !tablJeu[row][col+1]===""){proba=proba+getRandomInt(0,2)}
+        if(col>0 && !tablJeu[row][col-1]===""){proba=proba+getRandomInt(0,2)}
+        if(row<5 && !tablJeu[row+1][col]===""){proba=proba+getRandomInt(0,2)}
         let newProba = getRandomInt(0, proba)
-        console.log("newProba est :", newProba)
-        if(newProba>0){return 0}else{return 1}
+        console.log("Proba, new Proba :", proba, newProba)
+        if(newProba>0){return 1}else{return 0}
     }
  
 
