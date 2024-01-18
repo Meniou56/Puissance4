@@ -163,29 +163,6 @@ function desactiverSouris(duration) {
     * La fonction vérifie si la colonne est pleine, trouve la première case vide,
     * met à jour le tableau de jeu et vérifie s'il y a un gagnant.
     */ 
-
-    async function startComputerPlaying() {
-
-        /* On désactive les possibilités d'action du joueur humain*/
-        desactiveClickOver()
-        let isPionInsere = false
-
-        while (!isPionInsere) {
-
-            await paused(800)
-            console.log("l'ordinateur joue")
-
-            /*On insère un pion pour l'ordinateur*/
-            const colonne = getRandomInt(0,7)
-            isPionInsere = await insererPionColonne(colonne)
-            console.log("IA trying colonne :", colonne+1, "coup :", coupJ2)
-        }
-
-        IAplaying = false
-        activeClickOver()
-
-    }
-
         function insererPionColonne (colonne) {
 
             /* On défini la couleur du futur pion*/
@@ -201,11 +178,8 @@ function desactiverSouris(duration) {
                         if(IAplaying){
                             console.log("IA joue colonne pleine", colonne+1)
                             return false
-
                         }else{
-                            /* Si c'est le cas, il n'est pas possible de jouer ici */
-                            alertMessage("La colonne est déjà pleine")
-
+                            alertMessage("La colonne est déjà pleine")//sinon c'est l'humain
                             break // sortie si la colonne est pleine
                         }
 
@@ -214,6 +188,18 @@ function desactiverSouris(duration) {
 
                         /*On test quelle est la prochaine case disponible dans la colonne */
                         if (tablJeu[i][colonne] === "") {
+
+                            /* Si c'est à l'IA, reflexion quant au coup à jouer*/
+                            if(IAplaying){
+                                tryAgain = isNextRed(i, colonne)
+                                console.log(tryAgain)
+                                if(tryAgain===0){
+                                    console.log('je tente autre chose')
+                                    return false
+                                }else{
+                                    console.log('je suis satisfait')
+                                }
+                            }
 
                             /*On change la valeur de la case dans le tableau JS */
                             tablJeu[i][colonne] = nouvelleCouleur
@@ -232,8 +218,6 @@ function desactiverSouris(duration) {
 
                             /* Si c'est l'IA qui joue, le pion est bien inséré */
                             return true
-
-                            break// Sortie de la boucle après insertion du pion
                         }
                     
                 }
@@ -244,12 +228,57 @@ function desactiverSouris(duration) {
     /* FONCTIONS IA */
     /****************/
 
+    /* Fonction principal d'activation/désactivation de l'IA*/
+    async function startComputerPlaying() {
+
+        /* On désactive les possibilités d'action du joueur humain*/
+        desactiveClickOver()
+
+        /*On déterminer si l'IA à inséré un pion*/
+        await IAInsertPion()
+
+        /*On relance le jeu pour l'humain*/
+        IAplaying = false
+        activeClickOver()
+
+    }
+
+    /*Fonction pour que l'IA insere un pion*/
+    async function IAInsertPion(){
+        let isPionInsere = false
+
+        while (!isPionInsere) {
+
+            /*Temps de reflexion de l'IA ^^*/
+            await paused(800)
+
+            /*On insère un pion pour l'ordinateur*/
+            const colonne = getRandomInt(0,7)
+            isPionInsere = await insererPionColonne(colonne)
+            console.log("IA trying colonne :", colonne+1, "coup :", coupJ2)
+        }
+    }
+
+
     /*Fonction pour déterminer si c'est à l'IA de jouer */
     function isComputerTurn(couleurDernierJoueur) {
         if(modeSolo && couleurDernierJoueur === "red"){
             IAplaying = true
             startComputerPlaying()
         } 
+    }
+
+    function isNextRed(row, col) {
+        let proba = 0
+        console.log(row, col)
+        // Test d'être dans le tableau à faire ()
+        //if(tablJeu[row+1][col]==="red"){proba=proba+getRandomInt(0,11)}
+        //if(tablJeu[row-1][col]==="red"){proba=proba+getRandomInt(0,11)}
+        //if(tablJeu[row][col-1]==="red"){proba=proba+getRandomInt(0,11)}
+        console.log("proba est : ", proba)
+        let newProba = getRandomInt(0, proba)
+        console.log("newProba est :", newProba)
+        if(newProba>0){return 0}else{return 1}
     }
  
 
