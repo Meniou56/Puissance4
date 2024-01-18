@@ -174,31 +174,14 @@ function desactiverSouris(duration) {
                 /* On vérifie que la colonne n'est pas déjà rempli */
                 if (i===-1) {
 
-                        /* Si c'est l'IA, le pion n'est pas inséré (false)*/
-                        if(IAplaying){
-                            console.log("IA joue colonne pleine", colonne+1)
-                            return false
-                        }else{
-                            alertMessage("La colonne est déjà pleine")//sinon c'est l'humain
-                            break // sortie si la colonne est pleine
-                        }
+                    alertMessage("La colonne est déjà pleine")//sinon c'est l'humain
+                    break // sortie si la colonne est pleine
 
                     /* Sinon on poursuit la recherche de case */
                     } else {
 
                         /*On test quelle est la prochaine case disponible dans la colonne */
                         if (tablJeu[i][colonne] === "") {
-
-                            /* Si c'est à l'IA, reflexion quant au coup à jouer*/
-                            if(IAplaying){
-                                tryAgain = isNextRed(i, colonne)
-                                if(tryAgain===0){
-                                    console.log('je tente autre chose')
-                                    return false
-                                }else{
-                                    console.log('je suis satisfait')
-                                }
-                            }
 
                             /*On change la valeur de la case dans le tableau JS */
                             tablJeu[i][colonne] = nouvelleCouleur
@@ -216,11 +199,9 @@ function desactiverSouris(duration) {
                             if(gameOnOff){
                                 isComputerTurn(nouvelleCouleur)
                             }
-
-                            /* Si c'est l'IA qui joue, le pion est bien inséré */
-                            return true
+                            /*Sinon sortie de boucle*/
+                            break
                         }
-                    
                 }
             }
         } 
@@ -228,6 +209,15 @@ function desactiverSouris(duration) {
     /****************/
     /* FONCTIONS IA */
     /****************/
+
+    /*Fonction pour déterminer si c'est à l'IA de jouer */
+    function isComputerTurn(couleurDernierJoueur) {
+        if(modeSolo && couleurDernierJoueur === "red"){
+            IAplaying = true
+            startComputerPlaying()
+        } 
+    }
+    
 
     /* Fonction principal d'activation/désactivation de l'IA*/
     async function startComputerPlaying() {
@@ -246,37 +236,100 @@ function desactiverSouris(duration) {
 
     /*Fonction pour que l'IA insere un pion*/
     async function IAInsertPion(){
-        let isPionInsere = false
-
-        while (!isPionInsere) {
 
             /*Temps de reflexion de l'IA ^^*/
-            await paused(200)
+            await paused(500)
 
-            /*On insère un pion pour l'ordinateur*/
-            const colonne = getRandomInt(0,7)
-            isPionInsere = await insererPionColonne(colonne)
-            console.log("IA trying colonne :", colonne+1, "coup :", coupJ2)
-        }
+            /*On recherche ou inserer le pion*/
+            let colonne = await IAChoice()
+            insererPionColonne(colonne)
+    }
+
+    /* Fonction ou l'IA détermine si elle a fait un bon choix */
+    function IAChoice() {
+        let colonne
+        let tryAgain
+        let irow
+    
+        do {
+            colonne = getRandomInt(0, 7)
+            irow = 5
+    
+            while (irow >= 0) {
+                if (tablJeu[irow][colonne] === "") {
+
+                    tryAgain = isGreatChoiceIA(irow, colonne)
+    
+                    if (tryAgain === 1) {
+                        return colonne
+                    } else {
+                        break // Sort de la boucle while, essaie une nouvelle colonne
+                    }
+                }
+
+                /*L'IA joue une colonne pleine*/
+                irow--
+            }
+            
+            // Si irow atteint -1, alors la colonne est pleine
+            if (irow === -1) {
+                console.log("Colonne", colonne + 1, "est pleine");
+            }
+
+        } while (true) // Continue jusqu'à trouver une colonne non pleine avec un bon choix
     }
 
 
-    /*Fonction pour déterminer si c'est à l'IA de jouer */
-    function isComputerTurn(couleurDernierJoueur) {
-        if(modeSolo && couleurDernierJoueur === "red"){
-            IAplaying = true
-            startComputerPlaying()
-        } 
-    }
-
-    function isNextRed(row, col) {
+    /* Faire une fonction qui compare les meilleures proba ?*/
+    /* Cette fonction doit être revu !!!!! */
+    function isGreatChoiceIA(row, col) {
         let proba = 2
-        console.log("ligne : ", row, "colonne : ", col)
+        console.log("ligne : ", row+1, "colonne : ", col+1)
 
-        if(col<6 && !tablJeu[row][col+1]===""){proba=proba+getRandomInt(0,2)}
-        if(col>0 && !tablJeu[row][col-1]===""){proba=proba+getRandomInt(0,2)}
-        if(row<5 && !tablJeu[row+1][col]===""){proba=proba+getRandomInt(0,2)}
-        let newProba = getRandomInt(0, proba)
+        for(nextCol=1; nextCol<3; nextCol++){
+            console.log("je rentre dans la boucle")
+            if(nextCol<7 && !tablJeu[row][nextCol]===""){
+                proba+=10*nextCol
+            }
+
+        }
+
+        for (let prevCol = 1; prevCol < 3; prevCol++) {
+            if (col - prevCol >= 0 && tablJeu[row][col - prevCol] !== "") {
+                    proba+=10*nextCol
+                    if (proba > 2) {
+                    }
+            }
+        }
+
+        for (let nextDiag = 1; nextDiag < 3; nextDiag++) {
+            if (row + nextDiag < 6 && col + nextDiag < 7 && tablJeu[row + nextDiag][col + nextDiag] !== "") {
+                    proba+=10*nextCol
+                    if (proba > 2) {
+                    }
+            }
+        }
+
+        for (let prevDiag = 1; prevDiag < 3; prevDiag++) {
+            if (row - prevDiag >= 0 && col + prevDiag < 7 && tablJeu[row - prevDiag][col + prevDiag] !== "") {
+                    proba+=10*nextCol
+                    if (proba > 2) {
+                    }
+            }
+        }
+
+        for (let nextRow = 1; nextRow < 3; nextRow++) {
+
+            if (row + nextRow < 6 && tablJeu[row + nextRow][col] !== "") {
+
+                    proba +=nextRow
+                    if (proba > 2) {
+                    }
+            }
+        }
+        
+        
+        let newProba = getRandomInt(0, proba) - getRandomInt(0, 100000)
         console.log("Proba, new Proba :", proba, newProba)
         if(newProba>0){return 1}else{return 0}
     }
@@ -637,10 +690,12 @@ async function scoreSaved(newData) {
 async function messageVictoire (winnerPopup){
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){await paused(800)}
+    if(gameOnOff===true){
+        gameOnOff = false
+        await paused(800)
+    }
 
     /* On désactive la possibilité de continuer à jouer */
-    gameOnOff = false
     console.log("Victoire")
 
     /* Changer le nom de la couleur en français */
