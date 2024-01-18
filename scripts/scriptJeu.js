@@ -19,6 +19,7 @@
 
     // Définir si mode solo actif
     let modeSolo = true
+    let IAplaying = false
 
     /* On active la boucle principale */
     let gameOnOff = true
@@ -97,18 +98,18 @@ let mouseClick = document.querySelectorAll("td")
 
 
 /* Désactivation click/over sur le jeu */
-//function desactiveClickOver() {
-        /* On désactive l'écoute d'événement sur le jeu*/
- //   let mouseClick = document.querySelectorAll("td")
+function desactiveClickOver() {
+    /* On désactive l'écoute d'événement sur le jeu*/
+    let mouseClick = document.querySelectorAll("td")
 
     // Détection de chaque cellule
-  //  for (let i = 0; i < mouseClick.length; i++) {
+        for (let i = 0; i < mouseClick.length; i++) {
 
         // désactivation
-   //     mouseClick[i].removeEventListener("mouseover", handleMouseOver)
-   //     mouseClick[i].removeEventListener("click", handleMouseClick)
-   // }
-//}
+            mouseClick[i].removeEventListener("mouseover", handleMouseOver)
+            mouseClick[i].removeEventListener("click", handleMouseClick)
+         }
+    }
 
     /* Pour chaque flèche*/
     function handleMouseOver(event) {
@@ -130,6 +131,7 @@ let mouseClick = document.querySelectorAll("td")
         // On appelle la fonction pour faire glisser le pion, si le jeu est en cours
         if (gameOnOff) {
             insererPionColonne(colIndex)
+            console.log("l'humain joue colonne :", colIndex+1, "coup :", coupJ1)
         }
     }
 
@@ -165,11 +167,22 @@ function desactiverSouris(duration) {
     async function startComputerPlaying() {
 
         /* On désactive les possibilités d'action du joueur humain*/
-        await paused(800)
+        desactiveClickOver()
+        let isPionInsere = false
 
-        /*On insère un pion pour l'ordinateur*/
-        const colonne = getRandomInt(1,8)
-        insererPionColonne(colonne)
+        while (!isPionInsere) {
+
+            await paused(800)
+            console.log("l'ordinateur joue")
+
+            /*On insère un pion pour l'ordinateur*/
+            const colonne = getRandomInt(0,7)
+            isPionInsere = await insererPionColonne(colonne)
+            console.log("IA trying colonne :", colonne+1, "coup :", coupJ2)
+        }
+
+        IAplaying = false
+        activeClickOver()
 
     }
 
@@ -184,10 +197,17 @@ function desactiverSouris(duration) {
                 /* On vérifie que la colonne n'est pas déjà rempli */
                 if (i===-1) {
 
-                    /* Si c'est le cas, il n'est pas possible de jouer ici */
-                    alertMessage("La colonne est déjà pleine")
+                        /* Si c'est l'IA, le pion n'est pas inséré (false)*/
+                        if(IAplaying){
+                            console.log("IA joue colonne pleine", colonne+1)
+                            return false
 
-                    break // sortie si la colonne est pleine
+                        }else{
+                            /* Si c'est le cas, il n'est pas possible de jouer ici */
+                            alertMessage("La colonne est déjà pleine")
+
+                            break // sortie si la colonne est pleine
+                        }
 
                     /* Sinon on poursuit la recherche de case */
                     } else {
@@ -208,9 +228,10 @@ function desactiverSouris(duration) {
                             winnerIs()
 
                             /* Check if it's to computer to play */
-                            if(modeSolo && nouvelleCouleur === "red"){
-                                startComputerPlaying()
-                            }
+                            isComputerTurn(nouvelleCouleur)
+
+                            /* Si c'est l'IA qui joue, le pion est bien inséré */
+                            return true
 
                             break// Sortie de la boucle après insertion du pion
                         }
@@ -218,6 +239,19 @@ function desactiverSouris(duration) {
                 }
             }
         } 
+
+    /****************/
+    /* FONCTIONS IA */
+    /****************/
+
+    /*Fonction pour déterminer si c'est à l'IA de jouer */
+    function isComputerTurn(couleurDernierJoueur) {
+        if(modeSolo && couleurDernierJoueur === "red"){
+            IAplaying = true
+            startComputerPlaying()
+        } 
+    }
+ 
 
     /**********************************
      * FONCTION DE GESTION DU TABLEAU *
