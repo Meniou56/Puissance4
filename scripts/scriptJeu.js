@@ -192,7 +192,6 @@ function desactiverSouris(duration) {
                             /* Si c'est à l'IA, reflexion quant au coup à jouer*/
                             if(IAplaying){
                                 tryAgain = isNextRed(i, colonne)
-                                console.log(tryAgain)
                                 if(tryAgain===0){
                                     console.log('je tente autre chose')
                                     return false
@@ -214,7 +213,9 @@ function desactiverSouris(duration) {
                             winnerIs()
 
                             /* Check if it's to computer to play */
-                            isComputerTurn(nouvelleCouleur)
+                            if(gameOnOff){
+                                isComputerTurn(nouvelleCouleur)
+                            }
 
                             /* Si c'est l'IA qui joue, le pion est bien inséré */
                             return true
@@ -250,7 +251,7 @@ function desactiverSouris(duration) {
         while (!isPionInsere) {
 
             /*Temps de reflexion de l'IA ^^*/
-            await paused(800)
+            await paused(200)
 
             /*On insère un pion pour l'ordinateur*/
             const colonne = getRandomInt(0,7)
@@ -270,11 +271,11 @@ function desactiverSouris(duration) {
 
     function isNextRed(row, col) {
         let proba = 0
-        console.log(row, col)
-        // Test d'être dans le tableau à faire ()
-        //if(tablJeu[row+1][col]==="red"){proba=proba+getRandomInt(0,11)}
-        //if(tablJeu[row-1][col]==="red"){proba=proba+getRandomInt(0,11)}
-        //if(tablJeu[row][col-1]==="red"){proba=proba+getRandomInt(0,11)}
+        console.log("ligne : ", row, "colonne : ", col)
+
+        if(col<6 && tablJeu[row][col+1]==="red"){proba=proba+getRandomInt(0,11)}
+        if(col>0 && tablJeu[row][col-1]==="red"){proba=proba+getRandomInt(0,11)}
+        if(row<5 && tablJeu[row+1][col]==="red"){proba=proba+getRandomInt(0,11)}
         console.log("proba est : ", proba)
         let newProba = getRandomInt(0, proba)
         console.log("newProba est :", newProba)
@@ -637,10 +638,11 @@ async function scoreSaved(newData) {
 async function messageVictoire (winnerPopup){
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){await paused(1000)}
+    if(gameOnOff===true){await paused(800)}
 
     /* On désactive la possibilité de continuer à jouer */
     gameOnOff = false
+    console.log("Victoire")
 
     /* Changer le nom de la couleur en français */
     let couleurWinner = changeNameOfColor(winnerPopup)
