@@ -54,7 +54,7 @@
     /* Fonction pour vider un tableau */
         function viderTableau(tableau, newValue) {
             for (let iRow = 0; iRow < tableau.length; iRow++) {
-                for (let iCol = 0; iCol < tableau[iCol].length; iCol++) {
+                for (let iCol = 0; iCol < tableau[iRow].length; iCol++) {
                     tableau[iRow][iCol] = newValue
                 }
             }
