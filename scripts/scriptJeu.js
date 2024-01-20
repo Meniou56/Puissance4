@@ -8,6 +8,7 @@
 
     /* On commence par créer les tableaux de jeu JS*/
     let tablJeu = creationTableau(6, 7, '')
+    console.log("tableau Jeu inital : ", tablJeu)
 
     /* Définir l'alternance des joueurs en commencant par le rouge */
     let aQuiLeTour = "--couleurJ1"
@@ -20,6 +21,7 @@
     // Définir si mode solo actif, si l'IA joue et le score d'intérêt de chaque colonne
     let modeSolo = true
     let scoreInteretColonne = creationTableau(6, 7, 0)
+    console.log("tableauIA inital : ", scoreInteretColonne)
     let IAplaying = false
 
     /* On active la boucle principale */
@@ -32,34 +34,36 @@
     /* Appel des écoutes pour pouvoir jouer */
     activeClickOver()
 
+/*******************************/
+/* FONCTIONS POUR LES TABLEAUX */
+/*******************************/
+    /* Fonction creation du tableau de jeu */
+    function creationTableau(totalRow, totalCol, donnes) {
+        let tableauCree = []
+
+        for(iRow=0; iRow<totalRow; iRow++){
+            let newRow = []
+
+            for(iCol=0; iCol<totalCol; iCol++){
+                newRow.push(donnes)
+            }
+            tableauCree.push(newRow)
+        }
+        return tableauCree
+    }
+
+/* Fonction pour vider un tableau */
+    function viderTableau(tableau, newValue) {
+        for (let iRow = 0; iRow < tableau.length; iRow++) {
+            for (let iCol = 0; iCol < tableau[iRow].length; iCol++) {
+                tableau[iRow][iCol] = newValue
+            }
+        }
+    }
+
 /*******************
  *Fonction initiale* 
  *******************/
-
-    /* Fonction creation du tableau de jeu */
-        function creationTableau(totalRow, totalCol, donnes) {
-            let tableauCree = []
-
-            for(iRow=0; iRow<totalRow; iRow++){
-                let newRow = []
-
-                for(iCol=0; iCol<totalCol; iCol++){
-                    newRow.push(donnes)
-                }
-                tableauCree.push(newRow)
-            }
-            return tableauCree
-        }
-
-    /* Fonction pour vider un tableau */
-        function viderTableau(tableau, newValue) {
-            for (let iRow = 0; iRow < tableau.length; iRow++) {
-                for (let iCol = 0; iCol < tableau[iRow].length; iCol++) {
-                    tableau[iRow][iCol] = newValue
-                }
-            }
-        }
-
 
     /* Fonction de réinitalisation de la partie */
         function reinitiateGame(){
@@ -221,6 +225,9 @@ function desactiverSouris(duration) {
     function isComputerTurn(couleurDernierJoueur) {
         if(modeSolo && couleurDernierJoueur === "red"){
             IAplaying = true
+
+            console.log("le tableau de jeu détecté resemble à :", tablJeu)
+
             startComputerPlaying()
         } 
     }
@@ -248,26 +255,46 @@ function desactiverSouris(duration) {
             await paused(500)
 
             /*On réinitialise le score d'intérêt de la chaque cellule pour en établir un nouveau*/
+            //console.log("0.avant vidage tableau", scoreInteretColonne)
             viderTableau(scoreInteretColonne, 0)
 
-        console.log("1.réinitilisation : ", scoreInteretColonne)
+        //console.log("1.réinitilisation : ", scoreInteretColonne)
         detectionAlignement()
     }
 
     /* Fonction ou l'IA détermine si elle a fait un bon choix */
     function IAChoice() {
 
+        let colonneAChoisir = []
+
+        // Parcourir chaque colonne
+        for (let iCol = 0; iCol <= tablJeu.length ; iCol++) {
+            colonneAChoisir[iCol] = -1 // Initialiser avec -1 pour indiquer aucune colonne pleine trouvée
+        
+            // Parcourir chaque ligne depuis le bas pour cette colonne
+            for (let iRow=5; iRow>-1; iRow--){ {
+                if (tablJeu[iRow][iCol] === "") {
+                    colonneAChoisir[iCol] = scoreInteretColonne[iRow][iCol]// Enregistrer l'indice de la ligne vide
+                    break // Arrêter la recherche dès qu'une ligne vide est trouvée
+                }
+            }
+        }
+    }
+
         /* On ajoute un peu de hasard*/
-        ajoutHasardCol(2)
-        console.log("3.Tableau final: ", scoreInteretColonne)
+        /*for(i=0; i<7; i++){
+            colonneAChoisir[i] = colonneAChoisir[i]+getRandomInt(0, 2)
+        }*/
 
-        /*On compare les valeurs du tableau pour décider d'ou doit aller le pion*/
+        console.log("3.Tableau final: ", colonneAChoisir)
+
+        /*On compare les valeurs du tableau pour décider ou doit aller le pion*/
         let colonne = 0
-        let valeurMAxCol = scoreInteretColonne[0]
+        let valeurMAxCol = colonneAChoisir[0]
 
-        for (let i = 1; i<7; i++){
-            if (scoreInteretColonne[i] > valeurMAxCol) {
-                valeurMAxCol = scoreInteretColonne[i]
+        for (let i = 0; i<7; i++){
+            if (colonneAChoisir[i] > valeurMAxCol) {
+                valeurMAxCol = colonneAChoisir[i]
                 colonne = i
             }
         }
@@ -276,46 +303,27 @@ function desactiverSouris(duration) {
         /*On test toutes les cases de la colonne dans le tableau JS*/
         for (let iRow=5; iRow>-2; iRow--){
 
-            /* On vérifie que la colonne n'est pas déjà rempli */
-            if (iRow===-1) {
+                if (tablJeu[iRow][colonne] === "") {
 
-                /*si elle l'est, on ajoute du hasard supplémentaire dans le choix de la colonne*/
-                ajoutHasardCol(2)
+                    tablJeu[iRow][colonne] = "yellow"
 
-                /*un truc à faire for(i=0; i<7; i++){
-                    scoreInteretColonne[i] = scoreInteretColonne[i]+getRandomInt(0, 2)
-                }*/
+                    /* Si elle est dispo, c'est la case gagnante */
+                    rafraichirTablJeu(iRow, colonne, "yellow")
 
-                }else{
+                    /* Et on change de joueur */
+                    changePlayer()
 
-                    if (tablJeu[iRow][colonne] === "") {
+                    /* On vérifie s'il y a un gagnant */
+                    detectionAlignement()
 
-                        tablJeu[iRow][colonne] = "yellow"
-
-                        /* Si elle est dispo, c'est la case gagnante */
-                        rafraichirTablJeu(iRow, colonne, "yellow")
-
-                        /* Et on change de joueur */
-                        changePlayer()
-
-                        /* On vérifie s'il y a un gagnant */
-                        detectionAlignement()
-
-                        break
-                    }
-            }
+                    break
+                }
         }
     }
 
-    function ajoutHasardCol(difficulty){
-        for(i=0; i<7; i++){
-            scoreInteretColonne[i] = scoreInteretColonne[i]+getRandomInt(0, difficulty)
-        }
-    }
-
-    /**********************************
-     * FONCTION DE GESTION DU TABLEAU *
-     **********************************/
+    /*****************************************
+     * FONCTION DE GESTION DU TABLEAU VISUEL *
+     *****************************************/
 
     /* Fonction de rafrichaissement du tableau de jeu */
     function rafraichirTablJeu(row, col, couleur) {
@@ -376,10 +384,10 @@ function desactiverSouris(duration) {
     function detectionAlignement() {
 
         /* On check chaque ligne */
-        for (let iRow=0; iRow<6; iRow++) {
+        for (let iRow=0; iRow<tablJeu.length; iRow++) {
 
             /* et chaque colonne de chaque ligne */
-            for (let iCol=0; iCol<7; iCol++){
+            for (let iCol=0; iCol<tablJeu[iRow].length; iCol++){
 
                 /* Si la ligne contient un jeton, il faut vérifier ce qui est à côté */
                 if(tablJeu[iRow][iCol] !== "") {
@@ -411,7 +419,12 @@ function desactiverSouris(duration) {
                         if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes)){
                             compteurJetonsAlignes++
                         } else {
-                            break // la série de jetons identiques est interrompu 
+
+                            //la série de jetons identiques est interrompu
+                            // On informe l'IA du potentiel de la case et on quite la boucle
+                            if(IAplaying){scoreInteretColonne[nextCellRow][nextCellCol]+=compteurJetonsAlignes}
+                            if(IAplaying && iCol>0){scoreInteretColonne[iRow][iCol-1]+=compteurJetonsAlignes}
+                            break
                         }
                 }
         }
@@ -427,11 +440,19 @@ function desactiverSouris(duration) {
             /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
             for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
 
+
                     /* Et on lance la fonction pour savoir s'il sont identiques... */
                     if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes)){
                         compteurJetonsAlignes++
                     } else {
-                        break // la série de jetons identiques est interrompu 
+
+                        //la série de jetons identiques est interrompu
+                        // On informe l'IA du potentiel de la case supérieure et on quite la boucle
+                        if(IAplaying){
+                            console.log("rentre dans la boucle IA colonne")
+                            scoreInteretColonne[nextCellRow-1][nextCellCol] += compteurJetonsAlignes
+                            console.log("case : ", nextCellRow-1, nextCellCol, " est intéressante")}
+                        break
                     }
                 }
         }
@@ -474,9 +495,6 @@ function desactiverSouris(duration) {
                 /* Si c'est bien une case du tableau, on regarde son contenu */
                 if (tablJeu[iRow][iCol] === tablJeu[nextCellRow][nextCellCol]){
                     compteurJetonsAlignes++
-
-                        /*Si c'est l'IA, on incrémente l'intérêt porté à cette !!cellule!!*/
-                        if(IAplaying){scoreInteretColonne[iRow][iCol]=scoreInteretColonne[iRow][iCol]+2}
 
                         /* Est-on arrivé à 4 jetons d'affilés ? */
                         if (compteurJetonsAlignes === 4){
