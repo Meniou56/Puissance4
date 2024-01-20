@@ -19,10 +19,7 @@
 
     // Définir si mode solo actif, si l'IA joue et le score d'intérêt de chaque colonne
     let modeSolo = true
-    let scoreInteretColonne = []
-    for (let i = 0; i<7; i++){
-        scoreInteretColonne[i]=0
-    }
+    let scoreInteretColonne = creationTableau(6, 7, 0)
     let IAplaying = false
 
     /* On active la boucle principale */
@@ -52,6 +49,15 @@
                 tableauCree.push(newRow)
             }
             return tableauCree
+        }
+
+    /* Fonction pour vider un tableau */
+        function viderTableau(tableau, newValue) {
+            for (let iRow = 0; iRow < tableau.length; iRow++) {
+                for (let iCol = 0; iCol < tableau[iCol].length; iCol++) {
+                    tableau[iRow][iCol] = newValue
+                }
+            }
         }
 
 
@@ -241,10 +247,8 @@ function desactiverSouris(duration) {
             /*Temps de reflexion de l'IA ^^*/
             await paused(500)
 
-            /*On réinitialise le score d'intérêt de la chaque colonne, pour en établir un nouveau*/
-            for(i=0; i<7; i++){
-                scoreInteretColonne[i]= 0
-            }
+            /*On réinitialise le score d'intérêt de la chaque cellule pour en établir un nouveau*/
+            viderTableau(scoreInteretColonne, 0)
 
         console.log("1.réinitilisation : ", scoreInteretColonne)
         detectionAlignement()
@@ -389,6 +393,7 @@ function desactiverSouris(duration) {
             }
         }
         if(IAplaying){
+            console.log("2.évaluation :", scoreInteretColonne)
             IAChoice()
         }
     }
@@ -471,8 +476,7 @@ function desactiverSouris(duration) {
                     compteurJetonsAlignes++
 
                         /*Si c'est l'IA, on incrémente l'intérêt porté à cette !!cellule!!*/
-                        if(IAplaying){scoreInteretColonne[iCol]=scoreInteretColonne[iCol]+4
-                        console.log("2.évaluation :", scoreInteretColonne)}
+                        if(IAplaying){scoreInteretColonne[iRow][iCol]=scoreInteretColonne[iRow][iCol]+2}
 
                         /* Est-on arrivé à 4 jetons d'affilés ? */
                         if (compteurJetonsAlignes === 4){
