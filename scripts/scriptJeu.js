@@ -20,7 +20,8 @@
 
     // Définir si mode solo actif, si l'IA joue et le score d'intérêt de chaque colonne
     let modeSolo = true
-    let scoreInteretColonne = creationTableau(6, 7, 0)
+    let scoreInteretColonneRed = creationTableau(6, 7, 0)
+    let scoreInteretColonneYellow = creationTableau(6, 7, 0)
     console.log("tableauIA inital : ", scoreInteretColonne)
     let IAplaying = false
 
@@ -416,15 +417,15 @@ function desactiverSouris(duration) {
             for(let nextCellCol=iCol+1; nextCellCol<iCol+4 && nextCellCol<7; nextCellCol++){
 
                     /* Et on lance la fonction pour savoir s'il sont identiques... */
-                        if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes)){
+                        if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, "horizontal")){
                             compteurJetonsAlignes++
                         } else {
 
                             //la série de jetons identiques est interrompu
                             // On informe l'IA du potentiel de la case et on quite la boucle
-                            if(IAplaying){scoreInteretColonne[nextCellRow][nextCellCol]+=compteurJetonsAlignes}
+                            /*if(IAplaying){scoreInteretColonne[nextCellRow][nextCellCol]+=compteurJetonsAlignes}
                             if(IAplaying && iCol>0){scoreInteretColonne[iRow][iCol-1]+=compteurJetonsAlignes}
-                            break
+                            break*/
                         }
                 }
         }
@@ -442,7 +443,7 @@ function desactiverSouris(duration) {
 
 
                     /* Et on lance la fonction pour savoir s'il sont identiques... */
-                    if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes)){
+                    if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, "vertical")){
                         compteurJetonsAlignes++
                     } else {
 
@@ -464,6 +465,16 @@ function desactiverSouris(duration) {
 
             let compteurJetonsAlignes = 1
             let nextCellCol = iCol
+            let direction = 0
+
+            switch (increment){
+                case -1 :
+                direction="diagonalUp"
+                break
+                case 1 :
+                direction="diagonalDown"
+                break
+            }
 
             /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
             for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
@@ -475,7 +486,7 @@ function desactiverSouris(duration) {
                     if(nextCellCol<7){
 
                         /* Et on lance la fonction pour savoir s'il sont identiques... */
-                        if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes)){
+                        if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, direction)){
                             compteurJetonsAlignes++
                         } else {
                             break // la série de jetons identiques est interrompu 
@@ -490,7 +501,48 @@ function desactiverSouris(duration) {
         
 
             /*Fonctions en cas de jetons identiques, on le note, on regarde si c'est arrivé 4 fois et si oui on affiche le message de victoire */
-            function verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes) {
+            function verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, alignementType) {
+
+                /*On note, pour l'IA, le nombre de jetons alignés et donc l'intérêt de cette case et de celle avant le début de ligne*/
+                if(IAplaying){
+                    /*Ajustement cellule précédente*/
+                    let prevCellRow, prevCellCol
+                    switch (alignementType) {
+                        case "horizontal":
+                            prevCellRow=iRow
+                            prevCellCol=iCol-1
+                            break
+                        case "vertical":
+                            prevCellRow=iRow-1
+                            prevCellCol=iCol
+                            break
+                        case "diagonalUp":
+                            prevCellRow=iRow-1
+                            prevCellCol=iCol-1
+                        case "diagonalDown":
+                            prevCellRow=iRow-1
+                            prevCellCol=iCol+1
+                    }
+
+                    /* Si la nouvelle valeur des cases adjacentes est supérieure à la précédente, on change le score */ 
+                    if((scoreInteretColonne[nextCellRow][nextCellCol])<compteurJetonsAlignes*compteurJetonsAlignes){
+                        scoreInteretColonne[nextCellRow][nextCellCol]=compteurJetonsAlignes*compteurJetonsAlignes
+                    }
+
+                    if(prevCellRow>-1 && prevCellCol >-1){
+                        if(scoreInteretColonne[prevCellRow][prevCellCol]<compteurJetonsAlignes*compteurJetonsAlignes){
+                            scoreInteretColonne[prevCellRow][prevCellCol]=compteurJetonsAlignes*compteurJetonsAlignes  
+                        }
+                    }
+
+                    if(tablJeu[iRow][iCol] === "yellow"){
+                        scoreInteretColonne[nextCellRow][nextCellCol]++
+                        if(prevCellRow>-1 && prevCellCol >-1){
+                            scoreInteretColonne[prevCellRow][prevCellCol]++
+                        }
+                        
+                    }
+                }
 
                 /* Si c'est bien une case du tableau, on regarde son contenu */
                 if (tablJeu[iRow][iCol] === tablJeu[nextCellRow][nextCellCol]){
