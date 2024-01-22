@@ -8,7 +8,6 @@
 
     /* On commence par créer les tableaux de jeu JS*/
     let tablJeu = creationTableau(6, 7, '')
-    console.log("tableau Jeu inital : ", tablJeu)
 
     /* Définir l'alternance des joueurs en commencant par le rouge */
     let aQuiLeTour = "--couleurJ1"
@@ -21,8 +20,7 @@
     // Définir si mode solo actif, si l'IA joue et le score d'intérêt de chaque colonne
     let modeSolo = true
     let scoreInteretColonneRed = creationTableau(6, 7, 0)
-    let scoreInteretColonneYellow = creationTableau(6, 7, 0)
-    console.log("tableauIA inital : ", scoreInteretColonne)
+    let scoreInteretColonneYellow = creationTableau(6 ,7, 0)
     let IAplaying = false
 
     /* On active la boucle principale */
@@ -61,6 +59,19 @@
             }
         }
     }
+
+/* Fonction qui renvoie le tableau correspond à la couleur de la case */
+function whatTableColorIsThisCell(color){
+    switch (color) {
+        case "red" :
+            scoreInteretColonne=scoreInteretColonneRed
+            break
+        case "yellow" :
+            scoreInteretColonne=scoreInteretColonneYellow
+            break
+    }
+    return scoreInteretColonne
+}
 
 /*******************
  *Fonction initiale* 
@@ -257,7 +268,8 @@ function desactiverSouris(duration) {
 
             /*On réinitialise le score d'intérêt de la chaque cellule pour en établir un nouveau*/
             //console.log("0.avant vidage tableau", scoreInteretColonne)
-            viderTableau(scoreInteretColonne, 0)
+            viderTableau(scoreInteretColonneRed, 0)
+            viderTableau(scoreInteretColonneYellow, 0)
 
         //console.log("1.réinitilisation : ", scoreInteretColonne)
         detectionAlignement()
@@ -265,6 +277,8 @@ function desactiverSouris(duration) {
 
     /* Fonction ou l'IA détermine si elle a fait un bon choix */
     function IAChoice() {
+        console.log("le tableau rouge vaut : ", scoreInteretColonneRed)
+        console.log("le tableau jaune vaut : ", scoreInteretColonneYellow)
 
         let colonneAChoisir = []
 
@@ -275,7 +289,14 @@ function desactiverSouris(duration) {
             // Parcourir chaque ligne depuis le bas pour cette colonne
             for (let iRow=5; iRow>-1; iRow--){ {
                 if (tablJeu[iRow][iCol] === "") {
-                    colonneAChoisir[iCol] = scoreInteretColonne[iRow][iCol]// Enregistrer l'indice de la ligne vide
+
+                    // Enregistrer le meilleur indice de la ligne vide
+                    if(scoreInteretColonneYellow[iRow][iCol]>=scoreInteretColonneRed[iRow][iCol]){
+                        newIndice = scoreInteretColonneYellow[iRow][iCol]
+                    } else {
+                        newIndice = scoreInteretColonneRed[iRow][iCol]
+                    }
+                    colonneAChoisir[iCol] = newIndice
                     break // Arrêter la recherche dès qu'une ligne vide est trouvée
                 }
             }
@@ -402,7 +423,6 @@ function desactiverSouris(duration) {
             }
         }
         if(IAplaying){
-            console.log("2.évaluation :", scoreInteretColonne)
             IAChoice()
         }
     }
@@ -419,13 +439,6 @@ function desactiverSouris(duration) {
                     /* Et on lance la fonction pour savoir s'il sont identiques... */
                         if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, "horizontal")){
                             compteurJetonsAlignes++
-                        } else {
-
-                            //la série de jetons identiques est interrompu
-                            // On informe l'IA du potentiel de la case et on quite la boucle
-                            /*if(IAplaying){scoreInteretColonne[nextCellRow][nextCellCol]+=compteurJetonsAlignes}
-                            if(IAplaying && iCol>0){scoreInteretColonne[iRow][iCol-1]+=compteurJetonsAlignes}
-                            break*/
                         }
                 }
         }
@@ -450,7 +463,6 @@ function desactiverSouris(duration) {
                         //la série de jetons identiques est interrompu
                         // On informe l'IA du potentiel de la case supérieure et on quite la boucle
                         if(IAplaying){
-                            console.log("rentre dans la boucle IA colonne")
                             scoreInteretColonne[nextCellRow-1][nextCellCol] += compteurJetonsAlignes
                             console.log("case : ", nextCellRow-1, nextCellCol, " est intéressante")}
                         break
@@ -505,6 +517,7 @@ function desactiverSouris(duration) {
 
                 /*On note, pour l'IA, le nombre de jetons alignés et donc l'intérêt de cette case et de celle avant le début de ligne*/
                 if(IAplaying){
+                    
                     /*Ajustement cellule précédente*/
                     let prevCellRow, prevCellCol
                     switch (alignementType) {
@@ -519,28 +532,25 @@ function desactiverSouris(duration) {
                         case "diagonalUp":
                             prevCellRow=iRow-1
                             prevCellCol=iCol-1
+                            break
                         case "diagonalDown":
                             prevCellRow=iRow-1
                             prevCellCol=iCol+1
+                            break
                     }
 
-                    /* Si la nouvelle valeur des cases adjacentes est supérieure à la précédente, on change le score */ 
-                    if((scoreInteretColonne[nextCellRow][nextCellCol])<compteurJetonsAlignes*compteurJetonsAlignes){
-                        scoreInteretColonne[nextCellRow][nextCellCol]=compteurJetonsAlignes*compteurJetonsAlignes
-                    }
+                    /* A quelle couleur va le nouveau score ? */
+                    let scoreInteretColonne = whatTableColorIsThisCell(tablJeu[iRow][iCol])
 
-                    if(prevCellRow>-1 && prevCellCol >-1){
-                        if(scoreInteretColonne[prevCellRow][prevCellCol]<compteurJetonsAlignes*compteurJetonsAlignes){
-                            scoreInteretColonne[prevCellRow][prevCellCol]=compteurJetonsAlignes*compteurJetonsAlignes  
-                        }
-                    }
+                    /* Si la nouvelle valeur des cases adjacentes est supérieure à la précédente, on change le score */
+                        scoreInteretColonne[nextCellRow][nextCellCol]+=compteurJetonsAlignes
+                        if(compteurJetonsAlignes===2){scoreInteretColonne[nextCellRow][nextCellCol]+2}
+                        if(compteurJetonsAlignes===3){scoreInteretColonne[nextCellRow][nextCellCol]+4}
 
-                    if(tablJeu[iRow][iCol] === "yellow"){
-                        scoreInteretColonne[nextCellRow][nextCellCol]++
-                        if(prevCellRow>-1 && prevCellCol >-1){
-                            scoreInteretColonne[prevCellRow][prevCellCol]++
-                        }
-                        
+                    if(prevCellRow>-1 && prevCellCol >-1 && prevCellCol<6){
+                        scoreInteretColonne[prevCellRow][prevCellCol]+=compteurJetonsAlignes  
+                        if(compteurJetonsAlignes===2){scoreInteretColonne[prevCellRow][prevCellCol]+2}
+                        if(compteurJetonsAlignes===3){scoreInteretColonne[prevCellRow][prevCellCol]+4}
                     }
                 }
 
