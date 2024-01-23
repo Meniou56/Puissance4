@@ -297,13 +297,36 @@
 
 </div>
 
+<!--Bouton-->
+<div>
+    <a href="index.php" id="buttonPageScores">Quitter</a>
+</div>
+
 <!--POPUP PRINCIPAL-->
    <div id="popup">
     <!--Contenu du pop-up-->
     </div> 
 
 
-<!--Chargement du JS-->
+<!--Chargement des paramètres des variables superes gloables-->
+<script>
+
+    // Chargement de la variable Mode Solo ou Duo
+    <?php $mode = isset($_GET['mode']) ? $_GET['mode']: 'solo'; //solo en valeur par défaut en cas de problème
+
+    // Nettoyage de la variable pour contrer une attaque XSS
+    $mode = htmlspecialchars($mode, ENT_QUOTES, 'UTF-8');
+
+    if ($mode === 'solo') { ?>
+        modeSolo = true
+    <?php } elseif ($mode === 'duo') { ?>
+        modeSolo = false
+    <?php } else { ?>
+        modeSolo = true // De nouveau, solo en cas de problème
+    <?php } ?>
+</script>
+
+<!-- Chargement du JS -->
 <script src="scripts/scriptJeu.js"></script>
 
 </body>

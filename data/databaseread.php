@@ -32,3 +32,4 @@ try {
     echo json_encode(['error' => $exception->getMessage()]);
 }
 
+?>

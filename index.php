@@ -27,7 +27,7 @@
     <!--Contenu du pop-up-->
     <button id="soloMode" class="animate" title="Contre l'ordinateur">Mode Solo</button>
     <button id="duoMode" class="animate" title="À deux derrière un écran">Mode deux joueurs</button>
-    <button id="online" class="animate" title="À deux via internet">Mode online</button>
+    <button id="online" class="animate" title="Un jour...peut-être...ou pas !">Mode online</button>
     <button id="configuration" class="animate" title="Pour changer les paramètres">Configuration</button>
     <button id="scoresPage" class="animate" title="Pour consulter les scores">Scores</button>
 </div> 

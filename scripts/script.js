@@ -11,8 +11,8 @@ function chargementMenu(){
 
 /*Fonction de configuration du menu : adressage et désactivation de bouton */
 function configurationMenu(){
-    document.querySelector("#soloMode").disabled = true
-    document.querySelector("#duoMode").onclick = function(){window.location.href = "jeu.php"}
+    document.querySelector("#soloMode").onclick = function(){window.location.href = "jeu.php?mode=solo"}
+    document.querySelector("#duoMode").onclick = function(){window.location.href = "jeu.php?mode=duo"}
     document.querySelector("#online").disabled = true
     document.querySelector("#configuration").disabled = true
     document.querySelector("#scoresPage").onclick = function(){window.location.href = "pages/scores.php"}

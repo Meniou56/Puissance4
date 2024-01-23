@@ -45,7 +45,7 @@
 </div>
 
 <!--Bouton-->
-<div class="divButtonPageScores">
+<div>
     <a href="../index.php" id="buttonPageScores">Menu principal</a>
 </div>
 
