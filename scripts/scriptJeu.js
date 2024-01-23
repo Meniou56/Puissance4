@@ -154,7 +154,6 @@ function desactiveClickOver() {
         // On appelle la fonction pour faire glisser le pion, si le jeu est en cours
         if (gameOnOff) {
             insererPionColonne(colIndex)
-            console.log("l'humain joue colonne :", colIndex+1, "coup :", coupJ1)
         }
     }
 
@@ -213,7 +212,8 @@ function desactiverSouris(duration) {
                             /* Et on change de joueur */
                             changePlayer()
 
-                            /* On vérifie s'il y a un gagnant */
+                            /* On vérifie si c'est la fin du jeu */
+                            isTableFull()
                             detectionAlignement()
 
                             /* Check if it's to computer to play */
@@ -348,6 +348,22 @@ function detectionAlignement() {
                 return false //Le jeton n'est pas identique
             }
 
+        /*Fonction pour déterminer s'il y a egalité*/
+        function isTableFull(){
+
+            // Initialisation compteur de colonne pleine
+            let fullCol=0
+
+            // Parcourir chaque colonne
+            for (let iCol = 0; iCol <= tablJeu.length; iCol++) {
+                
+                //Regarder pour chaque colonne si la dernière cellule est pleine
+                if(tablJeu[0][iCol]!==""){fullCol++}
+                if(fullCol===6){
+                    messageWithButton("Égalité !")
+                }
+            }
+        }
 
     /****************/
     /* FONCTIONS IA */
@@ -368,7 +384,7 @@ function detectionAlignement() {
         desactiveClickOver()
 
         /*Après une petite pause, on déterminer si l'IA à inséré un pion*/
-        await paused(getRandomInt(400,1201))
+        await paused(getRandomInt(250,2251))
         await IAColChoice()
 
         /*On relance le jeu pour l'humain*/
@@ -408,8 +424,6 @@ function detectionAlignement() {
             }
         }
     }
-
-        console.log("3.Tableau final: ", colonneAChoisir)
 
         /*On compare les valeurs du tableau pour décider ou doit aller le pion*/
         let colonne = 0
@@ -841,16 +855,13 @@ async function scoreSaved(newData) {
  **************************/
 
 /* Message en cas de victoire */
-async function messageVictoire (winnerPopup){
+async function messageVictoire(winnerPopup) {
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
     if(gameOnOff===true){
         gameOnOff = false
         await paused(800)
     }
-
-    /* On désactive la possibilité de continuer à jouer */
-    console.log("Victoire")
 
     /* Changer le nom de la couleur en français */
     let couleurWinner = changeNameOfColor(winnerPopup)
@@ -896,6 +907,75 @@ async function messageVictoire (winnerPopup){
     saveScore()
 
 }
+
+/* Message en cas d'égalité */
+async function messageWithButton(messageContent) {
+
+    /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
+    if(gameOnOff===true){
+        gameOnOff = false
+        await paused(800)
+    }
+
+    /* récuperer le popup, le titre et le paragraphe */
+    let showPopup = document.getElementById("popup")
+    let h3Popup = showPopup.querySelector("h3")
+    let replayButton = showPopup.querySelector("#replay")
+    let saveButton = showPopup.querySelector("#save")
+
+    /* Chargement des zones de textes et boutons */
+    if(!h3Popup){h3Popup = document.createElement("h3")}
+    if(!replayButton){
+        replayButton = document.createElement("button")
+        replayButton.id = "replay"
+    }
+    if(!saveButton){
+        saveButton = document.createElement("button")
+        saveButton.id = "save"
+    }
+
+    /* Raccordement au DOM */
+    showPopup.appendChild(h3Popup)
+    showPopup.appendChild(replayButton)
+    showPopup.appendChild(saveButton)
+
+    /* Incorporer les nouveaux textes et couleur */
+    h3Popup.innerText = messageContent
+    replayButton.innerText = "Rejouer"
+    saveButton.innerText = "Quitter"
+
+    /*Afficher le popup*/
+    showPopup.style.display = "block"
+
+    /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
+    playAgain()
+
+    /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
+    leavingGame()
+
+}
+
+/* Fonction de relance d'une partie */
+function leavingGame() {
+
+
+    /* On écoute le bouton rejouer */
+    const buttonLeavingClic = document.querySelector("#popup #save")
+        
+        /* Le bouton a bien été récupéré ? */
+        if (buttonLeavingClic) {
+
+            /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
+            buttonLeavingClic.addEventListener("click", () => {
+
+                /*Mise en rechargement de la page en cas de "rejouer"*/
+                window.location.href = "index.php"
+                }
+            )
+        } else {
+            alertMessage("Erreur : bouton quitter n'ont récupéré")
+        }
+    }
 
 /* Message-formulaire pour avoir le nom du vainqueur */
 function formNomJoueur(){
