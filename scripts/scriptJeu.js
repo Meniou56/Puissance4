@@ -368,7 +368,7 @@ function detectionAlignement() {
         desactiveClickOver()
 
         /*Après une petite pause, on déterminer si l'IA à inséré un pion*/
-        await paused(600)
+        await paused(getRandomInt(400,1201))
         await IAColChoice()
 
         /*On relance le jeu pour l'humain*/
@@ -459,6 +459,8 @@ function detectionAlignement() {
         scoreAlign[2] = detectionDiagonalesIA(iRow, iCol, +1, color)
         scoreAlign[3] = detectionDiagonalesIA (iRow, iCol, -1, color)
 
+        console.log("tableau,", color," : ", scoreAlign)
+
         /* Quel est le score le plus intéressant ? */
         let scoreFinal = -1
         for(i=0; i<4; i++){
@@ -502,7 +504,7 @@ function detectionAlignement() {
             }
 
             // Calcul et envoie du score en privilégiant légèrement les jaunes
-            let newScore = nbrJetonsAlignes*nbrJetonsAlignes
+            let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
             if(color==="yellow"){newScore++}
             return newScore
         }
@@ -538,7 +540,7 @@ function detectionAlignement() {
             }
 
             // Calcul et envoie du score en privilégiant légèrement les jaunes
-            let newScore = nbrJetonsAlignes*nbrJetonsAlignes
+            let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
             if(color==="yellow"){newScore++}
             return newScore
         }
@@ -596,7 +598,7 @@ function detectionAlignement() {
             }
 
             // Calcul et envoie du score en privilégiant légèrement les jaunes
-            let newScore = nbrJetonsAlignes*nbrJetonsAlignes
+            let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
             if(color==="yellow"){newScore++}
             return newScore
         }
