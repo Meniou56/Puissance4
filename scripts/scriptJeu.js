@@ -627,7 +627,7 @@ function detectionAlignement() {
         pion.classList.add("circle-animate")
 
         /* On désactice l'utilisation de la souris, donc du jeu */
-        desactiverSouris(500)
+        desactiverSouris(750)
 
     }
 
