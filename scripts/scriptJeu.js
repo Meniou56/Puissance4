@@ -18,7 +18,7 @@
     let coupPlayer = 0
 
     // Définir si mode solo actif, si l'IA joue et le score d'intérêt de chaque colonne
-    let modeSolo = true
+    let modeSolo = false
     let scoreInteretColonneRed = creationTableau(6, 7, 0)
     let scoreInteretColonneYellow = creationTableau(6 ,7, 0)
     let IAplaying = false
@@ -229,6 +229,128 @@ function desactiverSouris(duration) {
             }
         } 
 
+    /***************************************************************
+     * FONCTIONS DE DETECTION D'ALIGNEMENT DE JETONS & DE VICTOIRE *
+     ***************************************************************/
+
+/* Fonction de recherche d'un gagnant */
+function detectionAlignement() {
+
+    /* On check chaque ligne */
+    for (let iRow=0; iRow<6; iRow++) {
+
+        /* et chaque colonne de chaque ligne */
+        for (let iCol=0; iCol<7; iCol++){
+
+            /* Si la ligne contient un jeton, il faut vérifier ce qui est à côté */
+            if(tablJeu[iRow][iCol] !== "") {
+                
+                /* détection de 4 jetons alignés */
+                detectionRowPlayed (iRow, iCol)
+                detectionColPlayed (iRow, iCol)
+                detectionDiagonales(iRow, iCol, +1)
+                detectionDiagonales(iRow, iCol, -1)
+
+            }
+        }
+    }
+}
+
+    /* Fonction de détection des lignes */
+    function detectionRowPlayed(iRow, iCol){
+
+        let compteurJetonWinner = 1
+        let nextCellRow = iRow
+
+        /* On vérifie les 4 cases adjacentes en ligne si elles ne sont pas en dehors du tableau*/
+        for(let nextCellCol=iCol+1; nextCellCol<iCol+4 && nextCellCol<7; nextCellCol++){
+
+                /* Et on lance la fonction pour savoir s'il sont identiques... */
+                    if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonWinner)){
+                        compteurJetonWinner++
+                    } else {
+                        break // la série de jetons identiques est interrompu 
+                    }
+            }
+    }
+
+
+
+    /* Fonction de détection des colonnes */
+    function detectionColPlayed(iRow, iCol){
+
+        let compteurJetonWinner = 1
+        let nextCellCol = iCol
+
+        /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
+        for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
+
+                /* Et on lance la fonction pour savoir s'il sont identiques... */
+                if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonWinner)){
+                    compteurJetonWinner++
+                } else {
+                    break // la série de jetons identiques est interrompu 
+                }
+            }
+    }
+
+
+
+    /* Fonction de détection des diagonales */
+    function detectionDiagonales(iRow, iCol, increment){
+
+        let compteurJetonWinner = 1
+        let nextCellCol = iCol
+
+        /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
+        for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
+
+            /* On augmente également la ligne de 1 pour créer la diagonale */
+                nextCellCol=nextCellCol+increment
+
+                /* On execute le code uniquement si cette case ne sort pas du tableau */
+                if(nextCellCol<7){
+
+                    /* Et on lance la fonction pour savoir s'il sont identiques... */
+                    if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonWinner)){
+                        compteurJetonWinner++
+                    } else {
+
+                        break // la série de jetons identiques est interrompu 
+                    }
+                } else {
+
+                    break // On est sorti du tableau
+            }
+
+        }
+    }
+    
+
+        /*Fonctions en cas de jetons identiques, on le note, on regarde si c'est arrivé 4 fois et si oui on affiche le message de victoire */
+        function verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonWinner) {
+
+            /* Si c'est bien une case du tableau, on regarde son contenu */
+            if (tablJeu[iRow][iCol] === tablJeu[nextCellRow][nextCellCol]){
+                compteurJetonWinner++
+
+                    /* Est-on arrivé à 4 jetons d'affilés ? */
+                    if (compteurJetonWinner === 4){
+
+                        /* On enregistre le nomre de coup du vainqueur */
+                        coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])
+
+                        /* On a un winner, on lui envoie un message */
+                        messageVictoire (tablJeu[iRow][iCol])
+                    }
+
+                    return true //Il y a bien un jeton supplémentaire identique
+                }
+
+                return false //Le jeton n'est pas identique
+            }
+
+
     /****************/
     /* FONCTIONS IA */
     /****************/
@@ -272,7 +394,7 @@ function desactiverSouris(duration) {
             viderTableau(scoreInteretColonneYellow, 0)
 
         //console.log("1.réinitilisation : ", scoreInteretColonne)
-        detectionAlignement()
+        detectionAlignementIA()
     }
 
     /* Fonction ou l'IA détermine si elle a fait un bon choix */
@@ -343,6 +465,171 @@ function desactiverSouris(duration) {
         }
     }
 
+    /*****************************************************
+     * FONCTIONS DE DETECTION D'ALIGNEMENT POUR L'IA     *
+     *****************************************************/
+
+    /* Fonction de recherche d'alignement */
+    function detectionAlignementIA() {
+
+        /* On check chaque ligne */
+        for (let iRow=0; iRow<tablJeu.length; iRow++) {
+
+            /* et chaque colonne de chaque ligne */
+            for (let iCol=0; iCol<tablJeu[iRow].length; iCol++){
+
+                /* Si la ligne contient un jeton, il faut vérifier ce qui est à côté */
+                if(tablJeu[iRow][iCol] !== "") {
+                    
+                    /* détection de 4 jetons alignés */
+                    detectionRowPlayedIA (iRow, iCol)
+                    detectionColPlayedIA (iRow, iCol)
+                    detectionDiagonalesIA(iRow, iCol, +1)
+                    detectionDiagonalesIA (iRow, iCol, -1)
+                }
+            }
+        }
+            IAChoice()
+    }
+
+        /* Fonction de détection des lignes */
+        function detectionRowPlayedIA(iRow, iCol){
+
+            let compteurJetonsAlignes = 1
+            let nextCellRow = iRow
+
+            /* On vérifie les 4 cases adjacentes en ligne si elles ne sont pas en dehors du tableau*/
+            for(let nextCellCol=iCol+1; nextCellCol<iCol+4 && nextCellCol<7; nextCellCol++){
+
+                    /* Et on lance la fonction pour savoir s'il sont identiques... */
+                        if(verifierAlignementIA(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, "horizontal")){
+                            compteurJetonsAlignes++
+                        }
+                }
+        }
+
+
+
+        /* Fonction de détection des colonnes */
+        function detectionColPlayedIA(iRow, iCol){
+
+            let compteurJetonsAlignes = 1
+            let nextCellCol = iCol
+
+            /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
+            for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
+
+
+                    /* Et on lance la fonction pour savoir s'il sont identiques... */
+                    if(verifierAlignementIA(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, "vertical")){
+                        compteurJetonsAlignes++
+                    } else {
+
+                        //la série de jetons identiques est interrompu
+                        // On informe l'IA du potentiel de la case supérieure et on quite la boucle
+                        if(IAplaying){
+                            scoreInteretColonne[nextCellRow-1][nextCellCol] += compteurJetonsAlignes
+                            console.log("case : ", nextCellRow-1, nextCellCol, " est intéressante")}
+                        break
+                    }
+                }
+        }
+
+
+
+        /* Fonction de détection des diagonales */
+        function detectionDiagonalesIA(iRow, iCol, increment){
+
+            let compteurJetonsAlignes = 1
+            let nextCellCol = iCol
+            let direction = 0
+
+            switch (increment){
+                case -1 :
+                direction="diagonalUp"
+                break
+                case 1 :
+                direction="diagonalDown"
+                break
+            }
+
+            /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
+            for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
+
+                /* On augmente également la ligne de 1 pour créer la diagonale */
+                    nextCellCol=nextCellCol+increment
+
+                    /* On execute le code uniquement si cette case ne sort pas du tableau */
+                    if(nextCellCol<7){
+
+                        /* Et on lance la fonction pour savoir s'il sont identiques... */
+                        if(verifierAlignementIA(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, direction)){
+                            compteurJetonsAlignes++
+                        } else {
+                            break // la série de jetons identiques est interrompu 
+                        }
+                    } else {
+
+                    break // On est sorti du tableau
+                }
+
+            }
+            }
+        
+
+            /*Fonctions en cas de jetons identiques, on le note, on regarde si c'est arrivé 4 fois et si oui on affiche le message de victoire */
+            function verifierAlignementIA(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, alignementType) {
+
+                /*On note, pour l'IA, le nombre de jetons alignés et donc l'intérêt de cette case et de celle avant le début de ligne*/
+                if(IAplaying){
+                    
+                    /*Ajustement cellule précédente*/
+                    let prevCellRow, prevCellCol
+                    switch (alignementType) {
+                        case "horizontal":
+                            prevCellRow=iRow
+                            prevCellCol=iCol-1
+                            break
+                        case "vertical":
+                            prevCellRow=iRow-1
+                            prevCellCol=iCol
+                            break
+                        case "diagonalUp":
+                            prevCellRow=iRow-1
+                            prevCellCol=iCol-1
+                            break
+                        case "diagonalDown":
+                            prevCellRow=iRow-1
+                            prevCellCol=iCol+1
+                            break
+                    }
+
+                    /* A quelle couleur va le nouveau score ? */
+                    let scoreInteretColonne = whatTableColorIsThisCell(tablJeu[iRow][iCol])
+
+                    /* Si la nouvelle valeur des cases adjacentes est supérieure à la précédente, on change le score */
+                        scoreInteretColonne[nextCellRow][nextCellCol]+=compteurJetonsAlignes
+                        if(compteurJetonsAlignes===2){scoreInteretColonne[nextCellRow][nextCellCol]+2}
+                        if(compteurJetonsAlignes===3){scoreInteretColonne[nextCellRow][nextCellCol]+4}
+
+                    if(prevCellRow>-1 && prevCellCol >-1 && prevCellCol<6){
+                        scoreInteretColonne[prevCellRow][prevCellCol]+=compteurJetonsAlignes  
+                        if(compteurJetonsAlignes===2){scoreInteretColonne[prevCellRow][prevCellCol]+2}
+                        if(compteurJetonsAlignes===3){scoreInteretColonne[prevCellRow][prevCellCol]+4}
+                    }
+                }
+
+                /* Si c'est bien une case du tableau, on regarde son contenu */
+                if (tablJeu[iRow][iCol] === tablJeu[nextCellRow][nextCellCol]){
+                    compteurJetonsAlignes++
+
+                        return true //Il y a bien une cellule supplémentaire identique ou vide
+
+                    }
+
+                    return false //Le jeton est de l'autre couleur
+                }
+
     /*****************************************
      * FONCTION DE GESTION DU TABLEAU VISUEL *
      *****************************************/
@@ -397,181 +684,6 @@ function desactiverSouris(duration) {
     function getCouleurJoueurActuel() {
         return getComputedStyle(document.documentElement).getPropertyValue(aQuiLeTour);
     }
-
-    /***************************************************************
-     * FONCTIONS DE DETECTION D'ALIGNEMENT DE JETONS & DE VICTOIRE *
-     ***************************************************************/
-
-    /* Fonction de recherche d'alignement */
-    function detectionAlignement() {
-
-        /* On check chaque ligne */
-        for (let iRow=0; iRow<tablJeu.length; iRow++) {
-
-            /* et chaque colonne de chaque ligne */
-            for (let iCol=0; iCol<tablJeu[iRow].length; iCol++){
-
-                /* Si la ligne contient un jeton, il faut vérifier ce qui est à côté */
-                if(tablJeu[iRow][iCol] !== "") {
-                    
-                    /* détection de 4 jetons alignés */
-                    detectionRowPlayed (iRow, iCol)
-                    detectionColPlayed (iRow, iCol)
-                    detectionDiagonales(iRow, iCol, +1)
-                    detectionDiagonales(iRow, iCol, -1)
-                }
-            }
-        }
-        if(IAplaying){
-            IAChoice()
-        }
-    }
-
-        /* Fonction de détection des lignes */
-        function detectionRowPlayed(iRow, iCol){
-
-            let compteurJetonsAlignes = 1
-            let nextCellRow = iRow
-
-            /* On vérifie les 4 cases adjacentes en ligne si elles ne sont pas en dehors du tableau*/
-            for(let nextCellCol=iCol+1; nextCellCol<iCol+4 && nextCellCol<7; nextCellCol++){
-
-                    /* Et on lance la fonction pour savoir s'il sont identiques... */
-                        if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, "horizontal")){
-                            compteurJetonsAlignes++
-                        }
-                }
-        }
-
-
-
-        /* Fonction de détection des colonnes */
-        function detectionColPlayed(iRow, iCol){
-
-            let compteurJetonsAlignes = 1
-            let nextCellCol = iCol
-
-            /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
-            for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
-
-
-                    /* Et on lance la fonction pour savoir s'il sont identiques... */
-                    if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, "vertical")){
-                        compteurJetonsAlignes++
-                    } else {
-
-                        //la série de jetons identiques est interrompu
-                        // On informe l'IA du potentiel de la case supérieure et on quite la boucle
-                        if(IAplaying){
-                            scoreInteretColonne[nextCellRow-1][nextCellCol] += compteurJetonsAlignes
-                            console.log("case : ", nextCellRow-1, nextCellCol, " est intéressante")}
-                        break
-                    }
-                }
-        }
-
-
-
-        /* Fonction de détection des diagonales */
-        function detectionDiagonales(iRow, iCol, increment){
-
-            let compteurJetonsAlignes = 1
-            let nextCellCol = iCol
-            let direction = 0
-
-            switch (increment){
-                case -1 :
-                direction="diagonalUp"
-                break
-                case 1 :
-                direction="diagonalDown"
-                break
-            }
-
-            /* On vérifie les 4 cases adjacentes en colonne, si elles ne sont pas en dehors du tableau */
-            for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6; nextCellRow++){
-
-                /* On augmente également la ligne de 1 pour créer la diagonale */
-                    nextCellCol=nextCellCol+increment
-
-                    /* On execute le code uniquement si cette case ne sort pas du tableau */
-                    if(nextCellCol<7){
-
-                        /* Et on lance la fonction pour savoir s'il sont identiques... */
-                        if(verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, direction)){
-                            compteurJetonsAlignes++
-                        } else {
-                            break // la série de jetons identiques est interrompu 
-                        }
-                    } else {
-
-                    break // On est sorti du tableau
-                }
-
-            }
-            }
-        
-
-            /*Fonctions en cas de jetons identiques, on le note, on regarde si c'est arrivé 4 fois et si oui on affiche le message de victoire */
-            function verifierAlignement(iRow, iCol, nextCellRow, nextCellCol, compteurJetonsAlignes, alignementType) {
-
-                /*On note, pour l'IA, le nombre de jetons alignés et donc l'intérêt de cette case et de celle avant le début de ligne*/
-                if(IAplaying){
-                    
-                    /*Ajustement cellule précédente*/
-                    let prevCellRow, prevCellCol
-                    switch (alignementType) {
-                        case "horizontal":
-                            prevCellRow=iRow
-                            prevCellCol=iCol-1
-                            break
-                        case "vertical":
-                            prevCellRow=iRow-1
-                            prevCellCol=iCol
-                            break
-                        case "diagonalUp":
-                            prevCellRow=iRow-1
-                            prevCellCol=iCol-1
-                            break
-                        case "diagonalDown":
-                            prevCellRow=iRow-1
-                            prevCellCol=iCol+1
-                            break
-                    }
-
-                    /* A quelle couleur va le nouveau score ? */
-                    let scoreInteretColonne = whatTableColorIsThisCell(tablJeu[iRow][iCol])
-
-                    /* Si la nouvelle valeur des cases adjacentes est supérieure à la précédente, on change le score */
-                        scoreInteretColonne[nextCellRow][nextCellCol]+=compteurJetonsAlignes
-                        if(compteurJetonsAlignes===2){scoreInteretColonne[nextCellRow][nextCellCol]+2}
-                        if(compteurJetonsAlignes===3){scoreInteretColonne[nextCellRow][nextCellCol]+4}
-
-                    if(prevCellRow>-1 && prevCellCol >-1 && prevCellCol<6){
-                        scoreInteretColonne[prevCellRow][prevCellCol]+=compteurJetonsAlignes  
-                        if(compteurJetonsAlignes===2){scoreInteretColonne[prevCellRow][prevCellCol]+2}
-                        if(compteurJetonsAlignes===3){scoreInteretColonne[prevCellRow][prevCellCol]+4}
-                    }
-                }
-
-                /* Si c'est bien une case du tableau, on regarde son contenu */
-                if (tablJeu[iRow][iCol] === tablJeu[nextCellRow][nextCellCol]){
-                    compteurJetonsAlignes++
-
-                        /* Est-on arrivé à 4 jetons d'affilés ? */
-                        if (compteurJetonsAlignes === 4){
-
-                            /* On enregistre le nombre de coup du vainqueur et le félicite */
-                            if(gameOnOff){coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])}
-                            if(gameOnOff){messageVictoire (tablJeu[iRow][iCol])}
-                        }
-
-                        return true //Il y a bien un jeton supplémentaire identique
-
-                    }
-
-                    return false //Le jeton n'est pas identique
-                }
 
 /*********************************
  * Fonctionnement dans les menus *
