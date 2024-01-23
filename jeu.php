@@ -308,7 +308,12 @@
     </div> 
 
 
-<!--Chargement du JS-->
+<!--Chargement des paramètres et du JS-->
+<script>
+    <?php $mode = isset($_GET['mode']) ? $_GET['mode']: 'solo'; ?>
+
+</script>
+
 <script src="scripts/scriptJeu.js"></script>
 
 </body>

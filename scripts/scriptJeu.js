@@ -17,8 +17,7 @@
     let coupJ2 = 0
     let coupPlayer = 0
 
-    // Définir si mode solo actif, si l'IA joue et le score d'intérêt de chaque colonne
-    let modeSolo = true
+    // Définir si l'IA joue
     let IAplaying = false
 
     /* On active la boucle principale */
