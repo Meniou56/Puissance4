@@ -19,6 +19,7 @@
 
     // Définir si l'IA joue
     let IAplaying = false
+    // let modeSolo est créé par php dans la page jeu.php
 
     /* On active la boucle principale */
     let gameOnOff = true
@@ -69,36 +70,6 @@ function whatTableColorIsThisCell(color){
     }
     return scoreInteretColonne
 }
-
-/*******************
- *Fonction initiale* 
- *******************/
-
-    /* Fonction de réinitalisation de la partie */
-        function reinitiateGame(){
-
-            /* On vide le tableau JS */
-            tablJeu = creationTableau()
-
-            /* On remet le J1 en 1er */
-            aQuiLeTour = "--couleurJ1"
-
-            /* Réinitialiser les variables pour compter chaque coup */
-            coupJ1 = 0
-            coupJ2 = 0
-            coupPlayer = 0
-
-            /* On mets à jour l'affichage */
-            for (let iRow=0; iRow<6; iRow++) {
-                for(let iCol=0; iCol<7; iCol++){
-                    rafraichirTablJeu(iRow,iCol, "")
-                }
-            }
-
-            /*On reautorise à jouer */
-            gameOnOff=true
-
-        }
 
 /***************************************/
 /* FONCTIONS DE GESTION SOURIS/CLAVIER */
@@ -696,15 +667,6 @@ function playAgain() {
 
                 /*Mise en rechargement de la page en cas de "rejouer"*/
                 location.reload()
-
-                /* on appel la fonction de réinitialisation de la partie */
-                /*reinitiateGame()*/
-
-                /* On réinitialise le menu */
-                /*eraseMessage()*/
-
-                /* Puis on cache la fenetre */
-                /*hidePopup()*/
                 }
             )
         } else {
@@ -818,6 +780,7 @@ function scoreFormat(winnerName) {
 
     // On efface le Popup
     eraseMessage()
+    hidePopup()
 }
 
 // Initialisation fichier score
