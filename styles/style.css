@@ -29,6 +29,8 @@ html {
             /* Menu */
             --couleurMenu:RGB(205, 179, 128);
             --couleurMenuAlerte:RGBA(255, 50, 50, 0.87);
+            --couleurMenuRed:RGBA(255, 0, 50, 0.87);
+            --couleurMenuYellow:RGBA(255, 240, 50, 0.87);
             --couleurMenuBorder:RGBA(185, 159, 108, 0.8);
 
             /* Boutons */
@@ -244,7 +246,7 @@ form input{
 /* STYLE DU MESSAGE D'ALERTE */
 #message {
     position: fixed;
-    padding: 0 5rem 0 5rem;
+    padding: 0 4rem 0 4rem;
     background-color: var(--couleurMenuAlerte);
     border-radius: 10px;
     box-shadow: 5px 5px 20px 1px var(--ombre);
