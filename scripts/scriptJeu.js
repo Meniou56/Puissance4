@@ -19,6 +19,7 @@
 
     // Définir si l'IA joue
     let IAplaying = false
+    // let modeSolo est créé par php dans la page jeu.php
 
     /* On active la boucle principale */
     let gameOnOff = true
@@ -27,7 +28,16 @@
      * Démarrage  *
      **********************/
 
-    /* Appel des écoutes pour pouvoir jouer */
+    /* Appel des écoutes pour pouvoir jouer et inforamtion 1er joueur */
+    if(!modeSolo){
+        setTimeout( ()=> {
+            alertMessage("Rouge commence", "--couleurMenuRed")
+        }, 900)
+    }else{
+        setTimeout( ()=> {
+            alertMessage("Vous commencez", "--couleurMenu")
+        }, 900)
+    }
     activeClickOver()
 
 /*******************************/
@@ -69,36 +79,6 @@ function whatTableColorIsThisCell(color){
     }
     return scoreInteretColonne
 }
-
-/*******************
- *Fonction initiale* 
- *******************/
-
-    /* Fonction de réinitalisation de la partie */
-        function reinitiateGame(){
-
-            /* On vide le tableau JS */
-            tablJeu = creationTableau()
-
-            /* On remet le J1 en 1er */
-            aQuiLeTour = "--couleurJ1"
-
-            /* Réinitialiser les variables pour compter chaque coup */
-            coupJ1 = 0
-            coupJ2 = 0
-            coupPlayer = 0
-
-            /* On mets à jour l'affichage */
-            for (let iRow=0; iRow<6; iRow++) {
-                for(let iCol=0; iCol<7; iCol++){
-                    rafraichirTablJeu(iRow,iCol, "")
-                }
-            }
-
-            /*On reautorise à jouer */
-            gameOnOff=true
-
-        }
 
 /***************************************/
 /* FONCTIONS DE GESTION SOURIS/CLAVIER */
@@ -192,7 +172,7 @@ function desactiverSouris(duration) {
                 /* On vérifie que la colonne n'est pas déjà rempli */
                 if (i===-1) {
 
-                    alertMessage("La colonne est déjà pleine")//sinon c'est l'humain
+                    alertMessage("La colonne est déjà pleine", "--couleurMenuAlerte")//sinon c'est l'humain
                     break // sortie si la colonne est pleine
 
                     /* Sinon on poursuit la recherche de case */
@@ -647,7 +627,7 @@ function detectionAlignement() {
         pion.classList.add("circle-animate")
 
         /* On désactice l'utilisation de la souris, donc du jeu */
-        desactiverSouris(500)
+        desactiverSouris(750)
 
     }
 
@@ -660,15 +640,47 @@ function detectionAlignement() {
         if (aQuiLeTour === "--couleurJ1"){
             aQuiLeTour = "--couleurJ2"
 
-            // On en profite pour compter un coup de plus pour le joueur 1
+            // On en profite pour compter un coup de plus pour le joueur 1 et indiquer le prochain joueur
             coupJ1++
+            if(!modeSolo){
+                if(coupJ1<4){
+                    setTimeout( ()=> {
+                        alertMessage("Tour de jaune", "--couleurMenuYellow")
+                    }, 750)
+                }
+            }
 
         } else {
             aQuiLeTour = "--couleurJ1"
-            if(IAplaying){IAplaying=false}
+            if(IAplaying){
+                IAplaying=false
+            }
 
             // On en profite pour compter un coup de plus pour le joueur 2
             coupJ2++
+            if(!modeSolo){
+                if(coupJ2<3){
+                    setTimeout( ()=> {
+                        alertMessage("Tour de rouge", "--couleurMenuRed")
+                    }, 750)
+                }
+                if(coupJ2===3){
+                    setTimeout( ()=> {
+                        alertMessage("Jouez selon la couleur des flèches maintenant ;)", "--couleurMenu")
+                    }, 750)
+                }
+            }else{
+                if(coupJ2<4){
+                    setTimeout( ()=> {
+                        alertMessage("C'est votre tour", "--couleurMenu")
+                    }, 750)
+                }
+                if(coupJ2===4){
+                    setTimeout( ()=> {
+                        alertMessage("Je vous laisse jouer maintenant ;)", "--couleurMenu")
+                    }, 750)
+                }
+            }
         }
     }
 
@@ -696,19 +708,10 @@ function playAgain() {
 
                 /*Mise en rechargement de la page en cas de "rejouer"*/
                 location.reload()
-
-                /* on appel la fonction de réinitialisation de la partie */
-                /*reinitiateGame()*/
-
-                /* On réinitialise le menu */
-                /*eraseMessage()*/
-
-                /* Puis on cache la fenetre */
-                /*hidePopup()*/
                 }
             )
         } else {
-            alertMessage("Erreur : bouton rejouer n'ont récupéré")
+            alertMessage("Erreur : bouton rejouer n'ont récupéré", "--couleurMenuAlerte")
         }
     }  
 
@@ -733,7 +736,7 @@ function valideName(nomJoueur){
         /* On renvoie la valeur de l'input (le nom saisie) */
         scoreFormat(nomJoueur)
     }else{
-        alertMessage("veuillez saisir au moins un caractère")
+        alertMessage("veuillez saisir au moins un caractère", "--couleurMenuAlerte")
     }
 }
         
@@ -760,7 +763,7 @@ function annuler(cancelButton) {
             }
         )
     } else {
-        alertMessage("Erreur : bouton annuler n'a pas été récupéré")
+        alertMessage("Erreur : bouton annuler n'a pas été récupéré", "--couleurMenuAlerte")
     }
 }
 
@@ -794,7 +797,7 @@ function saveScore() {
             /* S'il y a clic... on appel la fonction d'enregistrement du nom */
             buttonSaveClic.onclick = () => {formNomJoueur()}
         } else {
-            alertMessage("Erreur : Bouton sauvegarder n'ont récupéré")
+            alertMessage("Erreur : Bouton sauvegarder n'ont récupéré", "--couleurMenuAlerte")
         }
     } 
     
@@ -818,6 +821,7 @@ function scoreFormat(winnerName) {
 
     // On efface le Popup
     eraseMessage()
+    hidePopup()
 }
 
 // Initialisation fichier score
@@ -972,7 +976,7 @@ function leavingGame() {
                 }
             )
         } else {
-            alertMessage("Erreur : bouton quitter n'ont récupéré")
+            alertMessage("Erreur : bouton quitter n'ont récupéré", "--couleurMenuAlerte")
         }
     }
 
@@ -1040,7 +1044,7 @@ function hidePopup() {
 } 
 
 /* Message si colonne déjà pleine */
-function alertMessage(message) {
+function alertMessage(message, colorVar) {
 
     /* On récupère le paragraphe du message */
     let alertMessage = document.querySelector("#message p")
@@ -1052,6 +1056,17 @@ function alertMessage(message) {
     let fenetreMessage = document.getElementById("message")
     fenetreMessage.style.display = "block"
     fenetreMessage.style.zIndex = "11"
+
+    // Récupération et application de la couleur de fond
+    let rootStyle = getComputedStyle(document.documentElement)
+    fenetreMessage.style.backgroundColor = rootStyle.getPropertyValue(colorVar)
+
+    /* Si ce n'est pas un message d'alerte, il se position plus haut*/
+    if(colorVar!=="--couleurMenuAlerte"){
+        fenetreMessage.style.top = "10rem"
+    }else{
+        fenetreMessage.style.top = ""
+    }
 
     /*Après X secondes on cache à nouveau la fenetre*/
     setTimeout( ()=> {
