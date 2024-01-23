@@ -395,7 +395,6 @@ function detectionAlignement() {
                     let newIndice = 0
                     let scoreRed = determinerScoreIA(iRow, iCol, "red")
                     let scoreYellow = determinerScoreIA(iRow, iCol, "yellow")
-                    console.log("Colonne : ", iCol, "Jaune : ", scoreYellow, "Rouge : ", scoreRed)
 
                     // Enregistrer le meilleur indice de la ligne vide
                     if(scoreYellow>=scoreRed){
@@ -420,9 +419,12 @@ function detectionAlignement() {
             if (colonneAChoisir[i] > valeurMAxCol) {
                 valeurMAxCol = colonneAChoisir[i]
                 colonne = i
+
+            /* Changement de colonne hasardeux en cas d'égalité, pour éviter toute prévisibilité */
+            } else if (colonneAChoisir[i] === valeurMAxCol && getRandomInt(0,2)===1){
+                colonne = i
             }
         }
-        console.log("La colonne choisi est donc : ", colonne)
 
         /*On test toutes les cases de la colonne dans le tableau JS*/
         for (let iRow=5; iRow>-2; iRow--){
@@ -459,8 +461,6 @@ function detectionAlignement() {
         scoreAlign[2] = detectionDiagonalesIA(iRow, iCol, +1, color)
         scoreAlign[3] = detectionDiagonalesIA (iRow, iCol, -1, color)
 
-        console.log("tableau,", color," : ", scoreAlign)
-
         /* Quel est le score le plus intéressant ? */
         let scoreFinal = -1
         for(i=0; i<4; i++){
@@ -484,10 +484,9 @@ function detectionAlignement() {
             /* On vérifie les 4 cases adjacentes suivantes en ligne si elles ne sont pas en dehors du tableau*/
             let loopbreak = false
             for(let nextCellCol=iCol+1; nextCellCol<iCol+4 && nextCellCol<7 && loopbreak===false; nextCellCol++){
-                result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result>-1){
-                    nbrJetonsAlignes = result+nbrJetonsAlignes
-                } else {
+                let result = detectionCellContent(nextCellRow, nextCellCol, color)
+                if(result===1){nbrJetonsAlignes++}
+                if(result===-1){
                     loopbreak = true
                 }
             }
@@ -495,21 +494,18 @@ function detectionAlignement() {
             /* On vérifie les 4 cases adjacentes précédentes en ligne si elles ne sont pas en dehors du tableau*/
             loopbreak = false
             for(let nextCellCol=iCol-1; nextCellCol>iCol-4 && nextCellCol>-1 && loopbreak===false; nextCellCol--){
-                result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result>-1){
-                    nbrJetonsAlignes = result+nbrJetonsAlignes
-                } else {
+                let result = detectionCellContent(nextCellRow, nextCellCol, color)
+                if(result===1){nbrJetonsAlignes++}
+                if(result===-1){
                     loopbreak = true
                 }
             }
 
             // Calcul et envoie du score en privilégiant légèrement les jaunes
             let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            if(color==="yellow"){newScore++}
+            //if(color==="yellow"){newScore++}
             return newScore
         }
-
-
 
         /* Fonction de détection des colonnes */
         function detectionColPlayedIA(iRow, iCol, color){
@@ -520,32 +516,28 @@ function detectionAlignement() {
             /* On vérifie les 4 cases adjacentes suivantes en colonne si elles ne sont pas en dehors du tableau*/
             let loopbreak = false
             for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6 && loopbreak===false; nextCellRow++){
-                result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result>-1){
-                    nbrJetonsAlignes = result+nbrJetonsAlignes
-                } else {
+                let result = detectionCellContent(nextCellRow, nextCellCol, color)
+                if(result===1){nbrJetonsAlignes++}
+                if(result===-1){
                     loopbreak = true
                 }
             }
 
             /* On vérifie les 4 cases adjacentes précédentesx en colonne si elles ne sont pas en dehors du tableau*/
             loopbreak = false
-            for(nextCellRow=iRow-1; nextCellRow<iRow+4 && nextCellRow>-1 && loopbreak===false; nextCellRow--){
-                result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result>-1){
-                    nbrJetonsAlignes = result+nbrJetonsAlignes
-                } else {
+            for(nextCellRow=iRow-1; nextCellRow>iRow-4 && nextCellRow>-1 && loopbreak===false; nextCellRow--){
+                let result = detectionCellContent(nextCellRow, nextCellCol, color)
+                if(result===1){nbrJetonsAlignes++}
+                if(result===-1){
                     loopbreak = true
                 }
             }
 
             // Calcul et envoie du score en privilégiant légèrement les jaunes
             let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            if(color==="yellow"){newScore++}
+            //if(color==="yellow"){newScore++}
             return newScore
         }
-
-
 
         /* Fonction de détection des diagonales */
         function detectionDiagonalesIA(iRow, iCol, increment, color){
@@ -563,10 +555,9 @@ function detectionAlignement() {
                     /* On execute le code uniquement si cette case ne sort pas du tableau */
                     if(nextCellCol<7 && nextCellCol>-1){
 
-                        result = detectionCellContent(nextCellRow, nextCellCol, color)
-                        if(result>-1){
-                            nbrJetonsAlignes = result+nbrJetonsAlignes
-                        } else {
+                        let result = detectionCellContent(nextCellRow, nextCellCol, color)
+                        if(result===1){nbrJetonsAlignes++}
+                        if(result===-1){
                             loopbreak = true
                         }
                     } else {
@@ -586,10 +577,9 @@ function detectionAlignement() {
                     /* On execute le code uniquement si cette case ne sort pas du tableau */
                     if(nextCellCol<7 && nextCellCol>-1){
 
-                        result = detectionCellContent(nextCellRow, nextCellCol, color)
-                        if(result>-1){
-                            nbrJetonsAlignes = result+nbrJetonsAlignes
-                        } else {
+                        let result = detectionCellContent(nextCellRow, nextCellCol, color)
+                        if(result===1){nbrJetonsAlignes++}
+                        if(result===-1){
                             loopbreak = true
                         }
                     } else {
@@ -599,7 +589,7 @@ function detectionAlignement() {
 
             // Calcul et envoie du score en privilégiant légèrement les jaunes
             let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            if(color==="yellow"){newScore++}
+            //if(color==="yellow"){newScore++}
             return newScore
         }
 
