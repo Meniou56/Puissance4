@@ -1,14 +1,12 @@
 <!--Session is starting-->
 <?php session_start();
 
-// Vérifiez si les variables de session existent et les supprimez
-if (isset($_SESSION['player1'])) {
-    unset($_SESSION['player1']);
+//Fonction pour récuperer l'ID de session
+function getCurrentUserId() {
+    //if (isset($_SESSION['player1']) && $_SESSION)
 }
 
-if (isset($_SESSION['player2'])) {
-    unset($_SESSION['player2']);
-}
+
 ?>
 
 <!DOCTYPE html>

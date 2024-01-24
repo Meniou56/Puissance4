@@ -24,6 +24,9 @@
     /* On active la boucle principale */
     let gameOnOff = true
 
+    /*TEST*/
+    if(modeOnline){console.log("je suis joueur : ", player)}
+
     /**********************
      * Démarrage  *
      **********************/
@@ -38,7 +41,12 @@
             alertMessage("Vous commencez", "--couleurMenu")
         }, 900)
     }
-    activeClickOver()
+
+    //Activation des possibilités de jeu
+    if(!modeOnline || player==="red"){
+        activeClickOver()
+    }
+    
 
 /*******************************/
 /* FONCTIONS POUR LES TABLEAUX */

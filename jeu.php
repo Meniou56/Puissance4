@@ -12,6 +12,11 @@ $mode = htmlspecialchars($mode, ENT_QUOTES, 'UTF-8');?>
 
 //Si mode multi Online
 if($mode === "online"){
+
+    // Générer un identifiant unique pour la session
+    function generateSessionID() {
+        return md5(uniqid(rand(), true));
+    }
         //S'il y a déjà deux joueurs, la session est pleine
     if(isset($_SESSION['player1']) && isset($_SESSION['player2'])) {
         header('Location: pages/sessionFull.php');
@@ -19,15 +24,15 @@ if($mode === "online"){
     } else {
         // Creation du joueur 1
     if (!isset($_SESSION['player1'])) {
+        $_SESSION['player1Is'] = generateSessionID();
         $_SESSION['player1'] = 'Joueur rouge';
         $currentPlayer = 'Joueur rouge';
-        echo "rouge";
     } else {
 
     // Sinon création du joueur 2
+        $_SESSION['player2Is'] = generateSessionID();
         $_SESSION[('player2')] = "Joueur jaune";
         $currentPlayer = 'Joueur jaune';
-        echo "jaune";
     }
     }
 }
@@ -51,7 +56,7 @@ if($mode === "online"){
 <?php include 'pages/header.php'; ?>
 
 <!--Chargement des paramètres des variables superes gloables-->
-<?php include 'data/varModeJeu.php' ?>
+<?php include 'data/varModeJeu.php'?>
 
 <!--Message d'alerte-->
 <div id="message">
