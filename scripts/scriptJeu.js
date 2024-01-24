@@ -1072,10 +1072,10 @@ function alertMessage(message, colorVar) {
         fenetreMessage.style.top = ""
     }
 
-    /*Après X secondes on cache à nouveau la fenetre*/
+    /*Après X secondes on joue & on cache à nouveau la fenetre*/
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
-    }, 2500)
+    }, 2200)
 }
 
 /*********************
