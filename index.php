@@ -1,3 +1,16 @@
+<!--Session is starting-->
+<?php session_start();
+
+// Vérifiez si les variables de session existent et les supprimez
+if (isset($_SESSION['player1'])) {
+    unset($_SESSION['player1']);
+}
+
+if (isset($_SESSION['player2'])) {
+    unset($_SESSION['player2']);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
