@@ -24,6 +24,9 @@
     /* On active la boucle principale */
     let gameOnOff = true
 
+    /*TEST*/
+    if(modeOnline){console.log("je suis joueur : ", player)}
+
     /**********************
      * Démarrage  *
      **********************/
@@ -38,7 +41,12 @@
             alertMessage("Vous commencez", "--couleurMenu")
         }, 900)
     }
-    activeClickOver()
+
+    //Activation des possibilités de jeu
+    if(!modeOnline || player==="red"){
+        activeClickOver()
+    }
+    
 
 /*******************************/
 /* FONCTIONS POUR LES TABLEAUX */
@@ -318,7 +326,11 @@ function detectionAlignement() {
                         coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])
 
                         /* On a un winner, on lui envoie un message */
-                        messageVictoire (tablJeu[iRow][iCol])
+                        if(modeSolo && aQuiLeTour === "--couleurJ1"){
+                            messageWithButton("Perdu !")
+                        }else{
+                            messageVictoire (tablJeu[iRow][iCol])
+                        }
                     }
 
                     return true //Il y a bien un jeton supplémentaire identique
@@ -526,9 +538,9 @@ function detectionAlignement() {
                 }
             }
 
-            // Calcul et envoie du score en privilégiant légèrement les jaunes
+            // Calcul et envoie du score en privilégiant légèrement les jaunes s'ils sont à un jeton de la victoire
             let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            //if(color==="yellow"){newScore++}
+            if(color==="yellow" && newScore>26){newScore++}
             return newScore
         }
 
@@ -1068,10 +1080,10 @@ function alertMessage(message, colorVar) {
         fenetreMessage.style.top = ""
     }
 
-    /*Après X secondes on cache à nouveau la fenetre*/
+    /*Après X secondes on joue & on cache à nouveau la fenetre*/
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
-    }, 2500)
+    }, 2200)
 }
 
 /*********************

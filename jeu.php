@@ -1,3 +1,44 @@
+<!--Session is starting-->
+<?php session_start();?>
+
+<!--Chargement des informations de mode de jeu-->
+<?php $mode = isset($_GET['mode']) ? $_GET['mode']: 'solo'; //solo en valeur par défaut en cas de problème
+
+// Nettoyage de la variable pour contrer une attaque XSS
+$mode = htmlspecialchars($mode, ENT_QUOTES, 'UTF-8');?>
+
+<!--Chargement des informations en mode multijoueur online -->
+<?php
+
+//Si mode multi Online
+if($mode === "online"){
+
+    // Générer un identifiant unique pour la session
+    function generateSessionID() {
+        return md5(uniqid(rand(), true));
+    }
+        //S'il y a déjà deux joueurs, la session est pleine
+    if(isset($_SESSION['player1']) && isset($_SESSION['player2'])) {
+        header('Location: pages/sessionFull.php');
+        exit;
+    } else {
+        // Creation du joueur 1
+    if (!isset($_SESSION['player1'])) {
+        $_SESSION['player1Is'] = generateSessionID();
+        $_SESSION['player1'] = 'Joueur rouge';
+        $currentPlayer = 'Joueur rouge';
+    } else {
+
+    // Sinon création du joueur 2
+        $_SESSION['player2Is'] = generateSessionID();
+        $_SESSION[('player2')] = "Joueur jaune";
+        $currentPlayer = 'Joueur jaune';
+    }
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,10 +55,13 @@
 <!-- header -->
 <?php include 'pages/header.php'; ?>
 
+<!--Chargement des paramètres des variables superes gloables-->
+<?php include 'data/varModeJeu.php'?>
+
 <!--Message d'alerte-->
 <div id="message">
     <p>Paragraphe</p>
-    </div> 
+    </div>
 
 <!--Tableau de jeu-->
 <div id="tableauJeu">
@@ -297,7 +341,7 @@
 
 </div>
 
-<!--Bouton-->
+<!--Bouton quitter-->
 <div>
     <a href="index.php" id="buttonPageScores">Quitter</a>
 </div>
@@ -306,25 +350,6 @@
    <div id="popup">
     <!--Contenu du pop-up-->
     </div> 
-
-
-<!--Chargement des paramètres des variables superes gloables-->
-<script>
-
-    // Chargement de la variable Mode Solo ou Duo
-    <?php $mode = isset($_GET['mode']) ? $_GET['mode']: 'solo'; //solo en valeur par défaut en cas de problème
-
-    // Nettoyage de la variable pour contrer une attaque XSS
-    $mode = htmlspecialchars($mode, ENT_QUOTES, 'UTF-8');
-
-    if ($mode === 'solo') { ?>
-        modeSolo = true
-    <?php } elseif ($mode === 'duo') { ?>
-        modeSolo = false
-    <?php } else { ?>
-        modeSolo = true // De nouveau, solo en cas de problème
-    <?php } ?>
-</script>
 
 <!-- Chargement du JS -->
 <script src="scripts/scriptJeu.js"></script>
