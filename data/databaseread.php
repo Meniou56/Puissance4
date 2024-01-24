@@ -1,4 +1,8 @@
 <?php
+//Pas de misen en cache
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
 
 // Script de communication avec données JSON
 header('Content-Type: application/json');
