@@ -318,7 +318,11 @@ function detectionAlignement() {
                         coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])
 
                         /* On a un winner, on lui envoie un message */
-                        messageVictoire (tablJeu[iRow][iCol])
+                        if(modeSolo && aQuiLeTour === "--couleurJ1"){
+                            messageWithButton("Perdu !")
+                        }else{
+                            messageVictoire (tablJeu[iRow][iCol])
+                        }
                     }
 
                     return true //Il y a bien un jeton supplémentaire identique
@@ -526,9 +530,9 @@ function detectionAlignement() {
                 }
             }
 
-            // Calcul et envoie du score en privilégiant légèrement les jaunes
+            // Calcul et envoie du score en privilégiant légèrement les jaunes s'ils sont à un jeton de la victoire
             let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            //if(color==="yellow"){newScore++}
+            if(color==="yellow" && newScore>26){newScore++}
             return newScore
         }
 
