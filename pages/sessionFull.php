@@ -17,6 +17,10 @@ header("Expires: 0");
 
 </head>
 <body>
+
+<!-- header -->
+<?php include '../pages/header.php'; ?>
+
     <div class="message">
         <p>La session est déjà pleine. Veuillez réessayer plus tard.</p>
         <!--Bouton quitter-->

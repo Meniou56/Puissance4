@@ -152,9 +152,11 @@ async function messageVictoire(winnerPopup) {
 async function messageWithButton(messageContent) {
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){
-        gameOnOff = false
-        await paused(800)
+    if(typeof gameOnOff !=="undefined"){
+            if(gameOnOff===true){
+            gameOnOff = false
+            await paused(800)
+        }
     }
 
     /* récuperer le popup, le titre et le paragraphe */

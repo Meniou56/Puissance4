@@ -1,10 +1,6 @@
 <!--Session is starting-->
 <?php session_start();
 
-//Fonction pour récuperer l'ID de session
-function getCurrentUserId() {
-    //if (isset($_SESSION['player1']) && $_SESSION)
-}
 
 
 ?>
