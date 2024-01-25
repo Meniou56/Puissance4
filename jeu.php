@@ -17,6 +17,13 @@
 <!-- header -->
 <?php include 'pages/header.php'; ?>
 
+<!--Tableau joueur-->
+<div class="TableauVS">
+    <h4 id="Player1">En attente</h4>
+    <h4>VS</h4>
+    <h4 id="Player2">En attente</h4>
+</div>
+
 <!--Message d'alerte-->
 <div id="message">
     <p>Paragraphe</p>

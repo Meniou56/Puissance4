@@ -19,10 +19,12 @@
 
     // Définir si l'IA joue
     let IAplaying = false
-    // let modeSolo est créé par php dans la page jeu.php
 
     /* On active la boucle principale */
     let gameOnOff = true
+
+    /* Variable globales pour le mode Online*/
+    let onlinePlayer
 
     /*Démarrage mode Online*/
     if(modeOnline){
@@ -56,7 +58,6 @@ async function chargerJeuOnline() {
 // Fonction pour attendre que le jeu en ligne soient effectivement chargées avant chargement des données de jeu
 async function initialiseLoadOnline() {
     let jeuOnline = await chargerJeuOnline()
-    let onlinePlayer
 
     if(!jeuOnline.length || jeuOnline.length === 2){
         onlinePlayer = "red"
@@ -72,7 +73,21 @@ async function initialiseLoadOnline() {
 }
 
 function startOnlineGame(playerOnlineName){
-    console.log(playerOnlineName)
+    displayOnlineName(playerOnlineName)
+}
+
+function displayOnlineName(name){
+    if(onlinePlayer === "red"){
+        let nameOnBoard = document.getElementById("Player1")
+        nameOnBoard.style.color = "red" 
+        nameOnBoard.innerText = name
+    }else if (onlinePlayer === "yellow"){
+        let nameOnBoard = document.getElementById("Player2")
+        nameOnBoard.style.color = "yellow"
+        nameOnBoard.innerText = name
+    }else{
+        alertMessage("Erreur affichage nom de joueur", "--couleurMenuAlerte")
+    }
 }
 
     /**********************
