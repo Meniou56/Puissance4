@@ -33,8 +33,24 @@ function validerNom(form, validerButton, input) {
         /*On prévient le rafraichissement de la page */
         event.preventDefault()
 
+        /*Si mode online, on revient au jeu*/
+        if(modeOnline){
+            if((input.value).trim()){
+
+                /* On renvoie la valeur de l'input (le nom saisie) */
+                eraseMessage()
+                hidePopup()
+                startOnlineGame(input.value)
+
+            }else{
+                alertMessage("veuillez saisir au moins un caractère", "--couleurMenuAlerte")
+            }
+        }
+
         /* On appel la fonction de validation du nom */
-        valideName(input.value)
+        if(!modeOnline){
+            valideName(input.value)
+        }
     })
 }
 
@@ -64,11 +80,15 @@ function annuler(cancelButton) {
             /*On prévient le rafraichissement de la page */
             event.preventDefault()
 
+            /*Si Online, retour au menu*/
+            if(modeOnline){window.location.href='index.php'}
+
             /* on efface le message */
             eraseMessage()
 
             /* Puis on reviens au menu précédent */
             messageVictoire()
+
             }
         )
     } else {
@@ -220,7 +240,7 @@ function leavingGame() {
     }
 
 /* Message-formulaire pour avoir le nom du vainqueur */
-function formNomJoueur(){
+function formNomJoueur(messagePopup){
 
     /* On efface tout */
     eraseMessage()
@@ -252,7 +272,7 @@ function formNomJoueur(){
     let input = document.createElement("input")
 
     /* On ajoute les textes et attribut de ces nouveaux éléments */
-    label.innerText = "Entrer le nom du vainqueur"
+    label.innerText = messagePopup
     input.name = "name"
     input.minLength = "1"
     input.maxLength = "20"
@@ -264,6 +284,13 @@ function formNomJoueur(){
     form.appendChild(validerButton)
     form.appendChild(cancelButton)
     showPopup.appendChild(form)
+
+    /*Affichage du Popup si nécessaire*/
+    let stylePopup = window.getComputedStyle(showPopup)
+    if(stylePopup.display === "none"){
+            showPopup.style.display = "block"
+    }
+
 
     /* Action possible */
     annuler(cancelButton)

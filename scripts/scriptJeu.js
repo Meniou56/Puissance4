@@ -24,13 +24,14 @@
     /* On active la boucle principale */
     let gameOnOff = true
 
-    /*TEST*/
+    /*Démarrage mode Online*/
     if(modeOnline){
         initialiseLoadOnline()
     }
-/**************/
-/*Jeux online */
-/**************/
+
+/***************/
+/* Jeux online */
+/***************/
 // Fonction de chargement du jeu online JSON
 async function chargerJeuOnline() {
     try {
@@ -57,15 +58,21 @@ async function initialiseLoadOnline() {
     let jeuOnline = await chargerJeuOnline()
     let onlinePlayer
 
-    if(!jeuOnline.length){
-        onlinePlayer = "Player red"
+    if(!jeuOnline.length || jeuOnline.length === 2){
+        onlinePlayer = "red"
         activeClickOver()
-    } else if (jeuOnline.length === 1){
-        onlinePlayer = "Player yellow"
+        formNomJoueur("Nom de joueur")
+    } else if (jeuOnline.length === 1 || jeuOnline === 3){
+        onlinePlayer = "yellow"
         desactiveClickOver()
+        formNomJoueur("Nom de joueur")
     } else {
         window.location.href = 'pages/sessionFull.php'
     }
+}
+
+function startOnlineGame(playerOnlineName){
+    console.log(playerOnlineName)
 }
 
     /**********************
@@ -498,7 +505,7 @@ function saveScore() {
         if (buttonSaveClic) {
 
             /* S'il y a clic... on appel la fonction d'enregistrement du nom */
-            buttonSaveClic.onclick = () => {formNomJoueur()}
+            buttonSaveClic.onclick = () => {formNomJoueur("Entrer le nom du vainqueur")}
         } else {
             alertMessage("Erreur : Bouton sauvegarder n'ont récupéré", "--couleurMenuAlerte")
         }

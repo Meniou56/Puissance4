@@ -1,3 +1,6 @@
+<!--Session is starting-->
+<?php session_start();?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
