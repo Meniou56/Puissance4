@@ -353,6 +353,8 @@ if($mode === "online"){
 
 <!-- Chargement du JS -->
 <script src="scripts/scriptJeu.js"></script>
+<script src="scripts/IA.js"></script>
+<script src="scripts/affichage.js"></script>
 
 </body>
 </html>

@@ -3,7 +3,7 @@
     
     // Mode de jeu
     let modeSolo = false
-    let mondeOnline = false
+    let modeOnline = false
 
     <?php if ($mode === 'solo') { ?>
         modeSolo = true
