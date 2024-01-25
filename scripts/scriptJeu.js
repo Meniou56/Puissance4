@@ -25,7 +25,48 @@
     let gameOnOff = true
 
     /*TEST*/
-    if(modeOnline){console.log("je suis joueur : ", player)}
+    if(modeOnline){
+        initialiseLoadOnline()
+    }
+/**************/
+/*Jeux online */
+/**************/
+// Fonction de chargement du jeu online JSON
+async function chargerJeuOnline() {
+    try {
+
+        // Chargement des données de l'API
+        const response = await fetch('data/onlineread.php?_ts=' + new Date().getTime());
+
+        if(!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`)
+        }
+
+        // Transformation en JSON
+        const donnes = await response.json()
+        return donnes
+
+        // Si erreur :
+    } catch (erreur) {
+        console.error('Erreur lors du chargement des données', erreur)
+    }
+}
+
+// Fonction pour attendre que le jeu en ligne soient effectivement chargées avant chargement des données de jeu
+async function initialiseLoadOnline() {
+    let jeuOnline = await chargerJeuOnline()
+    let onlinePlayer
+
+    if(!jeuOnline.length){
+        onlinePlayer = "Player red"
+        activeClickOver()
+    } else if (jeuOnline.length === 1){
+        onlinePlayer = "Player yellow"
+        desactiveClickOver()
+    } else {
+        window.location.href = 'pages/sessionFull.php'
+    }
+}
 
     /**********************
      * Démarrage  *
@@ -43,9 +84,9 @@
     }
 
     //Activation des possibilités de jeu
-    if(!modeOnline || player==="red"){
+    //if(!modeOnline || player==="red"){
         activeClickOver()
-    }
+    //}
     
 
 /*******************************/

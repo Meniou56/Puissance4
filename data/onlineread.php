@@ -20,7 +20,7 @@ try {
     $mysqlClient->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     // On récupère les données
-    $stmt = $mysqlClient->query("SELECT * FROM scores");
+    $stmt = $mysqlClient->query("SELECT * FROM jeuonline");
     $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Transformation en JSON
@@ -35,5 +35,4 @@ try {
     http_response_code(500);
     echo json_encode(['error' => $exception->getMessage()]);
 }
-
 ?>

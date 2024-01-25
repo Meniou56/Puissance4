@@ -1,37 +1,3 @@
-<!--Session is starting-->
-<?php session_start();?>
-
-<!--Chargement des informations de mode de jeu-->
-<?php $mode = isset($_GET['mode']) ? $_GET['mode']: 'solo'; //solo en valeur par défaut en cas de problème
-
-// Nettoyage de la variable pour contrer une attaque XSS
-$mode = htmlspecialchars($mode, ENT_QUOTES, 'UTF-8');?>
-
-<!--Chargement des informations en mode multijoueur online -->
-<?php
-
-//Si mode multi Online
-if($mode === "online"){
-
-        //S'il y a déjà deux joueurs, la session est pleine
-    if(isset($_SESSION['player1']) && isset($_SESSION['player2'])) {
-        header('Location: pages/sessionFull.php');
-        exit;
-    } else if(!isset($_SESSION['player1'])) {
-        
-        // Creation du joueur 1
-        $_SESSION['player1'] = 'Joueur rouge';
-        $currentPlayer = 'Joueur rouge';
-    } else {
-
-    // Sinon création du joueur 2
-        $_SESSION[('player2')] = "Joueur jaune";
-        $currentPlayer = 'Joueur jaune';
-    }
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -47,9 +13,6 @@ if($mode === "online"){
 
 <!-- header -->
 <?php include 'pages/header.php'; ?>
-
-<!--Chargement des paramètres des variables superes gloables-->
-<?php include 'data/varModeJeu.php'?>
 
 <!--Message d'alerte-->
 <div id="message">
@@ -342,7 +305,10 @@ if($mode === "online"){
 <!--POPUP PRINCIPAL-->
    <div id="popup">
     <!--Contenu du pop-up-->
-    </div> 
+    </div>
+
+<!--Chargement des paramètres des variables superes gloables-->
+<?php include 'data/varModeJeu.php'?>
 
 <!-- Chargement du JS -->
 <script src="scripts/scriptJeu.js"></script>
