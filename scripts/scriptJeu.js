@@ -24,11 +24,13 @@
     let gameOnOff = true
 
     /* Variable globales pour le mode Online*/
-    let onlinePlayer
+    let playerRed = false
+    let playerYellow = false
     let jeuOnline
 
     /*Démarrage mode Online*/
     if(modeOnline){
+        displayIDElement("TableauVS", "inline")
         initialiseLoadOnline()
     }
 
@@ -41,9 +43,9 @@
 /*****************************/
 
 /*Lancement de la partie */
-/*function launchOnlineGame(){
-
-}*/
+function launchOnlineGame(){
+    console.log(onlinePlayer)
+}
 
 
 /******************************************/
@@ -74,12 +76,16 @@ async function chargerJeuOnline() {
 // Fonction pour attendre que le jeu en ligne soient effectivement chargées avant chargement des données de jeu
 async function initialiseLoadOnline() {
     jeuOnline = await chargerJeuOnline()
-    if(!jeuOnline.length || jeuOnline.length === 2){
-        onlinePlayer = "red"
+
+    //!!Si jeuonline est vide ou si partie pleine, il faut créer une partie
+
+    // On check la dernière ligne de BDD (dernière partie créée)
+    if(jeuOnline.length<10 && (jeuOnline[jeuOnline.length-1].user1 === "waiting")){
+        playerRed = true
         activeClickOver()
         formNomJoueur("Nom de joueur")
-    } else if (jeuOnline.length === 1 || jeuOnline === 3){
-        onlinePlayer = "yellow"
+    } else if (jeuOnline.length<10 && jeuOnline[jeuOnline.length-1].user1 !== "waiting"){
+        playerYellow = true
         desactiveClickOver()
         formNomJoueur("Nom de joueur")
     } else {
@@ -94,7 +100,7 @@ async function initialiseLoadOnline() {
 
 /* Fonction d'attente d'autres joueurs ?*/
 function startCheckForGame(playerOnlineName){
-    //displayOnlineName(playerOnlineName)
+    displayOnlineName(playerOnlineName)
     chooseOnlineGame(playerOnlineName, jeuOnline)
 }
 
@@ -112,6 +118,9 @@ function displayOnlineName(name){
         alertMessage("Erreur affichage nom de joueur", "--couleurMenuAlerte")
     }
 }
+
+
+
 
     /**********************
      * Démarrage  *
@@ -569,7 +578,7 @@ function scoreFormat(winnerName) {
 
     // On efface le Popup
     eraseMessage()
-    hidePopup()
+    displayIDElement("popup", "none")
 }
 
 // Initialisation fichier score

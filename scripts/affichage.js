@@ -39,7 +39,7 @@ function validerNom(form, validerButton, input) {
 
                 /* On renvoie la valeur de l'input (le nom saisie) */
                 eraseMessage()
-                hidePopup()
+                displayIDElement("popup", "none")
                 startCheckForGame(input.value)
 
             }else{
@@ -82,7 +82,7 @@ function annuler(cancelButton) {
 
             /* on efface le message */
             eraseMessage()
-            hidePopup()
+            displayIDElement("popup", "none")
 
             /*Si Online, retour au menu*/
             if(modeOnline){
@@ -344,23 +344,10 @@ function formNomJoueur(messagePopup){
             showPopup.style.display = "block"
     }
 
-
     /* Action possible */
     annuler(cancelButton)
     validerNom(form, validerButton, input)   
 }
-
-/* cacher le message de victoire */
-function hidePopup() {
-
-    /* On récupère le popup */
-    let hidePopup = document.getElementById("popup")
-
-    /* Si on la bien récupéré, on appel la fonction pour le cacher */
-    if (hidePopup){
-        hidePopup.style.display = "none"
-    }
-} 
 
 /* Message si colonne déjà pleine */
 function alertMessage(message, colorVar) {
@@ -391,4 +378,15 @@ function alertMessage(message, colorVar) {
     setTimeout( ()=> {
         fenetreMessage.style.display = "none"
     }, 2200)
+}
+
+
+/* Affichage d'un élément ID */
+function displayIDElement(element, method) {
+    let ElementToDisplay = document.getElementById(element)
+    if (ElementToDisplay) {
+        ElementToDisplay.style.display = method
+    } else {
+        console.error("Élément '" + element + "' non trouvé dans le DOM.")
+    }
 }

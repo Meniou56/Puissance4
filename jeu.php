@@ -18,7 +18,7 @@
 <?php include 'pages/header.php'; ?>
 
 <!--Tableau joueur-->
-<div class="TableauVS">
+<div id="TableauVS">
     <h4 id="Player1">En attente</h4>
     <h4>VS</h4>
     <h4 id="Player2">En attente</h4>
@@ -321,9 +321,9 @@
 <?php include 'data/varModeJeu.php'?>
 
 <!-- Chargement du JS -->
+<script src="scripts/affichage.js"></script>
 <script src="scripts/scriptJeu.js"></script>
 <script src="scripts/IA.js"></script>
-<script src="scripts/affichage.js"></script>
 
 </body>
 </html>
