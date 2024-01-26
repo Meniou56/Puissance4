@@ -37,9 +37,10 @@ function validerNom(form, validerButton, input) {
         if(modeOnline){
             if((input.value).trim()){
 
-                /* On renvoie la valeur de l'input (le nom saisie) */
+                /* On inscrit le nom dans la BDD et on revient au jeu */
                 eraseMessage()
                 displayIDElement("popup", "none")
+                savingOnlineName(input.value)
                 startCheckForGame(input.value)
 
             }else{

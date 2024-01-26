@@ -44,7 +44,7 @@
 
 /*Lancement de la partie */
 function launchOnlineGame(){
-    console.log(onlinePlayer)
+    console.log(ok)
 }
 
 
@@ -77,22 +77,108 @@ async function chargerJeuOnline() {
 async function initialiseLoadOnline() {
     jeuOnline = await chargerJeuOnline()
 
-    //!!Si jeuonline est vide ou si partie pleine, il faut créer une partie
+    // Boucle si trop de partie à créer (retour)
 
+    //Si jeuOnline est vide ou si partie pleine, il faut créer une partie (sauf si déjà plus de 100 parties!)
+    if(jeuOnline.length === 0 || jeuOnline[jeuOnline.length-1].user2 !== "waiting"){
+        let chargeUtile = chargeUtileNewParty()
+        await writingInSQL(chargeUtile)
+    
     // On check la dernière ligne de BDD (dernière partie créée)
-    if(jeuOnline.length<10 && (jeuOnline[jeuOnline.length-1].user1 === "waiting")){
+    } else if(jeuOnline[jeuOnline.length-1].user1 === "waiting"){
         playerRed = true
-        activeClickOver()
         formNomJoueur("Nom de joueur")
-    } else if (jeuOnline.length<10 && jeuOnline[jeuOnline.length-1].user1 !== "waiting"){
+    } else if (jeuOnline[jeuOnline.length-1].user1 !== "waiting"){
         playerYellow = true
-        desactiveClickOver()
         formNomJoueur("Nom de joueur")
-    } else {
-        window.location.href = 'pages/sessionFull.php'
     }
 }
 
+// Construction de la charge utile à envoyer pour la création d'une nouvelle partie
+function chargeUtileNewParty(){
+    const actualTime = new Date()
+
+    //Transformation de la date en format datetime(SQL)
+    function padTo2Digits(num) {
+        return num.toString().padStart(2, '0')
+    }
+
+    const formattedDateTime = actualTime.getFullYear() + '-' +
+        padTo2Digits(actualTime.getMonth() + 1) + '-' +
+        padTo2Digits(actualTime.getDate()) + ' ' +
+        padTo2Digits(actualTime.getHours()) + ':' +
+        padTo2Digits(actualTime.getMinutes()) + ':' +
+        padTo2Digits(actualTime.getSeconds())
+
+    // Chargement des paramètres
+    const newData = {
+        "action": "insert",
+        "date": formattedDateTime,
+        "user1": "waiting",
+        "user2": "waiting",
+        "row1" : -1,
+        "col1" : -1,
+        "row2" : -1,
+        "col2" : -1,
+        "etat" : "prepare"
+    }
+
+    // Retour de charge utile
+    return newData
+}
+
+/* Fonction d'initialisation d'enregistrement du nom dans la BDD */
+async function savingOnlineName(name){
+    chargeUtileName(name)
+    await writingInSQL(chargeUtileName)
+}
+
+
+// Construction charge utile des noms dans la BDD
+function chargeUtileName(name){
+
+    // Variable charge utile
+    let newData
+
+    // Chargement des paramètres
+    if(playerRed){
+        newData = {
+            "action": "updateUser1",
+            "user1": name,
+            "ID": jeuOnline[jeuOnline.length-1].ID//a vérif
+        }
+    }else if(playerYellow){
+        newData = {
+            "action": "updateUser2",
+            "user1": name,
+            "ID": jeuOnline[jeuOnline.length-1].ID//a vérif
+        }
+    }else{
+        console.log("Erreur lors de l'envoie du nom à la BDD")
+    }
+    return newData
+}
+
+// Fonction d'envoie de données de partie vers SQL
+async function writingInSQL(newData) {
+
+    try {
+        // Ecriture des nouvelles données
+        const reponse = await fetch('./data/onlinewrite.php', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData)
+        })
+
+        // Vérification
+        if (!reponse.ok) {
+            throw new Error(`Erreur HTTP: ${reponse.status}`)
+        }
+
+    } catch (erreur) {
+        console.error('Erreur lors de l\'envoie des données', erreur)
+    }
+}
 
 /***************************************************/
 /* FONCTIONS DE LANCEMENT ET INITIALISATION PARTIE */
@@ -106,11 +192,11 @@ function startCheckForGame(playerOnlineName){
 
 /* Fonction d'atttribution de joueur */
 function displayOnlineName(name){
-    if(onlinePlayer === "red"){
+    if(playerRed){
         let nameOnBoard = document.getElementById("Player1")
         nameOnBoard.style.color = "red" 
         nameOnBoard.innerText = name
-    }else if (onlinePlayer === "yellow"){
+    }else if (playerYellow){
         let nameOnBoard = document.getElementById("Player2")
         nameOnBoard.style.color = "yellow"
         nameOnBoard.innerText = name
@@ -581,7 +667,7 @@ function scoreFormat(winnerName) {
     displayIDElement("popup", "none")
 }
 
-// Initialisation fichier score
+// Envoie fichier score
 async function scoreSaved(newData) {
 
     try {
