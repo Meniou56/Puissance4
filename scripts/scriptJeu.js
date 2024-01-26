@@ -25,6 +25,7 @@
 
     /* Variable globales pour le mode Online*/
     let onlinePlayer
+    let jeuOnline
 
     /*Démarrage mode Online*/
     if(modeOnline){
@@ -34,6 +35,21 @@
 /***************/
 /* Jeux online */
 /***************/
+
+/*****************************/
+/* FONCTIONS EN COURS DE JEU */
+/*****************************/
+
+/*Lancement de la partie */
+/*function launchOnlineGame(){
+
+}*/
+
+
+/******************************************/
+/* FONCTIONS DE COMMUNICATION AVEC LA BDD */
+/******************************************/
+
 // Fonction de chargement du jeu online JSON
 async function chargerJeuOnline() {
     try {
@@ -57,8 +73,7 @@ async function chargerJeuOnline() {
 
 // Fonction pour attendre que le jeu en ligne soient effectivement chargées avant chargement des données de jeu
 async function initialiseLoadOnline() {
-    let jeuOnline = await chargerJeuOnline()
-
+    jeuOnline = await chargerJeuOnline()
     if(!jeuOnline.length || jeuOnline.length === 2){
         onlinePlayer = "red"
         activeClickOver()
@@ -72,10 +87,18 @@ async function initialiseLoadOnline() {
     }
 }
 
-function startOnlineGame(playerOnlineName){
-    displayOnlineName(playerOnlineName)
+
+/***************************************************/
+/* FONCTIONS DE LANCEMENT ET INITIALISATION PARTIE */
+/***************************************************/
+
+/* Fonction d'attente d'autres joueurs ?*/
+function startCheckForGame(playerOnlineName){
+    //displayOnlineName(playerOnlineName)
+    chooseOnlineGame(playerOnlineName, jeuOnline)
 }
 
+/* Fonction d'atttribution de joueur */
 function displayOnlineName(name){
     if(onlinePlayer === "red"){
         let nameOnBoard = document.getElementById("Player1")

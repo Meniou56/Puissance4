@@ -40,7 +40,7 @@ function validerNom(form, validerButton, input) {
                 /* On renvoie la valeur de l'input (le nom saisie) */
                 eraseMessage()
                 hidePopup()
-                startOnlineGame(input.value)
+                startCheckForGame(input.value)
 
             }else{
                 alertMessage("veuillez saisir au moins un caractère", "--couleurMenuAlerte")
@@ -80,11 +80,14 @@ function annuler(cancelButton) {
             /*On prévient le rafraichissement de la page */
             event.preventDefault()
 
-            /*Si Online, retour au menu*/
-            if(modeOnline){window.location.href='index.php'}
-
             /* on efface le message */
             eraseMessage()
+            hidePopup()
+
+            /*Si Online, retour au menu*/
+            if(modeOnline){
+                window.location.href='index.php'
+            }
 
             /* Puis on reviens au menu précédent */
             messageVictoire()
@@ -156,6 +159,56 @@ async function messageVictoire(winnerPopup) {
     pPopup.innerText = `${couleurWinner} a aligné 4 jetons`
     replayButton.innerText = "Rejouer"
     saveButton.innerText = "Enregistrer"
+
+    /*Afficher le popup*/
+    showPopup.style.display = "block"
+
+    /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
+    playAgain()
+
+    /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
+    saveScore()
+
+}
+
+/* Message attente partie en ligne */
+async function chooseOnlineGame(PlayerOne, partyList) {
+
+    /* récuperer le popup, le titre et le paragraphe */
+    let showPopup = document.getElementById("popup")
+    let h3Popup = showPopup.querySelector("h3")
+    let pPopup = showPopup.querySelector("p")
+    let replayButton = showPopup.querySelector("#replay")
+    let saveButton = showPopup.querySelector("#save")
+
+    /* Chargement des zones de textes et boutons */
+    if(!h3Popup){h3Popup = document.createElement("h3")}
+    if(!pPopup){pPopup = document.createElement("p")}
+    if(!replayButton){
+        replayButton = document.createElement("button")
+        replayButton.id = "replay"
+    }
+    if(!saveButton){
+        saveButton = document.createElement("button")
+        saveButton.id = "save"
+    }
+
+    /* Raccordement au DOM */
+    showPopup.appendChild(h3Popup)
+    showPopup.appendChild(pPopup)
+    showPopup.appendChild(replayButton)
+    showPopup.appendChild(saveButton)
+
+    /* Incorporer les nouveaux textes et couleur */
+    h3Popup.innerText = "Partie en ligne"
+    for(i = 0; i < partyList.length; i++){
+        pPopup.innerText = PlayerOne + " VS " + partyList[i].user
+    }
+
+
+    //pPopup.innerText = partyList.length
+    replayButton.innerText = "Lancer"
+    saveButton.innerText = "Retour"
 
     /*Afficher le popup*/
     showPopup.style.display = "block"
