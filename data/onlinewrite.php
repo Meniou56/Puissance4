@@ -28,7 +28,7 @@ try {
 
         if ($action == 'updateUser1') {
             // Action pour mise à jour de user1
-            $user1 = $donnees['user1'] ?? null;
+            $user1 = $donnees['user1'] ?? 'user1';
             $userId = $donnees['ID']; 
 
             try {

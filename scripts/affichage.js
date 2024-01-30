@@ -173,7 +173,7 @@ async function messageVictoire(winnerPopup) {
 }
 
 /* Message attente partie en ligne */
-async function chooseOnlineGame(PlayerOne, partyList) {
+async function chooseOnlineGame(PlayerOne) {
 
     /* récuperer le popup, le titre et le paragraphe */
     let showPopup = document.getElementById("popup")
@@ -202,12 +202,16 @@ async function chooseOnlineGame(PlayerOne, partyList) {
 
     /* Incorporer les nouveaux textes et couleur */
     h3Popup.innerText = "Partie en ligne"
-    for(i = 0; i < partyList.length; i++){
-        pPopup.innerText = PlayerOne + " VS " + partyList[i].user
+
+    //Nom des joueurs
+    if(playerRed){
+        pPopup.innerText = PlayerOne + " VS " + serverSQL.user2
+    } else if(playerYellow){
+        pPopup.innerText = serverSQL.user1 + " VS " + PlayerOne
+    } else {
+        pPopup.innerText = "Erreur"
     }
 
-
-    //pPopup.innerText = partyList.length
     replayButton.innerText = "Lancer"
     saveButton.innerText = "Retour"
 

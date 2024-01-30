@@ -26,7 +26,7 @@
     /* Variable globales pour le mode Online*/
     let playerRed = false
     let playerYellow = false
-    let jeuOnline
+    let serverSQL
 
     /*Démarrage mode Online*/
     if(modeOnline){
@@ -75,20 +75,23 @@ async function chargerJeuOnline() {
 
 // Fonction pour attendre que le jeu en ligne soient effectivement chargées avant chargement des données de jeu
 async function initialiseLoadOnline() {
-    jeuOnline = await chargerJeuOnline()
+    let jeuOnline = await chargerJeuOnline()
 
-    // Boucle si trop de partie à créer (retour)
+    // On enregistre la ligne qui servira pour toute la partie
+    serverSQL = jeuOnline[jeuOnline.length-1]
 
-    //Si jeuOnline est vide ou si partie pleine, il faut créer une partie (sauf si déjà plus de 100 parties!)
-    if(jeuOnline.length === 0 || jeuOnline[jeuOnline.length-1].user2 !== "waiting"){
+    //Si jeuOnline est vide ou si partie pleine, il faut créer une partie
+    if(jeuOnline.length === 0 || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting")){
         let chargeUtile = chargeUtileNewParty()
         await writingInSQL(chargeUtile)
-    
+        initialiseLoadOnline() // On recharge à nouveau jeuOnline
+    }
+
     // On check la dernière ligne de BDD (dernière partie créée)
-    } else if(jeuOnline[jeuOnline.length-1].user1 === "waiting"){
+    if(serverSQL.user1 === "waiting"){
         playerRed = true
         formNomJoueur("Nom de joueur")
-    } else if (jeuOnline[jeuOnline.length-1].user1 !== "waiting"){
+    } else if (serverSQL.user2 === "waiting"){
         playerYellow = true
         formNomJoueur("Nom de joueur")
     }
@@ -129,8 +132,8 @@ function chargeUtileNewParty(){
 
 /* Fonction d'initialisation d'enregistrement du nom dans la BDD */
 async function savingOnlineName(name){
-    chargeUtileName(name)
-    await writingInSQL(chargeUtileName)
+    let chargeUtile = chargeUtileName(name)
+    await writingInSQL(chargeUtile)
 }
 
 
@@ -145,13 +148,13 @@ function chargeUtileName(name){
         newData = {
             "action": "updateUser1",
             "user1": name,
-            "ID": jeuOnline[jeuOnline.length-1].ID//a vérif
+            "ID": serverSQL.ID//a vérif
         }
     }else if(playerYellow){
         newData = {
             "action": "updateUser2",
             "user1": name,
-            "ID": jeuOnline[jeuOnline.length-1].ID//a vérif
+            "ID": serverSQL.ID//a vérif
         }
     }else{
         console.log("Erreur lors de l'envoie du nom à la BDD")
@@ -187,7 +190,7 @@ async function writingInSQL(newData) {
 /* Fonction d'attente d'autres joueurs ?*/
 function startCheckForGame(playerOnlineName){
     displayOnlineName(playerOnlineName)
-    chooseOnlineGame(playerOnlineName, jeuOnline)
+    chooseOnlineGame(playerOnlineName)
 }
 
 /* Fonction d'atttribution de joueur */
