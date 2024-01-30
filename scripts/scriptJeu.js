@@ -42,40 +42,9 @@
 /* FONCTIONS EN COURS DE JEU */
 /*****************************/
 
-/*Lancement de la partie */
-function launchOnlineGame(){
-    console.log(ok)
-}
-
-
-/******************************************/
-/* FONCTIONS DE COMMUNICATION AVEC LA BDD */
-/******************************************/
-
-// Fonction de chargement du jeu online JSON
-async function chargerJeuOnline() {
-    try {
-
-        // Chargement des données de l'API
-        const response = await fetch('data/onlineread.php?_ts=' + new Date().getTime());
-
-        if(!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`)
-        }
-
-        // Transformation en JSON
-        const donnes = await response.json()
-        return donnes
-
-        // Si erreur :
-    } catch (erreur) {
-        console.error('Erreur lors du chargement des données', erreur)
-    }
-}
-
-// Fonction pour attendre que le jeu en ligne soient effectivement chargées avant chargement des données de jeu
+// Fonction pour charger les parties, en trouver une ou la créer, puis demander le nom de joueur
 async function initialiseLoadOnline() {
-    let jeuOnline = await chargerJeuOnline()
+    let jeuOnline = await readSQL("ALL")
 
     // On enregistre la ligne qui servira pour toute la partie
     serverSQL = jeuOnline[jeuOnline.length-1]
@@ -96,6 +65,38 @@ async function initialiseLoadOnline() {
         formNomJoueur("Nom de joueur")
     }
 }
+
+/******************************************/
+/* FONCTIONS DE COMMUNICATION AVEC LA BDD */
+/******************************************/
+    /************/
+    /*EN LECTURE*/
+    /************/
+
+    /* Fonction de maj des informations depuis la BDD */
+    async function readSQL(ID){
+        try {
+
+            // Chargement des données correspondant à l'ID
+            const response = await fetch('data/onlineread.php?id=' + ID + '&_=' + new Date().getTime()) //Pour être sur que les données sont maj
+
+            if(!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`)
+            }
+
+            // Transformation en JSON
+            const donnees = await response.json()
+            return donnees
+
+        } catch (erreur) {
+            console.error('Erreur lors du chargement des données', erreur)
+        }
+    }
+
+
+/***************/
+/* EN ECRITURE */
+/***************/
 
 // Construction de la charge utile à envoyer pour la création d'une nouvelle partie
 function chargeUtileNewParty(){
@@ -148,13 +149,13 @@ function chargeUtileName(name){
         newData = {
             "action": "updateUser1",
             "user1": name,
-            "ID": serverSQL.ID//a vérif
+            "ID": serverSQL.ID
         }
     }else if(playerYellow){
         newData = {
             "action": "updateUser2",
             "user1": name,
-            "ID": serverSQL.ID//a vérif
+            "ID": serverSQL.ID
         }
     }else{
         console.log("Erreur lors de l'envoie du nom à la BDD")
@@ -187,25 +188,40 @@ async function writingInSQL(newData) {
 /* FONCTIONS DE LANCEMENT ET INITIALISATION PARTIE */
 /***************************************************/
 
-/* Fonction d'attente d'autres joueurs ?*/
-function startCheckForGame(playerOnlineName){
-    displayOnlineName(playerOnlineName)
-    chooseOnlineGame(playerOnlineName)
+/* Fonction d'attente d'autres joueurs/maj joueurs ? ?*/
+async function startCheckForGame(){
+
+    //Maj des informations pour avoir les noms
+    let newServerSQL = await readSQL(serverSQL.ID)
+    serverSQL = newServerSQL[0]
+    displayBoardName()
+    waitingOnlineWindow()
+
+    //On vérifie si tout à été maj
+    if(serverSQL.user1 !=="waiting" && serverSQL.user2 !=="waiting"){
+        document.querySelector("#replay").disabled = false
+        //suitedelapartieafaire()
+    } else {
+        console.log(serverSQL)
+        await paused(2500)
+        startCheckForGame()
+    }
 }
 
 /* Fonction d'atttribution de joueur */
-function displayOnlineName(name){
-    if(playerRed){
-        let nameOnBoard = document.getElementById("Player1")
-        nameOnBoard.style.color = "red" 
-        nameOnBoard.innerText = name
-    }else if (playerYellow){
-        let nameOnBoard = document.getElementById("Player2")
-        nameOnBoard.style.color = "yellow"
-        nameOnBoard.innerText = name
-    }else{
-        alertMessage("Erreur affichage nom de joueur", "--couleurMenuAlerte")
-    }
+function displayBoardName(){
+
+        //Récupération des emplacements d'affichage
+        let nameOnBoardPlayer1 = document.getElementById("Player1")
+        let nameOnBoardPlayer2 = document.getElementById("Player2")
+
+        //Attribution des couleurs
+        nameOnBoardPlayer1.style.color = "red" 
+        nameOnBoardPlayer2.style.color = "yellow"
+
+        // Changement des noms
+        nameOnBoardPlayer1.innerText = serverSQL.user1
+        nameOnBoardPlayer2.innerText = serverSQL.user2
 }
 
 

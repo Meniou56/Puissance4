@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 // On récupère la configuration
 require_once(__DIR__ . '/../config/mysql.php');
 
-// Connexion à la BDD...
+// Connexion à la BDD
 try {
     $mysqlClient = new PDO(
         sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8', MYSQL_HOST, MYSQL_NAME, MYSQL_PORT),
@@ -19,8 +19,27 @@ try {
     );
     $mysqlClient->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // On récupère les données
-    $stmt = $mysqlClient->query("SELECT * FROM jeuonline");
+    // On récupère les paramètres concernant la ou les parties à récuperer
+    $id = $_GET['id'] ?? null;
+
+    if($id === 'ALL'){
+
+        // On récupère les données de toute la table jeuOnline
+        $stmt = $mysqlClient->query("SELECT * FROM jeuonline");
+    } else {
+
+        // Validation et nettoyage de l'ID
+        if (!is_numeric($id) || $id <= 0) {
+            throw new Exception("ID invalide");
+        }
+
+        //Préparation de la requête pour la partie spécifiée
+        $stmt = $mysqlClient->prepare("SELECT * FROM jeuonline WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    // On récupère les résultats
     $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Transformation en JSON
