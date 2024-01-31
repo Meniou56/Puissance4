@@ -57,12 +57,16 @@ async function initialiseLoadOnline() {
     }
 
     // On check la dernière ligne de BDD (dernière partie créée)
-    if(serverSQL.user1 === "waiting"){
+    if(serverSQL.user1 === "waiting"){ //ajouter une condition type (dernière partie créé il y a moins de 30")???
         playerRed = true
         formNomJoueur("Nom de joueur")
     } else if (serverSQL.user2 === "waiting"){
         playerYellow = true
         formNomJoueur("Nom de joueur")
+    } else {
+        // Si problème majeur, on signale et on recommence
+        alertMessage("Erreur au chargement de la partie")
+        initialiseLoadOnline()
     }
 }
 
@@ -228,7 +232,10 @@ async function startCheckForGame(){
             replayButton.innerText = "Prêt ?"
             replayButton.style.backgroundColor = "green"
 
-            //La partie a été lancée ?
+            //La partie a été lancée pour jaune ?
+            if(serverSQL.etat === "launched"){
+                launchingOnlineGame()
+                } 
 
             //Sinon, on recharge depuis la BDD après 2,5s
             await paused(2500)
@@ -272,8 +279,8 @@ async function launchingOnlineGame(){
         await writingInSQL(chargeLaunch)
         console.log("partie lancée")
     }
-
-    //code
+    displayIDElement("popup", "none")
+    //displayCountdown()
 }
 
 
