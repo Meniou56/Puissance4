@@ -191,6 +191,14 @@ function waitingOnlineWindow() {
         replayButton = document.createElement("button")
         replayButton.id = "replay"
     }
+
+    //Remise en forme si nécessaire
+    if(replayButton.style.border === "none" || replayButton.style.boxShadow === "none"){
+        replayButton.style.border = "3px solid RGBA(185, 159, 108, 0.8)"
+        replayButton.style.boxShadow = "5px 5px 20px 1px rgb(125, 125, 125)"
+        replayButton.style.backgroundColor = "RGB(205, 179, 128)"
+    }
+
     if(!saveButton){
         saveButton = document.createElement("button")
         saveButton.id = "save"
@@ -207,20 +215,50 @@ function waitingOnlineWindow() {
 
     //Nom des joueurs et boutons
     pPopup.innerText = serverSQL.user1 + " VS " + serverSQL.user2
-    replayButton.innerText = "Lancer"
+    if(playerRed){
+            replayButton.innerText = "Lancer"
+    }
+    if(playerYellow){
+            replayButton.innerText = "En attente"
+            replayButton.style.backgroundColor = "orange"
+            replayButton.style.border = "none"
+            replayButton.style.boxShadow = "none"
+    }
     replayButton.disabled = true
-    saveButton.innerText = "Retour"
+    saveButton.innerText = "Quitter"
 
     /*Afficher le popup*/
     showPopup.style.display = "block"
 
-    /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
-    playAgain()
+    /* Bouton de lancement de la partie */
+    waitLauningchOnlineGame()
 
-    /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
-    saveScore()
+    /* Bouton pour quitter la partie */
+    leavingGame()
 
 }
+
+//Fonction de lancement de la partie en ligne
+function waitLauningchOnlineGame() {
+
+
+    /* On écoute le bouton de lancement */
+    const buttonReplayClic = document.querySelector("#popup #replay")
+        
+        /* Le bouton a bien été récupéré ? */
+        if (buttonReplayClic) {
+
+            /* S'il y a clic... on appel la fonction de lancement */
+            buttonReplayClic.addEventListener("click", () => {
+
+                /*Lancement de la partie*/
+                launchingOnlineGame()
+                }
+            )
+        } else {
+            alertMessage("Erreur : bouton de lancement n'ont récupéré", "--couleurMenuAlerte")
+        }
+    }  
 
 /* Message en cas d'égalité */
 async function messageWithButton(messageContent) {

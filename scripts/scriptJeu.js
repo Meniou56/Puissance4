@@ -154,11 +154,32 @@ function chargeUtileName(name){
     }else if(playerYellow){
         newData = {
             "action": "updateUser2",
-            "user1": name,
+            "user2": name,
             "ID": serverSQL.ID
         }
     }else{
         console.log("Erreur lors de l'envoie du nom à la BDD")
+    }
+    return newData
+}
+
+// Construction charge utile lancement de partie
+function chargeUtileLaunch(){
+
+    // Variable charge utile
+    let newData
+
+    // Chargement des paramètres
+    if(playerRed){
+        newData = {
+            "action": "updateEtat",
+            "etat": "launched",
+            "ID": serverSQL.ID
+        }
+
+    // En cas d'erreur
+    }else{
+        console.log("Erreur lors de l'envoie du lancement au niveau de la BDD")
     }
     return newData
 }
@@ -184,9 +205,9 @@ async function writingInSQL(newData) {
     }
 }
 
-/***************************************************/
-/* FONCTIONS DE LANCEMENT ET INITIALISATION PARTIE */
-/***************************************************/
+/**********************************************************/
+/* FONCTIONS DE LANCEMENT ET INITIALISATION PARTIE ONLINE */
+/**********************************************************/
 
 /* Fonction d'attente d'autres joueurs/maj joueurs ? ?*/
 async function startCheckForGame(){
@@ -199,8 +220,26 @@ async function startCheckForGame(){
 
     //On vérifie si tout à été maj
     if(serverSQL.user1 !=="waiting" && serverSQL.user2 !=="waiting"){
-        document.querySelector("#replay").disabled = false
-        //suitedelapartieafaire()
+        
+        //Si joueur jaune, maj du bouton d'attente
+        if(playerYellow){
+            let showPopup = document.getElementById("popup")
+            let replayButton = showPopup.querySelector("#replay")
+            replayButton.innerText = "Prêt ?"
+            replayButton.style.backgroundColor = "green"
+
+            //La partie a été lancée ?
+
+            //Sinon, on recharge depuis la BDD après 2,5s
+            await paused(2500)
+            startCheckForGame()
+        }
+
+        //Si joueur rouge, prêt à lancer la partie
+        if(playerRed){
+            document.querySelector("#replay").disabled = false
+        }
+
     } else {
         console.log(serverSQL)
         await paused(2500)
@@ -224,7 +263,18 @@ function displayBoardName(){
         nameOnBoardPlayer2.innerText = serverSQL.user2
 }
 
+//Fonction de lancement de la partie
+async function launchingOnlineGame(){
 
+    //Envoie de l'information à jaune
+    if(playerRed){
+        let chargeLaunch = await chargeUtileLaunch()
+        await writingInSQL(chargeLaunch)
+        console.log("partie lancée")
+    }
+
+    //code
+}
 
 
     /**********************

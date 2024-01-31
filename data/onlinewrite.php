@@ -26,9 +26,22 @@ try {
         $donnees = json_decode(file_get_contents('php://input'), true);
         $action = $donnees['action'] ?? 'insert';
 
-        if ($action == 'updateUser1') {
+        if($action == 'updateEtat'){
+            //Action pour mise à jour de l'etat de la partie
+            $etat = $donnees['etat'] ?? null;
+            $userId = $donnees['ID'];
+
+            try{
+                $statement = $mysqlClient->prepare("UPDATE jeuonline SET etat = :etat WHERE ID = :ID");
+                $statement->execute(['etat' => $etat, 'ID' => $userId]);
+                echo json_encode(['success' => 'Etat mis à jour']);
+            } catch (PDOException $exception) {
+                http_response_code(500);
+                echo json_encode(['error' => $exception->getMessage()]);
+            }
+        } else if ($action == 'updateUser1') {
             // Action pour mise à jour de user1
-            $user1 = $donnees['user1'] ?? 'user1';
+            $user1 = $donnees['user1'] ?? null;
             $userId = $donnees['ID']; 
 
             try {
@@ -41,12 +54,12 @@ try {
             }
         } else if ($action == 'updateUser2') { 
               // Action pour mise à jour de user2
-            $user1 = $donnees['user1'] ?? null;
+            $user2 = $donnees['user2'] ?? null;
             $userId = $donnees['ID']; 
 
             try {
                 $statement = $mysqlClient->prepare("UPDATE jeuonline SET user2 = :user2 WHERE ID = :ID");
-                $statement->execute(['user2' => $user1, 'ID' => $userId]);
+                $statement->execute(['user2' => $user2, 'ID' => $userId]);
                 echo json_encode(['success' => 'Utilisateur mis à jour.']);
             } catch (PDOException $exception) {
                 http_response_code(500);
