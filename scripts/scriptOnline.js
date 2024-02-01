@@ -239,13 +239,15 @@ async function waitingTurn(who){
     }
 }
 
-/* Fonction d'attente d'autres joueurs/maj joueurs ? ?*/
+/* Fonction d'attente d'autres joueurs/maj joueurs */
 async function startCheckForGame(){
 
     //Maj des informations pour avoir les noms
     await checkBDDGame()
     displayBoardName()
-    waitingOnlineWindow()
+
+    //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
+    if(serverSQL.etat ==="prepare"){waitingOnlineWindow()}
 
     //On vérifie si tout à été maj // UN truc à vérifier par ici ???
     if(serverSQL.user1 !=="waiting" && serverSQL.user2 !=="waiting"){
