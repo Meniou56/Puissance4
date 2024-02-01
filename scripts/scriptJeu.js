@@ -220,12 +220,21 @@ function desactiverSouris(duration) {
                             isTableFull()
                             detectionAlignement()
 
-                            /* Check if it's to computer to play */
+                            // Or if it's to online player
                             if(playerRed || playerYellow){
                                 updateGame(i, colonne, nouvelleCouleur)
                                 desactiveClickOver()
+                                if(playerRed){
+                                    console.log("au tour de jaune")
+                                    waitingTurn("rturn")
+                                }else if(playerYellow){
+                                    console.log("au tour de rouge")
+                                    waitingTurn("yturn")
+                                }else{
+                                    console.log("problème dans la boucle de détection des tours online")
+                                }
                           
-                            // Or if it's to online player
+                            /* Check if it's to computer to play */
                             } else if(gameOnOff){
                                 isComputerTurn(nouvelleCouleur)
                             }

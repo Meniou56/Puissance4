@@ -214,7 +214,7 @@ async function checkBDDGame(){
     return serverSQL
 }
 
-//Fonction de gestion d'activation du tour de chaque joueur
+//Fonction de gestion d'activation du tour de chaque joueur ???Condition d'évolution à trouver???
 async function waitingTurn(who){
     serverSQL = await checkBDDGame()
 
@@ -222,19 +222,41 @@ async function waitingTurn(who){
     if(serverSQL.etat === who){
 
         //On récupère les informations de jetons inséré
-        if(who=== "yturn"){
+        if(who==="yturn"){
+            //Mise à jour du jeu
             rafraichirTablJeu(serverSQL.row1, serverSQL.col1, "red")
+            
+            /* Et on change de joueur */
+            changePlayer()
+
+            /* On vérifie si c'est la fin du jeu */
+            isTableFull()
+            detectionAlignement()
+
+            /* Et on active le tour de jaune */
             activeClickOver()
+
         } else if(who==="rturn"){
+            //Mise à jour du jeu
             rafraichirTablJeu(serverSQL.row2, serverSQL.col2, "yellow")
+            
+            /* Et on change de joueur */
+            changePlayer()
+
+            /* On vérifie si c'est la fin du jeu */
+            isTableFull()
+            detectionAlignement()
+
+            /* Et on active le tour de jaune */
             activeClickOver()
+
         } else {
             alertMessage("erreur BDD : insertion pion", "--couleurMenuAlerte")
         }
     } else {
 
         //Si ce n'est pas le tour de ce joueur, on patiente encore
-        await paused(2500)
+        await paused(800)
         waitingTurn(who)
     }
 }
@@ -249,7 +271,7 @@ async function startCheckForGame(){
     //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
     if(serverSQL.etat ==="prepare"){waitingOnlineWindow()}
 
-    //On vérifie si tout à été maj // UN truc à vérifier par ici ???
+    //On vérifie si tout à été maj
     if(serverSQL.user1 !=="waiting" && serverSQL.user2 !=="waiting"){
         
         //Si joueur jaune, maj du bouton d'attente
@@ -265,7 +287,7 @@ async function startCheckForGame(){
                 } 
 
             //Sinon, on recharge depuis la BDD après 2,5s
-            await paused(2500)
+            await paused(1500)
             startCheckForGame()
         }
 
