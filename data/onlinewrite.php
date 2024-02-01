@@ -39,6 +39,46 @@ try {
                 http_response_code(500);
                 echo json_encode(['error' => $exception->getMessage()]);
             }
+
+        } else if ($action == 'updateGameYellow') { 
+            // Action pour mise à jour du jeu après une action de jaune
+          $etat = $donnees['etat'];
+          $row2 = $donnees['row2'];
+          $col2 = $donnees['col2'];
+          $userId = $donnees['ID']; 
+
+          try {
+              $statement = $mysqlClient->prepare("UPDATE jeuonline SET etat = :etat, row2 = :row2, col2 = :col2 WHERE ID = :ID");
+              $statement->execute([
+                'etat' => $etat,
+                'row2' => $row2,
+                'col2' => $col2,
+                'ID' => $userId]);
+              echo json_encode(['success' => 'tableau mis à jour après que jaune est joué']);
+          } catch (PDOException $exception) {
+              http_response_code(500);
+              echo json_encode(['error' => $exception->getMessage()]);
+          }
+        } else if ($action == 'updateGameRed') { 
+            // Action pour mise à jour du jeu après une action de rouge
+            $etat = $donnees['etat'];
+            $row1 = $donnees['row1'];
+            $col1 = $donnees['col1'];
+            $userId = $donnees['ID']; 
+  
+            try {
+                $statement = $mysqlClient->prepare("UPDATE jeuonline SET etat = :etat, row1 = :row1, col1 = :col1 WHERE ID = :ID");
+                $statement->execute([
+                  'etat' => $etat,
+                  'row1' => $row1,
+                  'col1' => $col1,
+                  'ID' => $userId]);
+                echo json_encode(['success' => 'tableau mis à jour après que rouge est joué']);
+            } catch (PDOException $exception) {
+                http_response_code(500);
+                echo json_encode(['error' => $exception->getMessage()]);
+            }
+
         } else if ($action == 'updateUser1') {
             // Action pour mise à jour de user1
             $user1 = $donnees['user1'] ?? null;
@@ -52,6 +92,7 @@ try {
                 http_response_code(500);
                 echo json_encode(['error' => $exception->getMessage()]);
             }
+
         } else if ($action == 'updateUser2') { 
               // Action pour mise à jour de user2
             $user2 = $donnees['user2'] ?? null;
@@ -65,6 +106,7 @@ try {
                 http_response_code(500);
                 echo json_encode(['error' => $exception->getMessage()]);
             }
+
         } else {
             // Logique pour l'insertion
             try {

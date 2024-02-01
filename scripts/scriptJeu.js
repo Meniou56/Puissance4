@@ -1,309 +1,69 @@
-/***********************
- * Boucle d'une partie *
- ***********************/
+/*****************
+ * Mise en place *
+ *****************/
 
-    /*****************
-     * Mise en place *
-     *****************/
+/* On commence par créer les tableaux de jeu JS*/
+let tablJeu = creationTableau(6, 7, '')
 
-    /* On commence par créer les tableaux de jeu JS*/
-    let tablJeu = creationTableau(6, 7, '')
+/* Définir l'alternance des joueurs en commencant par le rouge */
+let aQuiLeTour = "--couleurJ1"
 
-    /* Définir l'alternance des joueurs en commencant par le rouge */
-    let aQuiLeTour = "--couleurJ1"
+/* Définir les variables globales pour compter chaque coup*/
+let coupJ1 = 0
+let coupJ2 = 0
+let coupPlayer = 0
 
-    /* Définir les variables globales pour compter chaque coup*/
-    let coupJ1 = 0
-    let coupJ2 = 0
-    let coupPlayer = 0
+// Définir si l'IA joue
+let IAplaying = false
 
-    // Définir si l'IA joue
-    let IAplaying = false
+/* On active la boucle principale */
+let gameOnOff = true
 
-    /* On active la boucle principale */
-    let gameOnOff = true
+/* Variable globales pour le mode Online*/
+let playerRed = false
+let playerYellow = false
+let serverSQL
 
-    /* Variable globales pour le mode Online*/
-    let playerRed = false
-    let playerYellow = false
-    let serverSQL
+/**************
+ * Démarrage  *
+ **************/
 
-    /*Démarrage mode Online*/
+/* Démarrage en fonction des modes */
+
+    /*Initialisation si mode Online*/
     if(modeOnline){
         displayIDElement("TableauVS", "inline")
         initialiseLoadOnline()
-    }
-
-/***************/
-/* Jeux online */
-/***************/
-
-/*****************************/
-/* FONCTIONS EN COURS DE JEU */
-/*****************************/
-
-// Fonction pour charger les parties, en trouver une ou la créer, puis demander le nom de joueur
-async function initialiseLoadOnline() {
-    let jeuOnline = await readSQL("ALL")
-
-    // On enregistre la ligne qui servira pour toute la partie
-    serverSQL = jeuOnline[jeuOnline.length-1]
-
-    //Si jeuOnline est vide ou si partie pleine, il faut créer une partie
-    if(jeuOnline.length === 0 || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting")){
-        let chargeUtile = chargeUtileNewParty()
-        await writingInSQL(chargeUtile)
-        initialiseLoadOnline() // On recharge à nouveau jeuOnline
-    }
-
-    // On check la dernière ligne de BDD (dernière partie créée)
-    if(serverSQL.user1 === "waiting"){ //ajouter une condition type (dernière partie créé il y a moins de 30")???
-        playerRed = true
-        formNomJoueur("Nom de joueur")
-    } else if (serverSQL.user2 === "waiting"){
-        playerYellow = true
-        formNomJoueur("Nom de joueur")
     } else {
-        // Si problème majeur, on signale et on recommence
-        alertMessage("Erreur au chargement de la partie")
-        initialiseLoadOnline()
+        startingGame()
     }
-}
 
-/******************************************/
-/* FONCTIONS DE COMMUNICATION AVEC LA BDD */
-/******************************************/
-    /************/
-    /*EN LECTURE*/
-    /************/
+    //Lancement et information 1er joueur
+    function startingGame(){
 
-    /* Fonction de maj des informations depuis la BDD */
-    async function readSQL(ID){
-        try {
+        //Rouge commence
+        if((modeOnline && playerRed) || modeSolo){
+            setTimeout( ()=> {
+                alertMessage("Vous commencez", "--couleurMenu")
+            }, 900)
+            activeClickOver()
 
-            // Chargement des données correspondant à l'ID
-            const response = await fetch('data/onlineread.php?id=' + ID + '&_=' + new Date().getTime()) //Pour être sur que les données sont maj
+        // Jaune commence
+        } else if (!modeSolo){
+            setTimeout( ()=> {
+                alertMessage("Rouge commence", "--couleurMenuRed")
+            }, 900)
 
-            if(!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`)
+            //Si on est pas en mode Online, jaune doit pouvoir jouer aussi (playerYellow est défini uniquement en mode online)
+            if(!playerYellow){
+                activeClickOver()
+
+            //Attendre que rouge ai joué
+            } else {
+                waitingTurn("yturn")
             }
-
-            // Transformation en JSON
-            const donnees = await response.json()
-            return donnees
-
-        } catch (erreur) {
-            console.error('Erreur lors du chargement des données', erreur)
         }
     }
-
-
-/***************/
-/* EN ECRITURE */
-/***************/
-
-// Construction de la charge utile à envoyer pour la création d'une nouvelle partie
-function chargeUtileNewParty(){
-    const actualTime = new Date()
-
-    //Transformation de la date en format datetime(SQL)
-    function padTo2Digits(num) {
-        return num.toString().padStart(2, '0')
-    }
-
-    const formattedDateTime = actualTime.getFullYear() + '-' +
-        padTo2Digits(actualTime.getMonth() + 1) + '-' +
-        padTo2Digits(actualTime.getDate()) + ' ' +
-        padTo2Digits(actualTime.getHours()) + ':' +
-        padTo2Digits(actualTime.getMinutes()) + ':' +
-        padTo2Digits(actualTime.getSeconds())
-
-    // Chargement des paramètres
-    const newData = {
-        "action": "insert",
-        "date": formattedDateTime,
-        "user1": "waiting",
-        "user2": "waiting",
-        "row1" : -1,
-        "col1" : -1,
-        "row2" : -1,
-        "col2" : -1,
-        "etat" : "prepare"
-    }
-
-    // Retour de charge utile
-    return newData
-}
-
-/* Fonction d'initialisation d'enregistrement du nom dans la BDD */
-async function savingOnlineName(name){
-    let chargeUtile = chargeUtileName(name)
-    await writingInSQL(chargeUtile)
-}
-
-
-// Construction charge utile des noms dans la BDD
-function chargeUtileName(name){
-
-    // Variable charge utile
-    let newData
-
-    // Chargement des paramètres
-    if(playerRed){
-        newData = {
-            "action": "updateUser1",
-            "user1": name,
-            "ID": serverSQL.ID
-        }
-    }else if(playerYellow){
-        newData = {
-            "action": "updateUser2",
-            "user2": name,
-            "ID": serverSQL.ID
-        }
-    }else{
-        console.log("Erreur lors de l'envoie du nom à la BDD")
-    }
-    return newData
-}
-
-// Construction charge utile lancement de partie
-function chargeUtileLaunch(){
-
-    // Variable charge utile
-    let newData
-
-    // Chargement des paramètres
-    if(playerRed){
-        newData = {
-            "action": "updateEtat",
-            "etat": "launched",
-            "ID": serverSQL.ID
-        }
-
-    // En cas d'erreur
-    }else{
-        console.log("Erreur lors de l'envoie du lancement au niveau de la BDD")
-    }
-    return newData
-}
-
-// Fonction d'envoie de données de partie vers SQL
-async function writingInSQL(newData) {
-
-    try {
-        // Ecriture des nouvelles données
-        const reponse = await fetch('./data/onlinewrite.php', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newData)
-        })
-
-        // Vérification
-        if (!reponse.ok) {
-            throw new Error(`Erreur HTTP: ${reponse.status}`)
-        }
-
-    } catch (erreur) {
-        console.error('Erreur lors de l\'envoie des données', erreur)
-    }
-}
-
-/**********************************************************/
-/* FONCTIONS DE LANCEMENT ET INITIALISATION PARTIE ONLINE */
-/**********************************************************/
-
-/* Fonction d'attente d'autres joueurs/maj joueurs ? ?*/
-async function startCheckForGame(){
-
-    //Maj des informations pour avoir les noms
-    let newServerSQL = await readSQL(serverSQL.ID)
-    serverSQL = newServerSQL[0]
-    displayBoardName()
-    waitingOnlineWindow()
-
-    //On vérifie si tout à été maj
-    if(serverSQL.user1 !=="waiting" && serverSQL.user2 !=="waiting"){
-        
-        //Si joueur jaune, maj du bouton d'attente
-        if(playerYellow){
-            let showPopup = document.getElementById("popup")
-            let replayButton = showPopup.querySelector("#replay")
-            replayButton.innerText = "Prêt ?"
-            replayButton.style.backgroundColor = "green"
-
-            //La partie a été lancée pour jaune ?
-            if(serverSQL.etat === "launched"){
-                launchingOnlineGame()
-                } 
-
-            //Sinon, on recharge depuis la BDD après 2,5s
-            await paused(2500)
-            startCheckForGame()
-        }
-
-        //Si joueur rouge, prêt à lancer la partie
-        if(playerRed){
-            document.querySelector("#replay").disabled = false
-        }
-
-    } else {
-        console.log(serverSQL)
-        await paused(2500)
-        startCheckForGame()
-    }
-}
-
-/* Fonction d'atttribution de joueur */
-function displayBoardName(){
-
-        //Récupération des emplacements d'affichage
-        let nameOnBoardPlayer1 = document.getElementById("Player1")
-        let nameOnBoardPlayer2 = document.getElementById("Player2")
-
-        //Attribution des couleurs
-        nameOnBoardPlayer1.style.color = "red" 
-        nameOnBoardPlayer2.style.color = "yellow"
-
-        // Changement des noms
-        nameOnBoardPlayer1.innerText = serverSQL.user1
-        nameOnBoardPlayer2.innerText = serverSQL.user2
-}
-
-//Fonction de lancement de la partie
-async function launchingOnlineGame(){
-
-    //Envoie de l'information à jaune
-    if(playerRed){
-        let chargeLaunch = await chargeUtileLaunch()
-        await writingInSQL(chargeLaunch)
-        console.log("partie lancée")
-    }
-    displayIDElement("popup", "none")
-    //displayCountdown()
-}
-
-
-    /**********************
-     * Démarrage  *
-     **********************/
-
-    /* Appel des écoutes pour pouvoir jouer et inforamtion 1er joueur */
-    if(!modeSolo){
-        setTimeout( ()=> {
-            alertMessage("Rouge commence", "--couleurMenuRed")
-        }, 900)
-    }else{
-        setTimeout( ()=> {
-            alertMessage("Vous commencez", "--couleurMenu")
-        }, 900)
-    }
-
-    //Activation des possibilités de jeu
-    //if(!modeOnline || player==="red"){
-        activeClickOver()
-    //}
-    
 
 /*******************************/
 /* FONCTIONS POUR LES TABLEAUX */
@@ -451,7 +211,7 @@ function desactiverSouris(duration) {
                             tablJeu[i][colonne] = nouvelleCouleur
 
                             /* Puis on rafraichie le tableau de jeu */
-                            rafraichirTablJeu([i],[colonne], nouvelleCouleur)
+                            rafraichirTablJeu(i,colonne, nouvelleCouleur)
 
                             /* Et on change de joueur */
                             changePlayer()
@@ -461,9 +221,15 @@ function desactiverSouris(duration) {
                             detectionAlignement()
 
                             /* Check if it's to computer to play */
-                            if(gameOnOff){
+                            if(playerRed || playerYellow){
+                                updateGame(i, colonne, nouvelleCouleur)
+                                desactiveClickOver()
+                          
+                            // Or if it's to online player
+                            } else if(gameOnOff){
                                 isComputerTurn(nouvelleCouleur)
                             }
+
                             /*Sinon sortie de boucle*/
                             break
                         }
