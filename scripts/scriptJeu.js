@@ -44,18 +44,12 @@ let serverSQL
         //Rouge commence
         if((modeOnline && playerRed) || modeSolo){
             setTimeout( ()=> {
-                countdown(3)
-            }, 3200)
-            setTimeout( ()=> {
                 alertMessage("Vous commencez", "--couleurMenu")
             }, 900)
             activeClickOver()
 
         // Jaune commence
         } else if (!modeSolo){
-            setTimeout( ()=> {
-                countdown(3)
-            }, 3200)
             setTimeout( ()=> {
                 alertMessage("Rouge commence", "--couleurMenuRed")
             }, 900)
