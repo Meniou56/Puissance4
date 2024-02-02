@@ -317,30 +317,28 @@ function displayBoardName(){
 //Fonction de lancement de la partie
 async function launchingOnlineGame(){
 
-    //Envoie de l'information à jaune
-    if(playerRed){
+    //Envoie de l'information de lancement de partie
+    if(playerRed && serverSQL.etat ==="prepare"){
         let chargeLaunch = chargeUtileEtat("launched")
         await writingInSQL(chargeLaunch)
-        await paused (1800)// à remplacer par un coundown !!
+        displayIDElement("popup", "none")
+        startingGame()
+    } else if (serverSQL.etat === "launched"){
+        displayIDElement("popup", "none")
+        startingGame()
     }
-    displayIDElement("popup", "none")
-    startingGame()
 }
 
 //Fonction de mise à jour de la partie (insertion d'un pion)
 async function updateGame(row, col, color){
-
         let chargeGame = chargeUtileInGame(row, col, color)
         await writingInSQL(chargeGame)
-        console.log("je viens d'enregistrer ", color, row, col)
 }
 
 //Fonction de mise en attente de la partie
 async function updateEtatWaiting(){
     let chargeUtileE = chargeUtileEtat("waiting")
     await writingInSQL(chargeUtileE)
-    console.log("BDD en attente")
-    console.log(tablJeu)
 }
 
 /********************************/

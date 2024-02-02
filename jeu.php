@@ -11,6 +11,9 @@
 </head>
 <body>
 
+<!--Div pour le countdown-->
+    <div id="countdown">3</div>
+
 <!-- header -->
 <?php include 'pages/header.php'; ?>
 
