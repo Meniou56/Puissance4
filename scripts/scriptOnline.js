@@ -229,40 +229,22 @@ async function waitingTurn(who){
 
         //On récupère les informations de jetons inséré
         if(who==="yturn"){
-            who=""
-            console.log("début de tour jaune", gameOnOff)
-            //Mise à jour du jeu
-            console.log("je viens de lire ", serverSQL.row1, serverSQL.col1)
+
+            //Mise à jour des tableaux de jeux visuels et virtuels
+            tablJeu[serverSQL.row1][serverSQL.col1] = "red"
             rafraichirTablJeu(serverSQL.row1, serverSQL.col1, "red")
-            await updateEtatWaiting()
-            
-            /* Et on change de joueur */
-            changePlayer()
 
-            /* On vérifie si c'est la fin du jeu */
-            isTableFull()
-            detectionAlignement()
-
-            /* Et on active le tour de jaune */
-            activeClickOver()
+            //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
+            await updateClientPlayer()
 
         } else if(who==="rturn"){
-            who=""
-            console.log("début de tour rouge")
-            //Mise à jour du jeu
-            console.log("je viens de lire ", serverSQL.row2, serverSQL.col2)
+
+            // Mise à jour du jeu
+            tablJeu[serverSQL.row2][serverSQL.col2] = "yellow"
             rafraichirTablJeu(serverSQL.row2, serverSQL.col2, "yellow")
-            await updateEtatWaiting()
-            
-            /* Et on change de joueur */
-            changePlayer()
 
-            /* On vérifie si c'est la fin du jeu */
-            isTableFull()
-            detectionAlignement()
-
-            /* Et on active le tour de jaune */
-            activeClickOver()
+            //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
+            await updateClientPlayer()
 
         } else {
             alertMessage("erreur BDD : insertion pion", "--couleurMenuAlerte")
@@ -357,4 +339,27 @@ async function updateEtatWaiting(){
     let chargeUtileE = chargeUtileEtat("waiting")
     await writingInSQL(chargeUtileE)
     console.log("BDD en attente")
+    console.log(tablJeu)
+}
+
+/********************************/
+/* FONCTION CLIENT Du JEU ONLINE*/
+/********************************/
+
+//Fonction de mise à jour de la partie côté client
+async function updateClientPlayer(){
+    
+    //Réinitialisation pour éviter des erreurs asynchrones
+    await updateEtatWaiting()
+    who=""
+
+    /* Et on change de joueur */
+    changePlayer()
+
+    /* On vérifie si c'est la fin du jeu */
+    isTableFull()
+    detectionAlignement()
+
+    /* Et on active notre tour */
+    activeClickOver()
 }
