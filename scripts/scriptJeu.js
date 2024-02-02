@@ -1,52 +1,69 @@
-/***********************
- * Boucle d'une partie *
- ***********************/
+/*****************
+ * Mise en place *
+ *****************/
 
-    /*****************
-     * Mise en place *
-     *****************/
+/* On commence par créer les tableaux de jeu JS*/
+let tablJeu = creationTableau(6, 7, '')
 
-    /* On commence par créer les tableaux de jeu JS*/
-    let tablJeu = creationTableau(6, 7, '')
+/* Définir l'alternance des joueurs en commencant par le rouge */
+let aQuiLeTour = "--couleurJ1"
 
-    /* Définir l'alternance des joueurs en commencant par le rouge */
-    let aQuiLeTour = "--couleurJ1"
+/* Définir les variables globales pour compter chaque coup*/
+let coupJ1 = 0
+let coupJ2 = 0
+let coupPlayer = 0
 
-    /* Définir les variables globales pour compter chaque coup*/
-    let coupJ1 = 0
-    let coupJ2 = 0
-    let coupPlayer = 0
+// Définir si l'IA joue
+let IAplaying = false
 
-    // Définir si l'IA joue
-    let IAplaying = false
-    // let modeSolo est créé par php dans la page jeu.php
+/* On active la boucle principale */
+let gameOnOff = true
 
-    /* On active la boucle principale */
-    let gameOnOff = true
+/* Variable globales pour le mode Online*/
+let playerRed = false
+let playerYellow = false
+let serverSQL
 
-    /*TEST*/
-    if(modeOnline){console.log("je suis joueur : ", player)}
+/**************
+ * Démarrage  *
+ **************/
 
-    /**********************
-     * Démarrage  *
-     **********************/
+/* Démarrage en fonction des modes */
 
-    /* Appel des écoutes pour pouvoir jouer et inforamtion 1er joueur */
-    if(!modeSolo){
-        setTimeout( ()=> {
-            alertMessage("Rouge commence", "--couleurMenuRed")
-        }, 900)
-    }else{
-        setTimeout( ()=> {
-            alertMessage("Vous commencez", "--couleurMenu")
-        }, 900)
+    /*Initialisation si mode Online*/
+    if(modeOnline){
+        displayIDElement("TableauVS", "inline")
+        initialiseLoadOnline()
+    } else {
+        startingGame()
     }
 
-    //Activation des possibilités de jeu
-    if(!modeOnline || player==="red"){
-        activeClickOver()
+    //Lancement et information 1er joueur
+    function startingGame(){
+
+        //Rouge commence
+        if((modeOnline && playerRed) || modeSolo){
+            setTimeout( ()=> {
+                alertMessage("Vous commencez", "--couleurMenu")
+            }, 900)
+            activeClickOver()
+
+        // Jaune commence
+        } else if (!modeSolo){
+            setTimeout( ()=> {
+                alertMessage("Rouge commence", "--couleurMenuRed")
+            }, 900)
+
+            //Si on est pas en mode Online, jaune doit pouvoir jouer aussi (playerYellow est défini uniquement en mode online)
+            if(!playerYellow){
+                activeClickOver()
+
+            //Attendre que rouge ai joué
+            } else {
+                waitingTurn("yturn")
+            }
+        }
     }
-    
 
 /*******************************/
 /* FONCTIONS POUR LES TABLEAUX */
@@ -172,7 +189,7 @@ function desactiverSouris(duration) {
     * La fonction vérifie si la colonne est pleine, trouve la première case vide,
     * met à jour le tableau de jeu et vérifie s'il y a un gagnant.
     */ 
-        function insererPionColonne (colonne) {
+        async function insererPionColonne (colonne) {
 
             /*On test toutes les cases de la colonne dans le tableau JS*/
             for (let i=5; i>-2; i--){
@@ -194,7 +211,7 @@ function desactiverSouris(duration) {
                             tablJeu[i][colonne] = nouvelleCouleur
 
                             /* Puis on rafraichie le tableau de jeu */
-                            rafraichirTablJeu([i],[colonne], nouvelleCouleur)
+                            rafraichirTablJeu(i,colonne, nouvelleCouleur)
 
                             /* Et on change de joueur */
                             changePlayer()
@@ -203,10 +220,26 @@ function desactiverSouris(duration) {
                             isTableFull()
                             detectionAlignement()
 
+                            // Or if it's to online player
+                            if(playerRed || playerYellow){
+                                await updateGame(i, colonne, nouvelleCouleur)
+                                desactiveClickOver()
+                                console.log("Je ne peux plus jouer")
+                                if(playerRed){
+                                    console.log("fin de tour rouge")
+                                    waitingTurn("rturn")
+                                }else if(playerYellow){
+                                    console.log("fin de tour jaune")
+                                    waitingTurn("yturn")
+                                }else{
+                                    console.log("problème dans la boucle de détection des tours online")
+                                }
+                          
                             /* Check if it's to computer to play */
-                            if(gameOnOff){
+                            } else if(gameOnOff){
                                 isComputerTurn(nouvelleCouleur)
                             }
+
                             /*Sinon sortie de boucle*/
                             break
                         }
@@ -325,11 +358,21 @@ function detectionAlignement() {
                         /* On enregistre le nomre de coup du vainqueur */
                         coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])
 
-                        /* On a un winner, on lui envoie un message */
-                        if(modeSolo && aQuiLeTour === "--couleurJ1"){
+                        //Winning/Loosing
+                        if(
+                            (modeSolo && aQuiLeTour === "--couleurJ1") //loosing solo
+                            || (modeOnline && ((playerYellow && tablJeu[iRow][iCol]!=="yellow") //Yellow loose online
+                            || (playerRed && tablJeu[iRow][iCol]!=="red"))) // Red loose online
+                        )
+                        {
                             messageWithButton("Perdu !")
                         }else{
-                            messageVictoire (tablJeu[iRow][iCol])
+                            /* On a un winner, on lui envoie un message */
+                            if(modeOnline){
+                                messageVictoireOnline(tablJeu[iRow][iCol])
+                            }else{
+                                messageVictoire(tablJeu[iRow][iCol])
+                            }
                         }
                     }
 
@@ -355,264 +398,6 @@ function detectionAlignement() {
                 }
             }
         }
-
-    /****************/
-    /* FONCTIONS IA */
-    /****************/
-
-    /*Fonction pour déterminer si c'est à l'IA de jouer */
-    function isComputerTurn(couleurDernierJoueur) {
-        if(modeSolo && couleurDernierJoueur === "red"){
-            IAplaying = true
-            startComputerPlaying()
-        } 
-    }
-    
-    /* Fonction principal d'activation/désactivation de l'IA*/
-    async function startComputerPlaying() {
-
-        /* On désactive les possibilités d'action du joueur humain*/
-        desactiveClickOver()
-
-        /*Après une petite pause, on déterminer si l'IA à inséré un pion*/
-        await paused(getRandomInt(250,2251))
-        await IAColChoice()
-
-        /*On relance le jeu pour l'humain*/
-        IAplaying = false
-        activeClickOver()
-
-    }
-
-    /* Fonction ou l'IA détermine quelle colonne choisir */
-    function IAColChoice() {
-
-        //Création tableau de colonne pour stocker la meilleure valeur de chaque colonne
-        let colonneAChoisir = []
-
-        // Parcourir chaque colonne
-        for (let iCol = 0; iCol <= tablJeu.length ; iCol++) {
-            colonneAChoisir[iCol] = -1 // Initialiser avec -1 pour indiquer aucune colonne pleine trouvée
-        
-            // Parcourir chaque ligne depuis le bas pour cette colonne
-            for (let iRow=5; iRow>-1; iRow--){ {
-                if (tablJeu[iRow][iCol] === "") {
-
-                    //On a une cellule vide pour la colonne, recherche de l'intérêt jaune & rouge
-                    let newIndice = 0
-                    let scoreRed = determinerScoreIA(iRow, iCol, "red")
-                    let scoreYellow = determinerScoreIA(iRow, iCol, "yellow")
-
-                    // Enregistrer le meilleur indice de la ligne vide
-                    if(scoreYellow>=scoreRed){
-                        newIndice = scoreYellow
-                    } else {
-                        newIndice = scoreRed
-                    }
-                    colonneAChoisir[iCol] = newIndice
-                    break // Arrêter la recherche dès qu'une ligne vide est trouvée
-                }
-            }
-        }
-    }
-
-        /*On compare les valeurs du tableau pour décider ou doit aller le pion*/
-        let colonne = 0
-        let valeurMAxCol = colonneAChoisir[0]
-
-        for (let i = 0; i<7; i++){
-            if (colonneAChoisir[i] > valeurMAxCol) {
-                valeurMAxCol = colonneAChoisir[i]
-                colonne = i
-
-            /* Changement de colonne hasardeux en cas d'égalité, pour éviter toute prévisibilité */
-            } else if (colonneAChoisir[i] === valeurMAxCol && getRandomInt(0,2)===1){
-                colonne = i
-            }
-        }
-
-        /*On test toutes les cases de la colonne dans le tableau JS*/
-        for (let iRow=5; iRow>-2; iRow--){
-
-                if (tablJeu[iRow][colonne] === "") {
-
-                    tablJeu[iRow][colonne] = "yellow"
-
-                    /* Si elle est dispo, c'est la case gagnante */
-                    rafraichirTablJeu(iRow, colonne, "yellow")
-
-                    /* Et on change de joueur */
-                    changePlayer()
-
-                    /* On vérifie s'il y a un gagnant */
-                    detectionAlignement()
-
-                    break
-                }
-        }
-    }
-
-    /*****************************************************
-     * FONCTIONS DE DETECTION D'ALIGNEMENT POUR L'IA     *
-     *****************************************************/
-
-    /* Fonction de déterminantion du score global de la cellule */
-    function determinerScoreIA(iRow, iCol, color) {
-                    
-        /* détection du nombre de jetons de la même couleur dans chaque alignements */
-        let scoreAlign = []
-        scoreAlign[0] = detectionRowPlayedIA (iRow, iCol, color)
-        scoreAlign[1] = detectionColPlayedIA (iRow, iCol, color)
-        scoreAlign[2] = detectionDiagonalesIA(iRow, iCol, +1, color)
-        scoreAlign[3] = detectionDiagonalesIA (iRow, iCol, -1, color)
-
-        /* Quel est le score le plus intéressant ? */
-        let scoreFinal = -1
-        for(i=0; i<4; i++){
-            if(scoreAlign[i]> scoreFinal) {
-                scoreFinal = scoreAlign[i]
-            } else if (scoreAlign[i] === scoreFinal) {
-                scoreFinal++
-            }
-        }
-
-        //On renvoie le score de la cellule
-        return scoreFinal
-    }
-
-        /* Fonction de détection des lignes */
-        function detectionRowPlayedIA(iRow, iCol, color){
-
-            let nbrJetonsAlignes = 1
-            let nextCellRow = iRow
-
-            /* On vérifie les 4 cases adjacentes suivantes en ligne si elles ne sont pas en dehors du tableau*/
-            let loopbreak = false
-            for(let nextCellCol=iCol+1; nextCellCol<iCol+4 && nextCellCol<7 && loopbreak===false; nextCellCol++){
-                let result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result===1){nbrJetonsAlignes++}
-                if(result===-1){
-                    loopbreak = true
-                }
-            }
-
-            /* On vérifie les 4 cases adjacentes précédentes en ligne si elles ne sont pas en dehors du tableau*/
-            loopbreak = false
-            for(let nextCellCol=iCol-1; nextCellCol>iCol-4 && nextCellCol>-1 && loopbreak===false; nextCellCol--){
-                let result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result===1){nbrJetonsAlignes++}
-                if(result===-1){
-                    loopbreak = true
-                }
-            }
-
-            // Calcul et envoie du score en privilégiant légèrement les jaunes
-            let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            //if(color==="yellow"){newScore++}
-            return newScore
-        }
-
-        /* Fonction de détection des colonnes */
-        function detectionColPlayedIA(iRow, iCol, color){
-
-            let nbrJetonsAlignes = 1
-            let nextCellCol = iCol
-
-            /* On vérifie les 4 cases adjacentes suivantes en colonne si elles ne sont pas en dehors du tableau*/
-            let loopbreak = false
-            for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6 && loopbreak===false; nextCellRow++){
-                let result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result===1){nbrJetonsAlignes++}
-                if(result===-1){
-                    loopbreak = true
-                }
-            }
-
-            /* On vérifie les 4 cases adjacentes précédentesx en colonne si elles ne sont pas en dehors du tableau*/
-            loopbreak = false
-            for(nextCellRow=iRow-1; nextCellRow>iRow-4 && nextCellRow>-1 && loopbreak===false; nextCellRow--){
-                let result = detectionCellContent(nextCellRow, nextCellCol, color)
-                if(result===1){nbrJetonsAlignes++}
-                if(result===-1){
-                    loopbreak = true
-                }
-            }
-
-            // Calcul et envoie du score en privilégiant légèrement les jaunes s'ils sont à un jeton de la victoire
-            let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            if(color==="yellow" && newScore>26){newScore++}
-            return newScore
-        }
-
-        /* Fonction de détection des diagonales */
-        function detectionDiagonalesIA(iRow, iCol, increment, color){
-
-            let nbrJetonsAlignes = 1
-            let nextCellCol = iCol
-
-            /* On vérifie les 4 cases adjacentes suivantes en diag si elles ne sont pas en dehors du tableau*/
-            let loopbreak = false
-            for(nextCellRow=iRow+1; nextCellRow<iRow+4 && nextCellRow<6 && loopbreak===false; nextCellRow++){
-
-                /* On augmente également la ligne de 1 pour créer la diagonale */
-                    nextCellCol=nextCellCol+increment
-
-                    /* On execute le code uniquement si cette case ne sort pas du tableau */
-                    if(nextCellCol<7 && nextCellCol>-1){
-
-                        let result = detectionCellContent(nextCellRow, nextCellCol, color)
-                        if(result===1){nbrJetonsAlignes++}
-                        if(result===-1){
-                            loopbreak = true
-                        }
-                    } else {
-                    break // On est sorti du tableau
-                }
-
-            }
-
-            /* Et on vérifie les 4 cases adjacentes précedentes en diag si elles ne sont pas en dehors du tableau*/
-            nextCellCol = iCol
-            loopbreak = false
-            for(nextCellRow=iRow-1; nextCellRow<iRow+4 && nextCellRow>-1 && loopbreak===false; nextCellRow--){
-
-                /* On inverse également le sens de la colonne pour créer la diagonale */
-                    nextCellCol=nextCellCol-increment
-
-                    /* On execute le code uniquement si cette case ne sort pas du tableau */
-                    if(nextCellCol<7 && nextCellCol>-1){
-
-                        let result = detectionCellContent(nextCellRow, nextCellCol, color)
-                        if(result===1){nbrJetonsAlignes++}
-                        if(result===-1){
-                            loopbreak = true
-                        }
-                    } else {
-                    break // On est sorti du tableau
-                }
-            }
-
-            // Calcul et envoie du score en privilégiant légèrement les jaunes
-            let newScore = nbrJetonsAlignes*nbrJetonsAlignes*nbrJetonsAlignes
-            //if(color==="yellow"){newScore++}
-            return newScore
-        }
-
-            /* Fonction qui détermine le contenu de la cellule et incrémente le nombr de jetons si nécessaire. 
-            Si jeton d'une autre couleur, la boucle de test est interrompu */
-            function detectionCellContent(nextCellRow, nextCellCol, color){
-                        
-                /* Et on lance la fonction pour savoir ce que contient la nouvelle cellule testée */
-                let contenuCell=tablJeu[nextCellRow][nextCellCol]
-                    switch (contenuCell){
-                        case color :
-                        return 1
-                        case "" :
-                        return 0
-                        default :
-                        return -1
-                }
-            }
 
     /*****************************************
      * FONCTION DE GESTION DU TABLEAU VISUEL *
@@ -649,6 +434,7 @@ function detectionAlignement() {
 
     /* Fonction d'alternance des joueurs */
     function changePlayer() {
+        console.log("changement de joueur")
         if (aQuiLeTour === "--couleurJ1"){
             aQuiLeTour = "--couleurJ2"
 
@@ -700,98 +486,6 @@ function detectionAlignement() {
     function getCouleurJoueurActuel() {
         return getComputedStyle(document.documentElement).getPropertyValue(aQuiLeTour);
     }
-
-/*********************************
- * Fonctionnement dans les menus *
- *********************************/
-
-/* Fonction de relance d'une partie */
-function playAgain() {
-
-
-    /* On écoute le bouton rejouer */
-    const buttonReplayClic = document.querySelector("#popup #replay")
-        
-        /* Le bouton a bien été récupéré ? */
-        if (buttonReplayClic) {
-
-            /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
-            buttonReplayClic.addEventListener("click", () => {
-
-                /*Mise en rechargement de la page en cas de "rejouer"*/
-                location.reload()
-                }
-            )
-        } else {
-            alertMessage("Erreur : bouton rejouer n'ont récupéré", "--couleurMenuAlerte")
-        }
-    }  
-
-/* Enregistrement du nom via form */
-function validerNom(form, validerButton, input) {
-
-    /* Et on le met sur écoute via "entrée" */
-    form.addEventListener("submit", (event) => {
-
-        /*On prévient le rafraichissement de la page */
-        event.preventDefault()
-
-        /* On appel la fonction de validation du nom */
-        valideName(input.value)
-    })
-}
-
-// Fonction qui renvoie le nom au formatage du score */
-function valideName(nomJoueur){
-    if(nomJoueur.trim()){
-
-        /* On renvoie la valeur de l'input (le nom saisie) */
-        scoreFormat(nomJoueur)
-    }else{
-        alertMessage("veuillez saisir au moins un caractère", "--couleurMenuAlerte")
-    }
-}
-        
-
-
-    
-/* Bouton annuler */
-function annuler(cancelButton) {
-        
-    /* Le bouton a bien été récupéré ? */
-    if (cancelButton) {
-
-        /* S'il y a clic... on annule */
-        cancelButton.addEventListener("click", (event) => {
-
-            /*On prévient le rafraichissement de la page */
-            event.preventDefault()
-
-            /* on efface le message */
-            eraseMessage()
-
-            /* Puis on reviens au menu précédent */
-            messageVictoire()
-            }
-        )
-    } else {
-        alertMessage("Erreur : bouton annuler n'a pas été récupéré", "--couleurMenuAlerte")
-    }
-}
-
-/* Fonction d'effacement du contenu des messages */
-function eraseMessage(){
-
-    /* On récupèe showPopup */
-    let showPopup = document.getElementById("popup")
-
-    /* Pour mieux le supprimer */
-    if(showPopup){
-        while (showPopup.firstChild) {
-            showPopup.removeChild(showPopup.firstChild)
-        }
-    }
-}
     
 /*************************************
  * FONCTIONS ENREGISTREMENT DE SCORE *
@@ -807,7 +501,7 @@ function saveScore() {
         if (buttonSaveClic) {
 
             /* S'il y a clic... on appel la fonction d'enregistrement du nom */
-            buttonSaveClic.onclick = () => {formNomJoueur()}
+            buttonSaveClic.onclick = () => {formNomJoueur("Entrer le nom du vainqueur")}
         } else {
             alertMessage("Erreur : Bouton sauvegarder n'ont récupéré", "--couleurMenuAlerte")
         }
@@ -833,10 +527,10 @@ function scoreFormat(winnerName) {
 
     // On efface le Popup
     eraseMessage()
-    hidePopup()
+    displayIDElement("popup", "none")
 }
 
-// Initialisation fichier score
+// Envoie fichier score
 async function scoreSaved(newData) {
 
     try {
@@ -858,232 +552,6 @@ async function scoreSaved(newData) {
     } catch (erreur) {
         console.error('Erreur lors de l\'envoie des données', erreur)
     }
-}
-
-/************************/
-/* FONCTIONS AFFICHAGES */
-/************************/
-
-
-/**************************
- * FONCTIONS DES MESSAGES *
- **************************/
-
-/* Message en cas de victoire */
-async function messageVictoire(winnerPopup) {
-
-    /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){
-        gameOnOff = false
-        await paused(800)
-    }
-
-    /* Changer le nom de la couleur en français */
-    let couleurWinner = changeNameOfColor(winnerPopup)
-
-    /* récuperer le popup, le titre et le paragraphe */
-    let showPopup = document.getElementById("popup")
-    let h3Popup = showPopup.querySelector("h3")
-    let pPopup = showPopup.querySelector("p")
-    let replayButton = showPopup.querySelector("#replay")
-    let saveButton = showPopup.querySelector("#save")
-
-    /* Chargement des zones de textes et boutons */
-    if(!h3Popup){h3Popup = document.createElement("h3")}
-    if(!pPopup){pPopup = document.createElement("p")}
-    if(!replayButton){
-        replayButton = document.createElement("button")
-        replayButton.id = "replay"
-    }
-    if(!saveButton){
-        saveButton = document.createElement("button")
-        saveButton.id = "save"
-    }
-
-    /* Raccordement au DOM */
-    showPopup.appendChild(h3Popup)
-    showPopup.appendChild(pPopup)
-    showPopup.appendChild(replayButton)
-    showPopup.appendChild(saveButton)
-
-    /* Incorporer les nouveaux textes et couleur */
-    h3Popup.innerText = "Victoire"
-    pPopup.innerText = `${couleurWinner} a aligné 4 jetons`
-    replayButton.innerText = "Rejouer"
-    saveButton.innerText = "Enregistrer"
-
-    /*Afficher le popup*/
-    showPopup.style.display = "block"
-
-    /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
-    playAgain()
-
-    /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
-    saveScore()
-
-}
-
-/* Message en cas d'égalité */
-async function messageWithButton(messageContent) {
-
-    /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){
-        gameOnOff = false
-        await paused(800)
-    }
-
-    /* récuperer le popup, le titre et le paragraphe */
-    let showPopup = document.getElementById("popup")
-    let h3Popup = showPopup.querySelector("h3")
-    let replayButton = showPopup.querySelector("#replay")
-    let saveButton = showPopup.querySelector("#save")
-
-    /* Chargement des zones de textes et boutons */
-    if(!h3Popup){h3Popup = document.createElement("h3")}
-    if(!replayButton){
-        replayButton = document.createElement("button")
-        replayButton.id = "replay"
-    }
-    if(!saveButton){
-        saveButton = document.createElement("button")
-        saveButton.id = "save"
-    }
-
-    /* Raccordement au DOM */
-    showPopup.appendChild(h3Popup)
-    showPopup.appendChild(replayButton)
-    showPopup.appendChild(saveButton)
-
-    /* Incorporer les nouveaux textes et couleur */
-    h3Popup.innerText = messageContent
-    replayButton.innerText = "Rejouer"
-    saveButton.innerText = "Quitter"
-
-    /*Afficher le popup*/
-    showPopup.style.display = "block"
-
-    /* Appel de la fonction pour savoir si les joueurs veulent faire une nouvelle partie */
-    playAgain()
-
-    /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
-    leavingGame()
-
-}
-
-/* Fonction de relance d'une partie */
-function leavingGame() {
-
-
-    /* On écoute le bouton rejouer */
-    const buttonLeavingClic = document.querySelector("#popup #save")
-        
-        /* Le bouton a bien été récupéré ? */
-        if (buttonLeavingClic) {
-
-            /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
-            buttonLeavingClic.addEventListener("click", () => {
-
-                /*Mise en rechargement de la page en cas de "rejouer"*/
-                window.location.href = "index.php"
-                }
-            )
-        } else {
-            alertMessage("Erreur : bouton quitter n'ont récupéré", "--couleurMenuAlerte")
-        }
-    }
-
-/* Message-formulaire pour avoir le nom du vainqueur */
-function formNomJoueur(){
-
-    /* On efface tout */
-    eraseMessage()
-
-    /* récuperer le popup, le titre, le paragraphe et les boutons */
-    let showPopup = document.getElementById("popup")
-    let validerButton = showPopup.querySelector("#validerButton")
-    let cancelButton = showPopup.querySelector("#cancelButton")
-
-    /* Chargement des boutons */
-    if(!validerButton){
-        validerButton = document.createElement("button")
-        validerButton.id = "valider"
-        validerButton.type ="submit"
-        validerButton.innerText = "Valider"
-    }
-
-
-    if(!cancelButton){
-        cancelButton = document.createElement("button")
-        cancelButton.id = "cancel"
-        cancelButton.innerText = "Annuler"
-    }
-
-    /* Création du formulaire */
-    let form = document.createElement("form")
-    let label = document.createElement("label")
-    let br = document.createElement("br")
-    let input = document.createElement("input")
-
-    /* On ajoute les textes et attribut de ces nouveaux éléments */
-    label.innerText = "Entrer le nom du vainqueur"
-    input.name = "name"
-    input.minLength = "1"
-    input.maxLength = "20"
-
-    /* Raccordement au DOM */
-    form.appendChild(label)
-    form.appendChild(br)
-    form.appendChild(input)
-    form.appendChild(validerButton)
-    form.appendChild(cancelButton)
-    showPopup.appendChild(form)
-
-    /* Action possible */
-    annuler(cancelButton)
-    validerNom(form, validerButton, input)   
-}
-
-/* cacher le message de victoire */
-function hidePopup() {
-
-    /* On récupère le popup */
-    let hidePopup = document.getElementById("popup")
-
-    /* Si on la bien récupéré, on appel la fonction pour le cacher */
-    if (hidePopup){
-        hidePopup.style.display = "none"
-    }
-} 
-
-/* Message si colonne déjà pleine */
-function alertMessage(message, colorVar) {
-
-    /* On récupère le paragraphe du message */
-    let alertMessage = document.querySelector("#message p")
-
-    /* On le change avec le message à envoyer */
-    alertMessage.innerText = message
-
-    /* Et on l'affiche dans la fenetre */
-    let fenetreMessage = document.getElementById("message")
-    fenetreMessage.style.display = "block"
-    fenetreMessage.style.zIndex = "11"
-
-    // Récupération et application de la couleur de fond
-    let rootStyle = getComputedStyle(document.documentElement)
-    fenetreMessage.style.backgroundColor = rootStyle.getPropertyValue(colorVar)
-
-    /* Si ce n'est pas un message d'alerte, il se position plus haut*/
-    if(colorVar!=="--couleurMenuAlerte"){
-        fenetreMessage.style.top = "10rem"
-    }else{
-        fenetreMessage.style.top = ""
-    }
-
-    /*Après X secondes on joue & on cache à nouveau la fenetre*/
-    setTimeout( ()=> {
-        fenetreMessage.style.display = "none"
-    }, 2200)
 }
 
 /*********************

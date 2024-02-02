@@ -1,3 +1,10 @@
+<?php
+//Pas de misen en cache
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,6 +17,10 @@
 
 </head>
 <body>
+
+<!-- header -->
+<?php include '../pages/header.php'; ?>
+
     <div class="message">
         <p>La session est déjà pleine. Veuillez réessayer plus tard.</p>
         <!--Bouton quitter-->
