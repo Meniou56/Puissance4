@@ -321,6 +321,7 @@ async function launchingOnlineGame(){
     if(playerRed){
         let chargeLaunch = chargeUtileEtat("launched")
         await writingInSQL(chargeLaunch)
+        await paused (1800)// à remplacer par un coundown !!
     }
     displayIDElement("popup", "none")
     startingGame()

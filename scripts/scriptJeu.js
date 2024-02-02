@@ -358,11 +358,21 @@ function detectionAlignement() {
                         /* On enregistre le nomre de coup du vainqueur */
                         coupPlayer = nbCoupWinner(tablJeu[iRow][iCol])
 
-                        /* On a un winner, on lui envoie un message */
-                        if(modeSolo && aQuiLeTour === "--couleurJ1"){
+                        //Winning/Loosing
+                        if(
+                            (modeSolo && aQuiLeTour === "--couleurJ1") //loosing solo
+                            || (modeOnline && ((playerYellow && tablJeu[iRow][iCol]!=="yellow") //Yellow loose online
+                            || (playerRed && tablJeu[iRow][iCol]!=="red"))) // Red loose online
+                        )
+                        {
                             messageWithButton("Perdu !")
                         }else{
-                            messageVictoire (tablJeu[iRow][iCol])
+                            /* On a un winner, on lui envoie un message */
+                            if(modeOnline){
+                                messageVictoireOnline(tablJeu[iRow][iCol])
+                            }else{
+                                messageVictoire(tablJeu[iRow][iCol])
+                            }
                         }
                     }
 

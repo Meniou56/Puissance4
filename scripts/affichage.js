@@ -36,7 +36,7 @@ function validerNom(form, validerButton, input) {
         event.preventDefault()
 
         /*Si mode online, on revient au jeu*/
-        if(modeOnline){
+        if(modeOnline && coupJ1<3){
             if((input.value).trim()){
 
                 /* On inscrit le nom dans la BDD et on revient au jeu */
@@ -51,7 +51,7 @@ function validerNom(form, validerButton, input) {
         }
 
         /* On appel la fonction de validation du nom */
-        if(!modeOnline){
+        if(!modeOnline || coupJ1>2){
             valideName(input.value)
         }
     })
@@ -171,6 +171,66 @@ async function messageVictoire(winnerPopup) {
 
     /* Appel de la fonction pour savoir si le joueur veut enregistrer son score */
     saveScore()
+
+}
+
+/* Message en cas de victoire online*/
+async function messageVictoireOnline(winnerPopup) {
+
+    /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
+    if(gameOnOff===true){
+        gameOnOff = false
+        await paused(800)
+    }
+
+    /* Changer le nom de la couleur en français et rechercher le nom du gagnant*/
+    let couleurWinner = changeNameOfColor(winnerPopup)
+    let userName
+    if(couleurWinner==="Rouge"){
+        userName=serverSQL.user1
+    }else{
+        userName=serverSQL.user2
+    }
+
+    /* récuperer le popup, le titre et le paragraphe */
+    let showPopup = document.getElementById("popup")
+    let h3Popup = showPopup.querySelector("h3")
+    let pPopup = showPopup.querySelector("p")
+    let replayButton = showPopup.querySelector("#replay")
+    let saveButton = showPopup.querySelector("#save")
+
+    /* Chargement des zones de textes et boutons */
+    if(!h3Popup){h3Popup = document.createElement("h3")}
+    if(!pPopup){pPopup = document.createElement("p")}
+    if(!replayButton){
+        replayButton = document.createElement("button")
+        replayButton.id = "replay"
+    }
+    if(!saveButton){
+        saveButton = document.createElement("button")
+        saveButton.id = "save"
+    }
+
+    /* Raccordement au DOM */
+    showPopup.appendChild(h3Popup)
+    showPopup.appendChild(pPopup)
+    showPopup.appendChild(replayButton)
+    showPopup.appendChild(saveButton)
+
+    /* Incorporer les nouveaux textes */
+    h3Popup.innerText = "Victoire"
+    pPopup.innerText = `Bravo ${userName} !`
+    replayButton.innerText = "Enregistrer"
+    saveButton.innerText = "Quitter"
+
+    /*Afficher le popup*/
+    showPopup.style.display = "block"
+
+    /* Appel de la fonction pour savoir si le joueur veux enregistrer son score */
+    replayButton.addEventListener('click', () => scoreFormat(userName))
+
+    /* Appel de la fonction pour savoir si le joueur veut quitter */
+    saveButton.addEventListener('click', () => leavingGame())
 
 }
 
@@ -386,6 +446,7 @@ function formNomJoueur(messagePopup){
     /* Action possible */
     annuler(cancelButton)
     validerNom(form, validerButton, input)   
+    console.log(coupJ1, coupJ2, coupPlayer)
 }
 
 /* Message si colonne déjà pleine */
