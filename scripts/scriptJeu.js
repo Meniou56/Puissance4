@@ -189,7 +189,7 @@ function desactiverSouris(duration) {
     * La fonction vérifie si la colonne est pleine, trouve la première case vide,
     * met à jour le tableau de jeu et vérifie s'il y a un gagnant.
     */ 
-        function insererPionColonne (colonne) {
+        async function insererPionColonne (colonne) {
 
             /*On test toutes les cases de la colonne dans le tableau JS*/
             for (let i=5; i>-2; i--){
@@ -222,13 +222,14 @@ function desactiverSouris(duration) {
 
                             // Or if it's to online player
                             if(playerRed || playerYellow){
-                                updateGame(i, colonne, nouvelleCouleur)
+                                await updateGame(i, colonne, nouvelleCouleur)
                                 desactiveClickOver()
+                                console.log("Je ne peux plus jouer")
                                 if(playerRed){
-                                    console.log("au tour de jaune")
+                                    console.log("fin de tour rouge")
                                     waitingTurn("rturn")
                                 }else if(playerYellow){
-                                    console.log("au tour de rouge")
+                                    console.log("fin de tour jaune")
                                     waitingTurn("yturn")
                                 }else{
                                     console.log("problème dans la boucle de détection des tours online")
@@ -423,6 +424,7 @@ function detectionAlignement() {
 
     /* Fonction d'alternance des joueurs */
     function changePlayer() {
+        console.log("changement de joueur")
         if (aQuiLeTour === "--couleurJ1"){
             aQuiLeTour = "--couleurJ2"
 

@@ -21,7 +21,7 @@ async function initialiseLoadOnline() {
     }
 
     // On check la dernière ligne de BDD (dernière partie créée)
-    if(serverSQL.user1 === "waiting"){ //ajouter une condition type (dernière partie créé il y a moins de 30")???
+    if(serverSQL.user1 && serverSQL.user1 === "waiting"){ //ajouter une condition type (dernière partie créé il y a moins de 30")???
         playerRed = true
         formNomJoueur("Nom de joueur")
     } else if (serverSQL.user2 === "waiting"){
@@ -130,24 +130,30 @@ function chargeUtileName(name){
     return newData
 }
 
-// Construction charge utile lancement de partie
-function chargeUtileLaunch(){
+// Construction charge utile d'etat
+function chargeUtileEtat(etat){
 
     // Variable charge utile
     let newData
 
     // Chargement des paramètres
-    if(playerRed){
+    if(playerRed && etat==="launched"){
         newData = {
             "action": "updateEtat",
             "etat": "launched",
             "ID": serverSQL.ID
         }
 
-    // En cas d'erreur
-    }else{
-        console.log("Erreur lors de l'envoie du lancement au niveau de la BDD")
+    }else if(etat!=="launched"){
+        newData = {
+            "action": "updateEtat",
+            "etat": etat,
+            "ID": serverSQL.ID
+        }
+    } else {
+        console.log("erreur lors de la mise à jour de l'état dans la BDD")
     }
+    console.log(newData)
     return newData
 }
 
@@ -214,7 +220,7 @@ async function checkBDDGame(){
     return serverSQL
 }
 
-//Fonction de gestion d'activation du tour de chaque joueur ???Condition d'évolution à trouver???
+//Moteur principal de jeu Online : établissement des fonctions de chaque joueur à chaque tour
 async function waitingTurn(who){
     serverSQL = await checkBDDGame()
 
@@ -223,8 +229,12 @@ async function waitingTurn(who){
 
         //On récupère les informations de jetons inséré
         if(who==="yturn"){
+            who=""
+            console.log("début de tour jaune", gameOnOff)
             //Mise à jour du jeu
+            console.log("je viens de lire ", serverSQL.row1, serverSQL.col1)
             rafraichirTablJeu(serverSQL.row1, serverSQL.col1, "red")
+            await updateEtatWaiting()
             
             /* Et on change de joueur */
             changePlayer()
@@ -237,8 +247,12 @@ async function waitingTurn(who){
             activeClickOver()
 
         } else if(who==="rturn"){
+            who=""
+            console.log("début de tour rouge")
             //Mise à jour du jeu
+            console.log("je viens de lire ", serverSQL.row2, serverSQL.col2)
             rafraichirTablJeu(serverSQL.row2, serverSQL.col2, "yellow")
+            await updateEtatWaiting()
             
             /* Et on change de joueur */
             changePlayer()
@@ -256,7 +270,7 @@ async function waitingTurn(who){
     } else {
 
         //Si ce n'est pas le tour de ce joueur, on patiente encore
-        await paused(800)
+        await paused(1500)
         waitingTurn(who)
     }
 }
@@ -287,7 +301,7 @@ async function startCheckForGame(){
                 } 
 
             //Sinon, on recharge depuis la BDD après 2,5s
-            await paused(1500)
+            await paused(2500)
             startCheckForGame()
         }
 
@@ -323,7 +337,7 @@ async function launchingOnlineGame(){
 
     //Envoie de l'information à jaune
     if(playerRed){
-        let chargeLaunch = chargeUtileLaunch()
+        let chargeLaunch = chargeUtileEtat("launched")
         await writingInSQL(chargeLaunch)
     }
     displayIDElement("popup", "none")
@@ -335,5 +349,12 @@ async function updateGame(row, col, color){
 
         let chargeGame = chargeUtileInGame(row, col, color)
         await writingInSQL(chargeGame)
+        console.log("je viens d'enregistrer ", color, row, col)
+}
 
+//Fonction de mise en attente de la partie
+async function updateEtatWaiting(){
+    let chargeUtileE = chargeUtileEtat("waiting")
+    await writingInSQL(chargeUtileE)
+    console.log("BDD en attente")
 }
