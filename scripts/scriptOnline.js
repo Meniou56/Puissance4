@@ -354,8 +354,8 @@ async function updateGame(row, col, color){
 }
 
 //Fonction de mise en attente de la partie
-async function updateEtatWaiting(){
-    let chargeUtileE = chargeUtileEtat("waiting")
+async function updateEtatWaiting(etat){
+    let chargeUtileE = chargeUtileEtat(etat)
     await writingInSQL(chargeUtileE)
 }
 
@@ -367,7 +367,7 @@ async function updateEtatWaiting(){
 async function updateClientPlayer(){
     
     //Réinitialisation pour éviter des erreurs asynchrones
-    await updateEtatWaiting()
+    await updateEtatWaiting("waitTurn")
     who=""
 
     /* Et on change de joueur */
