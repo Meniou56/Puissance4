@@ -261,7 +261,7 @@ async function waitingTurn(who){
 async function startCheckForGame(){
 
     //Maj des informations pour avoir les noms
-    await checkBDDGame()
+    serverSQL = await checkBDDGame()
     displayBoardName()
 
     //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
