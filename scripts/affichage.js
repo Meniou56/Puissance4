@@ -1,5 +1,3 @@
-
-
 /*********************************
  * Fonctionnement dans les menus *
  *********************************/
@@ -446,7 +444,6 @@ function formNomJoueur(messagePopup){
     /* Action possible */
     annuler(cancelButton)
     validerNom(form, validerButton, input)   
-    console.log(coupJ1, coupJ2, coupPlayer)
 }
 
 /* Message si colonne déjà pleine */
@@ -489,4 +486,35 @@ function displayIDElement(element, method) {
     } else {
         console.error("Élément '" + element + "' non trouvé dans le DOM.")
     }
+}
+
+//Fonction de countdown et blocage du programme
+function countdown(number){
+        
+        //Récupération de la div et affichage
+        let countdown = document.getElementById("countdown")
+        countdown.style.display = "block"
+
+        //Itération du compte à rebours
+        function updateCountDown(i){
+            if(i>0){
+                countdown.innerText = i
+                countdown.classList.add("animate")
+
+                //Attente fin de transition pour animation inversée
+                setTimeout(() => {
+                    countdown.classList.remove("animate")
+                    setTimeout(() => {
+                        updateCountDown(i-1)
+                    }, 500)
+                }, 500)
+            }else{
+                //A la fin on cache à nouveau le compteur et promesse accomplie
+                countdown.style.display ="none"
+            }
+        }
+        //Attente fin de transition pour continuer compte à rebours
+        setTimeout(() => {
+            updateCountDown(number)
+        }, 500)
 }

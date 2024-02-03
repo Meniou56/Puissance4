@@ -57,10 +57,6 @@ let serverSQL
             //Si on est pas en mode Online, jaune doit pouvoir jouer aussi (playerYellow est défini uniquement en mode online)
             if(!playerYellow){
                 activeClickOver()
-
-            //Attendre que rouge ai joué
-            } else {
-                waitingTurn("yturn")
             }
         }
     }

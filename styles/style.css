@@ -301,3 +301,23 @@ form input{
         opacity: 1;
     } 
 }
+
+/*Countdown*/
+#countdown{
+    font-size: 0rem;
+    opacity: 0;
+    display: none;
+    font-weight: bolder;
+    color:lightseagreen;
+    position: absolute;
+    left:50%;
+    top:50%;
+    transition: all 0.5s ease-in-out;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+#countdown.animate{
+    font-size: 45rem;
+    opacity: 1;
+}
