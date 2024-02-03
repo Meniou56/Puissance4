@@ -14,22 +14,30 @@ async function initialiseLoadOnline() {
     serverSQL = jeuOnline[jeuOnline.length-1]
 
     //Si jeuOnline est vide ou si partie pleine, il faut créer une partie
-    if(jeuOnline.length === 0 || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting")){
+    if(jeuOnline.length === 0 
+        || ((serverSQL.user1 !== "waiting") 
+            && (serverSQL.user2 !== "waiting"))){
         let chargeUtile = chargeUtileNewParty()
         await writingInSQL(chargeUtile)
         initialiseLoadOnline() // On recharge à nouveau jeuOnline
+    }else{
+        checkLoadingPlayer()
     }
-
+    
     // On check la dernière ligne de BDD (dernière partie créée)
-    if(serverSQL.user1 && serverSQL.user1 === "waiting"){ //ajouter une condition type (dernière partie créé il y a moins de 30")???
-        playerRed = true
-        formNomJoueur("Nom de joueur")
-    } else if (serverSQL.user2 === "waiting"){
-        playerYellow = true
-        formNomJoueur("Nom de joueur")
-    } else {
-        //Sinon on recommence la boucle de chargement
-        initialiseLoadOnline()
+    async function checkLoadingPlayer(){
+        if(serverSQL.user1 && serverSQL.user1 === "waiting"){ 
+            playerRed = true
+            await savingOnlineName("loading")
+            formNomJoueur("Nom de joueur")
+        } else if (serverSQL.user2 === "waiting"){
+            playerYellow = true
+            await savingOnlineName("loading")
+            formNomJoueur("Nom de joueur")
+        } else {
+            //Sinon on recommence la boucle de chargement
+            initialiseLoadOnline()
+        }
     }
 }
 
@@ -39,6 +47,13 @@ async function initialiseLoadOnline() {
     /************/
     /*EN LECTURE*/
     /************/
+
+    // Fonction de mise à jour de la partie BDD depuis le client//amélioration possible ici
+    async function checkBDDGame(){
+        let newServerSQL = await readSQL(serverSQL.ID)
+        serverSQL = newServerSQL[0]
+        return serverSQL
+    }
 
     /* Fonction de maj des informations depuis la BDD */
     async function readSQL(ID){
@@ -59,7 +74,6 @@ async function initialiseLoadOnline() {
             console.error('Erreur lors du chargement des données', erreur)
         }
     }
-
 
 /***************/
 /* EN ECRITURE */
@@ -213,12 +227,6 @@ async function writingInSQL(newData) {
 /**********************************************************/
 /* FONCTIONS DE LANCEMENT ET INITIALISATION PARTIE ONLINE */
 /**********************************************************/
-// Fonction de mise à jour de la partie BDD
-async function checkBDDGame(){
-    let newServerSQL = await readSQL(serverSQL.ID)
-    returnServerSQL = newServerSQL[0]
-    return returnServerSQL
-}
 
 //Moteur principal de jeu Online : établissement des fonctions de chaque joueur à chaque tour
 async function waitingTurn(who){
@@ -253,6 +261,7 @@ async function waitingTurn(who){
 
         //Si ce n'est pas le tour de ce joueur, on patiente encore
         await paused(1500)
+        console.log("je viens d'attendre 1,5s et j'attends ", who)
         waitingTurn(who)
     }
 }
@@ -265,10 +274,13 @@ async function startCheckForGame(){
     displayBoardName()
 
     //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
-    if(serverSQL.etat ==="prepare"){waitingOnlineWindow()}
+    if(serverSQL.etat ==="waiting"){
+        waitingOnlineWindow()
+    }
 
     //On vérifie si tout à été maj
-    if(serverSQL.user1 !=="waiting" && serverSQL.user2 !=="waiting"){
+    if((serverSQL.user1 !=="waiting") 
+        && serverSQL.user2 !=="waiting"){
         
         //Si joueur jaune, maj du bouton d'attente
         if(playerYellow){
@@ -336,20 +348,20 @@ async function updateGame(row, col, color){
 }
 
 //Fonction de mise en attente de la partie
-async function updateEtatWaiting(){
-    let chargeUtileE = chargeUtileEtat("waiting")
+async function updateEtatWaiting(etat){
+    let chargeUtileE = chargeUtileEtat(etat)
     await writingInSQL(chargeUtileE)
 }
 
 /********************************/
-/* FONCTION CLIENT Du JEU ONLINE*/
+/* FONCTION CLIENT DU JEU ONLINE*/
 /********************************/
 
 //Fonction de mise à jour de la partie côté client
 async function updateClientPlayer(){
     
     //Réinitialisation pour éviter des erreurs asynchrones
-    await updateEtatWaiting()
+    await updateEtatWaiting("waitTurn")
     who=""
 
     /* Et on change de joueur */

@@ -444,7 +444,6 @@ function formNomJoueur(messagePopup){
     /* Action possible */
     annuler(cancelButton)
     validerNom(form, validerButton, input)   
-    console.log(coupJ1, coupJ2, coupPlayer)
 }
 
 /* Message si colonne déjà pleine */
