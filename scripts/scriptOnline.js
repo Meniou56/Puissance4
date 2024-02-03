@@ -216,8 +216,8 @@ async function writingInSQL(newData) {
 // Fonction de mise à jour de la partie BDD
 async function checkBDDGame(){
     let newServerSQL = await readSQL(serverSQL.ID)
-    serverSQL = newServerSQL[0]
-    return serverSQL
+    returnServerSQL = newServerSQL[0]
+    return returnServerSQL
 }
 
 //Moteur principal de jeu Online : établissement des fonctions de chaque joueur à chaque tour
@@ -325,7 +325,7 @@ async function launchingOnlineGame(){
         startingGame()
     } else if (serverSQL.etat === "launched"){
         displayIDElement("popup", "none")
-        startingGame()
+        waitingTurn("yturn")//attendre que je rouge ai joué
     }
 }
 
