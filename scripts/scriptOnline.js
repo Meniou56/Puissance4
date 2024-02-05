@@ -111,6 +111,12 @@ async function savingOnlineName(name){
     await writingInSQL(chargeUtile)
 }
 
+// Fonction de libération d'une place réservé (si un joueur quitte)
+async function releaseSpaceName(){
+    if(modeOnline && (playerRed || playerYellow) ){
+            await savingOnlineName("waiting")
+        }
+}
 
 // Construction charge utile des noms dans la BDD
 function chargeUtileName(name){

@@ -87,6 +87,7 @@ function annuler(cancelButton) {
 
             /*Si Online, retour au menu*/
             if(modeOnline){
+                releaseSpaceName()
                 window.location.href='index.php'
             }
 
@@ -379,6 +380,9 @@ function leavingGame() {
 
             /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
             buttonLeavingClic.addEventListener("click", () => {
+
+                //En mode online, libération de la place
+                releaseSpaceName()
 
                 /*Mise en rechargement de la page en cas de "rejouer"*/
                 window.location.href = "index.php"
