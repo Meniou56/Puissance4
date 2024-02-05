@@ -426,7 +426,7 @@ function formNomJoueur(messagePopup){
     let input = document.createElement("input")
 
     /* On ajoute les textes et attribut de ces nouveaux éléments */
-    label.innerText = messagePopup
+    label.innerText = messagePopup+serverSQL.ID
     input.name = "name"
     input.minLength = "1"
     input.maxLength = "20"
@@ -521,4 +521,16 @@ function countdown(number){
         setTimeout(() => {
             updateCountDown(number)
         }, 500)
+}
+
+
+/**********************************/
+/* FONCTIONS SPECIFIQUE AU ONLINE */
+/**********************************/
+
+// Fonction de libération d'une place réservé (si un joueur quitte)
+async function releaseSpaceName(){
+    if(modeOnline && (playerRed || playerYellow) ){
+            await savingOnlineName("waiting")
+        }
 }
