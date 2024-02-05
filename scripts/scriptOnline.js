@@ -5,7 +5,7 @@
 /*****************************/
 /* FONCTIONS EN COURS DE JEU */
 /*****************************/
-
+let passage=0//A SUPPR
 // Fonction pour charger les parties, en trouver une ou la créer, puis demander le nom de joueur
 async function initialiseLoadOnline() {
     let jeuOnline = await readSQL("ALL")
@@ -13,11 +13,13 @@ async function initialiseLoadOnline() {
     //Si jeuOnline est vide ou si partie pleine, il faut créer une partie
     if(jeuOnline.length === 0 
         || (jeuOnline[jeuOnline.length-1].user1 !== "waiting" && jeuOnline[jeuOnline.length-1].user2 !== "waiting")){
+        
+        //Création d'une nouvelle partie
         let chargeUtile = chargeUtileNewParty()
         await writingInSQL(chargeUtile)
         initialiseLoadOnline() // On recharge à nouveau jeuOnline
     }else{
-        // On enregistre la ligne qui servira pour toute la partie
+        // La partie existe, on l'enregistre pour toute la partie
         serverSQL = jeuOnline[jeuOnline.length-1]
         checkLastGame()
     }
@@ -159,7 +161,6 @@ function chargeUtileEtat(etat){
     } else {
         console.log("erreur lors de la mise à jour de l'état dans la BDD")
     }
-    console.log(newData)
     return newData
 }
 
@@ -222,13 +223,14 @@ async function writingInSQL(newData) {
 // Fonction de mise à jour de la partie BDD
 async function checkBDDGame(){
     let newServerSQL = await readSQL(serverSQL.ID)
-    serverSQL = newServerSQL[0]
-    return serverSQL
+    readingServerSQL = newServerSQL[0]
+    return readingServerSQL
 }
 
 //Moteur principal de jeu Online : établissement des fonctions de chaque joueur à chaque tour
 async function waitingTurn(who){
-    console.log("controle de la BDD")
+
+    // Update : reading game session on BDD
     serverSQL = await checkBDDGame()
 
     //A qui est-ce le tour ?
@@ -242,7 +244,7 @@ async function waitingTurn(who){
             rafraichirTablJeu(serverSQL.row1, serverSQL.col1, "red")
 
             //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
-            await updateClientPlayer()
+            updateClientPlayer()
 
         } else if(who==="rturn"){
 
@@ -251,7 +253,7 @@ async function waitingTurn(who){
             rafraichirTablJeu(serverSQL.row2, serverSQL.col2, "yellow")
 
             //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
-            await updateClientPlayer()
+            updateClientPlayer()
 
         } else {
             alertMessage("erreur BDD : insertion pion", "--couleurMenuAlerte")
@@ -262,9 +264,7 @@ async function waitingTurn(who){
 
         // Fonction pour la mise en pause puis retour à la fonction
         async function pauseOnline() {
-            console.log("Pause débutée");
             await new Promise(resolve => setTimeout(resolve, 2500));
-            console.log("Pause terminée");
             waitingTurn(who);
         }
     }
@@ -274,7 +274,7 @@ async function waitingTurn(who){
 async function startCheckForGame(){
 
     //Maj des informations pour avoir les noms
-    await checkBDDGame()
+    serverSQL = await checkBDDGame()
     displayBoardName()
 
     //Si on est encore dans la phase de préparation de partie, fenêtre d'attente

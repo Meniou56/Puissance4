@@ -45,8 +45,8 @@ let serverSQL
         if((modeOnline && playerRed) || modeSolo){
             setTimeout( ()=> {
                 alertMessage("Vous commencez", "--couleurMenu")
+                activeClickOver()
             }, 900)
-            activeClickOver()
 
         // Jaune commence
         } else if (!modeSolo){
@@ -107,6 +107,7 @@ function whatTableColorIsThisCell(color){
 
 /* Activation click/over sur le jeu */
 function activeClickOver() {
+
     // Détection du clic ou survol
 let mouseClick = document.querySelectorAll("td")
 
@@ -122,6 +123,7 @@ let mouseClick = document.querySelectorAll("td")
 
 /* Désactivation click/over sur le jeu */
 function desactiveClickOver() {
+
     /* On désactive l'écoute d'événement sur le jeu*/
     let mouseClick = document.querySelectorAll("td")
 
@@ -204,7 +206,14 @@ function desactiverSouris(duration) {
 
                             /* On défini la couleur du futur pion*/
                             let nouvelleCouleur = getCouleurJoueurActuel()
+
+                            //Attribution de la couleur à la case
                             tablJeu[i][colonne] = nouvelleCouleur
+
+                            /*Si mode online on vérifie la couleur du joueur*/
+                            if(modeOnline){
+                                UpdateInsertionOnline()
+                            }
 
                             /* Puis on rafraichie le tableau de jeu */
                             rafraichirTablJeu(i,colonne, nouvelleCouleur)
@@ -217,22 +226,20 @@ function desactiverSouris(duration) {
                             detectionAlignement()
 
                             // Or if it's to online player
-                            if(playerRed || playerYellow){
-                                await updateGame(i, colonne, nouvelleCouleur)
+                            function UpdateInsertionOnline(){
                                 desactiveClickOver()
-                                console.log("Je ne peux plus jouer")
+                                updateGame(i, colonne, nouvelleCouleur)
                                 if(playerRed){
-                                    console.log("fin de tour rouge")
                                     waitingTurn("rturn")
                                 }else if(playerYellow){
-                                    console.log("fin de tour jaune")
                                     waitingTurn("yturn")
                                 }else{
                                     console.log("problème dans la boucle de détection des tours online")
                                 }
-                          
+                            }
+
                             /* Check if it's to computer to play */
-                            } else if(gameOnOff){
+                            if(gameOnOff){
                                 isComputerTurn(nouvelleCouleur)
                             }
 
@@ -430,7 +437,7 @@ function detectionAlignement() {
 
     /* Fonction d'alternance des joueurs */
     function changePlayer() {
-        console.log("changement de joueur")
+
         if (aQuiLeTour === "--couleurJ1"){
             aQuiLeTour = "--couleurJ2"
 
