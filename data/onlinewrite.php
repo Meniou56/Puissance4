@@ -108,8 +108,13 @@ try {
             }
 
         } else {
-            // Logique pour l'insertion
+            // Logique pour l'insertion et mise à jour BDD(suppression anciennes lignes)
             try {
+
+                //Suppression des lignes-parties périmées
+                $deleteStatement = $mysqlClient->prepare("DELETE FROM jeuonline WHERE date < NOW() - INTERVAL 1 DAY");
+                $deleteStatement->execute();
+
                 $date = $donnees['date'];
                 $user1 = $donnees['user1'];
                 $user2 = $donnees['user2'];
