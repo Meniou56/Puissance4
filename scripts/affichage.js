@@ -34,7 +34,7 @@ function validerNom(form, validerButton, input) {
         event.preventDefault()
 
         /*Si mode online, on revient au jeu*/
-        if(modeOnline && coupJ1<3){
+        if(modeOnline){
             if((input.value).trim()){
 
                 /* On inscrit le nom dans la BDD et on revient au jeu */
@@ -49,7 +49,7 @@ function validerNom(form, validerButton, input) {
         }
 
         /* On appel la fonction de validation du nom */
-        if(!modeOnline || coupJ1>2){
+        if(!modeOnline){
             valideName(input.value)
         }
     })

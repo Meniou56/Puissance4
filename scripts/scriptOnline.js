@@ -5,7 +5,7 @@
 /*****************************/
 /* FONCTIONS EN COURS DE JEU */
 /*****************************/
-let passage=0//A SUPPR
+
 // Fonction pour charger les parties, en trouver une ou la créer, puis demander le nom de joueur
 async function initialiseLoadOnline() {
     let jeuOnline = await readSQL("ALL")

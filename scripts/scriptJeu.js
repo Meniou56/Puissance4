@@ -58,6 +58,10 @@ let serverSQL
             if(!playerYellow){
                 activeClickOver()
             }
+            //Attendre que rouge ai joué
+             else {
+                waitingTurn("yturn")
+            }
         }
     }
 
