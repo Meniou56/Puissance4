@@ -1,6 +1,3 @@
-//Bug si perdu!!!!!!!!!!!!!!!!!!!
-//Bug sur l'affichage de la fenetre
-
 /***************/
 /* Jeux online */
 /***************/
@@ -239,13 +236,15 @@ async function checkBDDGame(){
 //Moteur principal de jeu Online : établissement des fonctions de chaque joueur à chaque tour
 async function waitingTurn(who){
 
+    //Variable et data
     serverSQL = await checkBDDGame()
+    console.log("who vaut : ", who, " server.etat vaut : ", serverSQL.etat)
 
     //A qui est-ce le tour ?
     if(serverSQL.etat === who){
 
         //On récupère les informations de jetons inséré
-        if(playerYellow && who==="yturn"){
+        if(playerYellow && who==="yturn" && aQuiLeTour==="--couleurJ1"){
             console.log("test jaune")//problème ici
 
             //Mise à jour des tableaux de jeux visuels et virtuels
@@ -255,7 +254,7 @@ async function waitingTurn(who){
             //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
             await updateClientPlayer()
 
-        } else if(playerRed && who==="rturn"){
+        } else if(playerRed && who==="rturn" && aQuiLeTour==="--couleurJ2"){
             console.log("test rouge")
             // Mise à jour du jeu
             tablJeu[serverSQL.row2][serverSQL.col2] = "yellow"
@@ -264,8 +263,15 @@ async function waitingTurn(who){
             //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
             await updateClientPlayer()
 
+        //Activation rouge si 1er coup
+        } else if (playerRed && who==="launched"){
+            setTimeout( ()=> {
+                alertMessage("Vous commencez", "--couleurMenu")
+                activeClickOver()
+            }, 900)
+
         } else {
-            alertMessage("erreur BDD : insertion pion", "--couleurMenuAlerte")
+            pauseOnline()
         }
     } else {
         //Si ce n'est pas le tour de ce joueur, on patiente encore
@@ -273,7 +279,7 @@ async function waitingTurn(who){
 
         // Fonction pour la mise en pause puis retour à la fonction
         async function pauseOnline() {
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            await new Promise(resolve => setTimeout(resolve, 1500))
             if(playerRed){
                 waitingTurn("rturn")
             } else if(playerYellow){
@@ -287,46 +293,52 @@ async function waitingTurn(who){
 
 /* Fonction d'attente d'autres joueurs/maj joueurs */
 async function startCheckForGame(){
+    
+    if(!yellowGameActive){
+        //Maj des informations pour avoir les noms
+        serverSQL = await checkBDDGame()
+        displayBoardName()
 
-    //Maj des informations pour avoir les noms
-    serverSQL = await checkBDDGame()
-    displayBoardName()
+        //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
+        if(serverSQL.etat==="prepare"){
+            waitingOnlineWindow()
+            isWindow=true
+        }
 
-    //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
-    if(serverSQL.etat ==="prepare"){
-        waitingOnlineWindow()
-    }
+        //On vérifie si tout à été maj
+        if (serverSQL.user1 !== "waiting" && serverSQL.user1 !== "loading" 
+            && serverSQL.user2 !== "waiting" && serverSQL.user2 !== "loading"){
+                console.log("passage startCheckForGame")
+            //Si joueur jaune, maj du bouton d'attente
+            if(playerYellow){
+                let showPopup = document.getElementById("popup")
+                let replayButton = showPopup.querySelector("#replay")
+                replayButton.innerText = "Prêt ?"
+                replayButton.style.backgroundColor = "green"
 
-    //On vérifie si tout à été maj
-    if (serverSQL.user1 !== "waiting" && serverSQL.user1 !== "loading" 
-        && serverSQL.user2 !== "waiting" && serverSQL.user2 !== "loading"){
-        
-        //Si joueur jaune, maj du bouton d'attente
-        if(playerYellow){
-            let showPopup = document.getElementById("popup")
-            let replayButton = showPopup.querySelector("#replay")
-            replayButton.innerText = "Prêt ?"
-            replayButton.style.backgroundColor = "green"
+                //La partie a été lancée pour jaune ?
+                if(serverSQL.etat !== "prepare"){
+                    displayIDElement("popup", "none")
+                    yellowGameActive = true
+                    launchingOnlineGame()
+                    } 
 
-            //La partie a été lancée pour jaune ?
-            if(serverSQL.etat !== "prepare"){
-                displayIDElement("popup", "none")
-                launchingOnlineGame()
-                } 
+                //Sinon, on recharge depuis la BDD
+                await paused(1500)
+                startCheckForGame()
+            }
 
-            //Sinon, on recharge depuis la BDD après 2,5s
-            await paused(2500)
+            //Si joueur rouge, prêt à lancer la partie
+            if(playerRed && isWindow){
+                document.querySelector("#replay").disabled = false
+            }else if(!isWindow && serverSQL.etat==="prepare"){
+                startCheckForGame()
+            }
+
+        } else {
+            await paused(1500)
             startCheckForGame()
         }
-
-        //Si joueur rouge, prêt à lancer la partie
-        if(playerRed){
-            document.querySelector("#replay").disabled = false
-        }
-
-    } else {
-        await paused(2500)
-        startCheckForGame()
     }
 }
 
@@ -354,7 +366,7 @@ async function launchingOnlineGame(){
         let chargeLaunch = chargeUtileEtat("launched")
         await writingInSQL(chargeLaunch)
         displayIDElement("popup", "none")
-        startingGame()
+        waitingTurn("launched")
     } else if (serverSQL.etat !== "prepare"){
         displayIDElement("popup", "none")
         waitingTurn("yturn")
@@ -396,8 +408,9 @@ async function updateClientPlayer(){
     detectionAlignement()
 
     //Réinitialisation pour éviter des erreurs asynchrones
+    console.log("desactivation de who")
     await updateEtatWaiting("waitTurn")
 
     /* Et on active notre tour, uniquement si toutes les opérations sont finis */
-    activeClickOver()//Heu ?????
+    activeClickOver()
 }

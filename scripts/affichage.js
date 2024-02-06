@@ -230,7 +230,6 @@ async function messageVictoireOnline(winnerPopup) {
 
     /* Appel de la fonction pour savoir si le joueur veut quitter */
     saveButton.addEventListener('click', () => leavingGame())
-
 }
 
 /* Message attente partie en ligne */

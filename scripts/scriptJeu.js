@@ -23,6 +23,8 @@ let gameOnOff = true
 let playerRed = false
 let playerYellow = false
 let serverSQL
+let yellowGameActive = false
+let isWindow=false
 
 /**************
  * Démarrage  *
@@ -43,10 +45,10 @@ let serverSQL
     function startingGame(){
 
         //Rouge commence
-        if((modeOnline && playerRed) || modeSolo){
+        if(modeSolo){
             setTimeout( ()=> {
                 alertMessage("Vous commencez", "--couleurMenu")
-                if(coupJ1===0){activeClickOver()}//activation si 1er coup, sinon activation par la boucle waitTurn
+                activeClickOver()//activation si 1er coup, sinon activation par la boucle waitTurn
             }, 900)
 
         // Jaune commence
@@ -231,13 +233,13 @@ function desactiverSouris(duration) {
                             detectionAlignement()
 
                             // Or if it's to online player
-                            function UpdateInsertionOnline(){
+                            async function UpdateInsertionOnline(){
                                 desactiveClickOver()
                                 updateGame(i, colonne, nouvelleCouleur)
                                 if(playerRed){
-                                    waitingTurn("rturn")
+                                    await waitingTurn("rturn")
                                 }else if(playerYellow){
-                                    waitingTurn("yturn")
+                                    await waitingTurn("yturn")
                                 }else{
                                     console.log("problème dans la boucle de détection des tours online")
                                 }
@@ -430,6 +432,7 @@ function detectionAlignement() {
         pion.style.backgroundColor = couleur
         pion.style.boxShadow = "none"
         pion.classList.add("circle-animate")
+        console.log("insertion pion : ", couleur)
 
         /* On désactice l'utilisation de la souris, donc du jeu */
         desactiverSouris(750)
