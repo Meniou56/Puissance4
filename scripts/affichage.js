@@ -5,7 +5,6 @@
 /* Fonction de relance d'une partie */
 function playAgain() {
 
-
     /* On écoute le bouton rejouer */
     const buttonReplayClic = document.querySelector("#popup #replay")
         
@@ -175,6 +174,9 @@ async function messageVictoire(winnerPopup) {
 
 /* Message en cas de victoire online*/
 async function messageVictoireOnline(winnerPopup) {
+
+    /*Réinitialisation du Popup*/
+    document.getElementById("popup").innerHTML = savePopup
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
     if(gameOnOff===true){

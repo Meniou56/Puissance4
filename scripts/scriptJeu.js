@@ -22,8 +22,11 @@ let gameOnOff = true
 /* Variable globales pour le mode Online*/
 let playerRed = false
 let playerYellow = false
-let serverSQL =[]
+let serverSQL
 let yellowGameActive = false
+
+/*Sauvegarde d'état initiaux*/
+const savePopup = document.getElementById("popup").innerHTML
 
 /**************
  * Démarrage  *

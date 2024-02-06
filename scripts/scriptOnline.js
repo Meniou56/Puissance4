@@ -16,9 +16,7 @@ async function initialiseLoadOnline() {
         }
 
         //Création d'une partie
-        if (jeuOnline.length === 0 || !serverSQL //si pas de ligne précédente
-            || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") //Si toutes les places sont occupées
-            || serverSQL.row1!==-1 || serverSQL.row2!==-1) { //S'il s'agit d'une partie déjà joué
+        if (jeuOnline.length === 0 || !serverSQL || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") || serverSQL.row1>-1 || serverSQL.row2>-1) { //S'il s'agit d'une partie déjà joué
             let chargeUtile = chargeUtileNewParty()
             await writingInSQL(chargeUtile)
             initialiseLoadOnline()
