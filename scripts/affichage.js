@@ -19,7 +19,7 @@ function playAgain() {
                 }
             )
         } else {
-            alertMessage("Erreur : bouton rejouer n'ont récupéré", "--couleurMenuAlerte")
+            if(!modeOnline){alertMessage("Erreur : bouton rejouer n'ont récupéré", "--couleurMenuAlerte")}
         }
     }  
 
