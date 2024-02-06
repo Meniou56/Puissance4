@@ -250,13 +250,6 @@ function waitingOnlineWindow() {
         replayButton.id = "replay"
     }
 
-    //Remise en forme si nécessaire
-    if(replayButton.style.border === "none" || replayButton.style.boxShadow === "none"){
-        replayButton.style.border = "3px solid RGBA(185, 159, 108, 0.8)"
-        replayButton.style.boxShadow = "5px 5px 20px 1px rgb(125, 125, 125)"
-        replayButton.style.backgroundColor = "RGB(205, 179, 128)"
-    }
-
     if(!saveButton){
         saveButton = document.createElement("button")
         saveButton.id = "save"
@@ -269,10 +262,10 @@ function waitingOnlineWindow() {
     showPopup.appendChild(saveButton)
 
     /* Incorporer les nouveaux textes et couleur */
-    h3Popup.innerText = "Partie en ligne"
+    h3Popup.innerText = "Match en ligne"
 
     //Nom des joueurs et boutons
-    pPopup.innerText = serverSQL.user1 + " VS " + serverSQL.user2
+    pPopup.innerHTML = "Partie " + serverSQL.ID + "<br>" + serverSQL.user1 + " VS " + serverSQL.user2
     if(playerRed){
             replayButton.innerText = "Lancer"
     }
@@ -348,12 +341,21 @@ async function messageWithButton(messageContent) {
 
     /* Raccordement au DOM */
     showPopup.appendChild(h3Popup)
-    showPopup.appendChild(replayButton)
     showPopup.appendChild(saveButton)
+    //Si message perdu et en mode online, pas de bouton
+    if(messageContent!=="Perdu !" && modeOnline){
+        showPopup.appendChild(replayButton)
+    }else{
+        showPopup.removeChild(replayButton)
+    }
+
 
     /* Incorporer les nouveaux textes et couleur */
     h3Popup.innerText = messageContent
-    replayButton.innerText = "Rejouer"
+    if(replayButton){
+        replayButton.innerText = "Rejouer"
+    }
+
     saveButton.innerText = "Quitter"
 
     /*Afficher le popup*/
@@ -425,7 +427,7 @@ function formNomJoueur(messagePopup){
     let input = document.createElement("input")
 
     /* On ajoute les textes et attribut de ces nouveaux éléments */
-    label.innerText = messagePopup+serverSQL.ID
+    label.innerText = messagePopup
     input.name = "name"
     input.minLength = "1"
     input.maxLength = "20"

@@ -164,9 +164,8 @@ function chargeUtileEtat(etat){
             "ID": serverSQL.ID
         }
     } else {
-        console.log("erreur lors de la mise à jour de l'état dans la BDD")
+        console.log("Erreur lors de la mise à jour de l'état dans la BDD")
     }
-    console.log(newData)
     return newData
 }
 
@@ -238,14 +237,12 @@ async function waitingTurn(who){
 
     //Variable et data
     serverSQL = await checkBDDGame()
-    console.log("who vaut : ", who, " server.etat vaut : ", serverSQL.etat)
 
     //A qui est-ce le tour ?
     if(serverSQL.etat === who){
 
         //On récupère les informations de jetons inséré
         if(playerYellow && who==="yturn" && aQuiLeTour==="--couleurJ1"){
-            console.log("test jaune")//problème ici
 
             //Mise à jour des tableaux de jeux visuels et virtuels
             tablJeu[serverSQL.row1][serverSQL.col1] = "red"
@@ -255,7 +252,7 @@ async function waitingTurn(who){
             await updateClientPlayer()
 
         } else if(playerRed && who==="rturn" && aQuiLeTour==="--couleurJ2"){
-            console.log("test rouge")
+
             // Mise à jour du jeu
             tablJeu[serverSQL.row2][serverSQL.col2] = "yellow"
             rafraichirTablJeu(serverSQL.row2, serverSQL.col2, "yellow")
@@ -293,7 +290,7 @@ async function waitingTurn(who){
 
 /* Fonction d'attente d'autres joueurs/maj joueurs */
 async function startCheckForGame(){
-    
+
     if(!yellowGameActive){
         //Maj des informations pour avoir les noms
         serverSQL = await checkBDDGame()
@@ -308,7 +305,7 @@ async function startCheckForGame(){
         //On vérifie si tout à été maj
         if (serverSQL.user1 !== "waiting" && serverSQL.user1 !== "loading" 
             && serverSQL.user2 !== "waiting" && serverSQL.user2 !== "loading"){
-                console.log("passage startCheckForGame")
+
             //Si joueur jaune, maj du bouton d'attente
             if(playerYellow){
                 let showPopup = document.getElementById("popup")
@@ -379,7 +376,7 @@ async function updateGame(row, col, color){
         let chargeGame = chargeUtileInGame(row, col, color)
         await writingInSQL(chargeGame)
     }catch (error){
-        console.log("erreur lors de l'écriture updateGame", error)
+        console.log("Erreur lors de l'écriture updateGame", error)
     }
 }
 
@@ -389,7 +386,7 @@ async function updateEtatWaiting(etat){
         let chargeUtileE = chargeUtileEtat(etat)
         await writingInSQL(chargeUtileE)
     }catch (error){
-        console.log("erreur lors de l'écriture de l'état du jeu", error)
+        console.log("Erreur lors de l'écriture de l'état du jeu", error)
     }
 }
 
@@ -408,7 +405,6 @@ async function updateClientPlayer(){
     detectionAlignement()
 
     //Réinitialisation pour éviter des erreurs asynchrones
-    console.log("desactivation de who")
     await updateEtatWaiting("waitTurn")
 
     /* Et on active notre tour, uniquement si toutes les opérations sont finis */

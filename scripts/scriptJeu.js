@@ -34,7 +34,6 @@ let isWindow=false
 
     /*Initialisation si mode Online*/
     if(modeOnline){
-        console.log("Démarrage")
         displayIDElement("TableauVS", "inline")
         initialiseLoadOnline()
     } else {
@@ -432,7 +431,6 @@ function detectionAlignement() {
         pion.style.backgroundColor = couleur
         pion.style.boxShadow = "none"
         pion.classList.add("circle-animate")
-        console.log("insertion pion : ", couleur)
 
         /* On désactice l'utilisation de la souris, donc du jeu */
         desactiverSouris(750)
@@ -451,12 +449,22 @@ function detectionAlignement() {
 
             // On en profite pour compter un coup de plus pour le joueur 1 et indiquer le prochain joueur
             coupJ1++
-            if(!modeSolo){
+
+            // Message pour désigner les tours
+            if(!modeSolo && !modeOnline){
                 if(coupJ1<4){
                     setTimeout( ()=> {
                         alertMessage("Tour de jaune", "--couleurMenuYellow")
                     }, 750)
                 }
+            } else if (modeOnline && playerRed){
+                setTimeout( ()=> {
+                    alertMessage("Tour de jaune", "--couleurMenuYellow")
+                }, 750)
+            } else if (modeOnline && playerYellow){
+                setTimeout( ()=> {
+                    alertMessage("C'est votre tour", "--couleurMenuYellow")
+                }, 750)
             }
 
         } else {
@@ -467,7 +475,7 @@ function detectionAlignement() {
 
             // On en profite pour compter un coup de plus pour le joueur 2
             coupJ2++
-            if(!modeSolo){
+            if(!modeSolo && !modeOnline){
                 if(coupJ2<3){
                     setTimeout( ()=> {
                         alertMessage("Tour de rouge", "--couleurMenuRed")
@@ -478,7 +486,7 @@ function detectionAlignement() {
                         alertMessage("Jouez selon la couleur des flèches maintenant ;)", "--couleurMenu")
                     }, 750)
                 }
-            }else{
+            }else if(modeSolo){
                 if(coupJ2<4){
                     setTimeout( ()=> {
                         alertMessage("C'est votre tour", "--couleurMenu")
@@ -489,6 +497,14 @@ function detectionAlignement() {
                         alertMessage("Je vous laisse jouer maintenant ;)", "--couleurMenu")
                     }, 750)
                 }
+            }else if(modeOnline && playerRed){
+                setTimeout( ()=> {
+                    alertMessage("C'est votre tour", "--couleurMenuRed")
+                }, 750)
+            }else if(modeOnline && playerYellow){
+                setTimeout( ()=> {
+                    alertMessage("Tour de rouge", "--couleurMenuRed")
+                }, 750)
             }
         }
     }
