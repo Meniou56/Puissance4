@@ -32,6 +32,7 @@ let serverSQL
 
     /*Initialisation si mode Online*/
     if(modeOnline){
+        console.log("Démarrage")
         displayIDElement("TableauVS", "inline")
         initialiseLoadOnline()
     } else {
@@ -45,7 +46,7 @@ let serverSQL
         if((modeOnline && playerRed) || modeSolo){
             setTimeout( ()=> {
                 alertMessage("Vous commencez", "--couleurMenu")
-                activeClickOver()
+                if(coupJ1===0){activeClickOver()}//activation si 1er coup, sinon activation par la boucle waitTurn
             }, 900)
 
         // Jaune commence

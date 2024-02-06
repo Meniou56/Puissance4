@@ -11,43 +11,39 @@
 
 // Fonction pour charger les parties, en trouver une ou la créer, puis demander le nom de joueur
 async function initialiseLoadOnline() {
-    let jeuOnline = await readSQL("ALL")
+    try {
+        let jeuOnline = await readSQL("ALL")
 
-    // On enregistre la ligne qui servira pour toute la partie
-    if(jeuOnline[jeuOnline.length-1]){
-        serverSQL = jeuOnline[jeuOnline.length-1]
-    }
-
-    //Si jeuOnline est vide ou si partie pleine, il faut créer une partie
-    if(jeuOnline.length === 0){
-        let chargeUtile = chargeUtileNewParty()
-        await writingInSQL(chargeUtile)
-        initialiseLoadOnline() // On recharge à nouveau jeuOnline
-    }else if(serverSQL && (serverSQL.user1==="waiting" || serverSQL.user2==="waiting")){
-        checkLastGame()
-    } else {
-        // Il n'y a pas d'emplacement libre, on créé un partie
-        let chargeUtile = chargeUtileNewParty()
-        await writingInSQL(chargeUtile)
-        initialiseLoadOnline() // On recharge à nouveau jeuOnline
-    }
-
-    async function checkLastGame(){
-        // On check la dernière ligne de BDD (dernière partie créée)
-        if(serverSQL.user1 && serverSQL.user1 === "waiting"){
-            playerRed = true
-            await savingOnlineName("loading")//On informe que la place est prise
-            formNomJoueur("Nom de joueur")
-        } else if (serverSQL.user2 === "waiting"){
-            playerYellow = true
-            await savingOnlineName("loading")//On informe que la place est prise
-            formNomJoueur("Nom de joueur")
-        } else {
-            console.log("Erreur lors de l'adressage du joueur : rouge/jaune")
-            initialiseLoadOnline()
+        if (jeuOnline[jeuOnline.length - 1]) {
+            serverSQL = jeuOnline[jeuOnline.length - 1]
         }
-    }
 
+        if (jeuOnline.length === 0 || !serverSQL || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting")) {
+            let chargeUtile = chargeUtileNewParty()
+            await writingInSQL(chargeUtile)
+            initialiseLoadOnline()
+        } else if (serverSQL && (serverSQL.user1 === "waiting" || serverSQL.user2 === "waiting")) {
+            await checkLastGame()
+        }
+    } catch (error) {
+        console.error("Erreur lors du chargement de la partie:", error)
+    }
+}
+
+async function checkLastGame(){
+    // On check la dernière ligne de BDD (dernière partie créée)
+    if(serverSQL.user1 && serverSQL.user1 === "waiting"){
+        playerRed = true
+        await savingOnlineName("loading")//On informe que la place est prise
+        formNomJoueur("Nom de joueur")
+    } else if (serverSQL.user2 === "waiting"){
+        playerYellow = true
+        await savingOnlineName("loading")//On informe que la place est prise
+        formNomJoueur("Nom de joueur")
+    } else {
+        console.log("Erreur lors de l'adressage du joueur : rouge/jaune")
+        initialiseLoadOnline()
+    }
 }
 
 /******************************************/
@@ -117,8 +113,12 @@ function chargeUtileNewParty(){
 
 /* Fonction d'initialisation d'enregistrement du nom dans la BDD */
 async function savingOnlineName(name){
-    let chargeUtile = chargeUtileName(name)
-    await writingInSQL(chargeUtile)
+    try {
+        let chargeUtile = chargeUtileName(name)
+        await writingInSQL(chargeUtile) 
+    } catch (error) {
+        console.error('Une erreur est survenue lors de la sauvegarde du nom :', error)
+    }
 }
 
 // Construction charge utile des noms dans la BDD
@@ -231,9 +231,9 @@ async function writingInSQL(newData) {
 /**********************************************************/
 // Fonction de mise à jour de la partie BDD
 async function checkBDDGame(){
-    let newServerSQL = await readSQL(serverSQL.ID)
-    serverSQL = newServerSQL[0]
-    return serverSQL
+    let newData = await readSQL(serverSQL.ID)
+    targetedData = newData[0]
+    return targetedData
 }
 
 //Moteur principal de jeu Online : établissement des fonctions de chaque joueur à chaque tour
@@ -242,13 +242,11 @@ async function waitingTurn(who){
     serverSQL = await checkBDDGame()
 
     //A qui est-ce le tour ?
-    if(serverSQL.etat === who && reinitModeOnline){
-
-        //Un seul tour possible
-        reinitModeOnline=false
+    if(serverSQL.etat === who){
 
         //On récupère les informations de jetons inséré
         if(playerYellow && who==="yturn"){
+            console.log("test jaune")//problème ici
 
             //Mise à jour des tableaux de jeux visuels et virtuels
             tablJeu[serverSQL.row1][serverSQL.col1] = "red"
@@ -258,7 +256,7 @@ async function waitingTurn(who){
             await updateClientPlayer()
 
         } else if(playerRed && who==="rturn"){
-
+            console.log("test rouge")
             // Mise à jour du jeu
             tablJeu[serverSQL.row2][serverSQL.col2] = "yellow"
             rafraichirTablJeu(serverSQL.row2, serverSQL.col2, "yellow")
@@ -291,7 +289,7 @@ async function waitingTurn(who){
 async function startCheckForGame(){
 
     //Maj des informations pour avoir les noms
-    await checkBDDGame()
+    serverSQL = await checkBDDGame()
     displayBoardName()
 
     //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
@@ -365,14 +363,22 @@ async function launchingOnlineGame(){
 
 //Fonction de mise à jour de la partie (insertion d'un pion)
 async function updateGame(row, col, color){
+    try {
         let chargeGame = chargeUtileInGame(row, col, color)
         await writingInSQL(chargeGame)
+    }catch (error){
+        console.log("erreur lors de l'écriture updateGame", error)
+    }
 }
 
 //Fonction de mise en attente de la partie
 async function updateEtatWaiting(etat){
-    let chargeUtileE = chargeUtileEtat(etat)
-    await writingInSQL(chargeUtileE)
+    try {
+        let chargeUtileE = chargeUtileEtat(etat)
+        await writingInSQL(chargeUtileE)
+    }catch (error){
+        console.log("erreur lors de l'écriture de l'état du jeu", error)
+    }
 }
 
 /********************************/
@@ -389,10 +395,9 @@ async function updateClientPlayer(){
     isTableFull()
     detectionAlignement()
 
-    /* Et on active notre tour, uniquement si toutes les opérations sont finis */
-    activeClickOver()
-
     //Réinitialisation pour éviter des erreurs asynchrones
     await updateEtatWaiting("waitTurn")
-    reinitModeOnline = true
+
+    /* Et on active notre tour, uniquement si toutes les opérations sont finis */
+    activeClickOver()//Heu ?????
 }
