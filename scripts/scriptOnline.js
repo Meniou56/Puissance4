@@ -15,12 +15,15 @@ async function initialiseLoadOnline() {
             serverSQL = jeuOnline[jeuOnline.length - 1]
         }
 
-        if (jeuOnline.length === 0 || !serverSQL || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting")) {
+        //Création d'une partie
+        if (jeuOnline.length === 0 || !serverSQL //si pas de ligne précédente
+            || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") //Si toutes les places sont occupées
+            || serverSQL.row1!==-1 || serverSQL.row2!==-1) { //S'il s'agit d'une partie déjà joué
             let chargeUtile = chargeUtileNewParty()
             await writingInSQL(chargeUtile)
             initialiseLoadOnline()
         } else if (serverSQL && (serverSQL.user1 === "waiting" || serverSQL.user2 === "waiting")) {
-            await checkLastGame()
+            checkLastGame()
         }
     } catch (error) {
         console.error("Erreur lors du chargement de la partie:", error)
@@ -297,9 +300,8 @@ async function startCheckForGame(){
         displayBoardName()
 
         //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
-        if(serverSQL.etat==="prepare"){
+        if(serverSQL.etat!=="waiting" && coupJ1<1){
             waitingOnlineWindow()
-            isWindow=true
         }
 
         //On vérifie si tout à été maj
@@ -315,6 +317,7 @@ async function startCheckForGame(){
 
                 //La partie a été lancée pour jaune ?
                 if(serverSQL.etat !== "prepare"){
+                    console.log("désaffichage")
                     displayIDElement("popup", "none")
                     yellowGameActive = true
                     launchingOnlineGame()
@@ -326,10 +329,8 @@ async function startCheckForGame(){
             }
 
             //Si joueur rouge, prêt à lancer la partie
-            if(playerRed && isWindow){
+            if(playerRed){
                 document.querySelector("#replay").disabled = false
-            }else if(!isWindow && serverSQL.etat==="prepare"){
-                startCheckForGame()
             }
 
         } else {
@@ -364,7 +365,7 @@ async function launchingOnlineGame(){
         await writingInSQL(chargeLaunch)
         displayIDElement("popup", "none")
         waitingTurn("launched")
-    } else if (serverSQL.etat !== "prepare"){
+    } else if (playerYellow && (serverSQL.etat!=="prepare" || serverSQL.etat!=="waiting")){
         displayIDElement("popup", "none")
         waitingTurn("yturn")
     }

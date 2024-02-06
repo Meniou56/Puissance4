@@ -22,9 +22,8 @@ let gameOnOff = true
 /* Variable globales pour le mode Online*/
 let playerRed = false
 let playerYellow = false
-let serverSQL
+let serverSQL =[]
 let yellowGameActive = false
-let isWindow=false
 
 /**************
  * Démarrage  *
