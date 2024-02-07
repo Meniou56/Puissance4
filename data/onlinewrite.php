@@ -111,10 +111,22 @@ try {
             // Logique pour l'insertion et mise à jour BDD(suppression anciennes lignes)
             try {
 
-                //Suppression des lignes-parties périmées
+                /*Phase de nettoyage*/
+                /********************/
+                //Suppression des lignes-parties périmées (plus d'un jour)
                 $deleteStatement = $mysqlClient->prepare("DELETE FROM jeuonline WHERE date < NOW() - INTERVAL 1 DAY");
                 $deleteStatement->execute();
 
+                // Suppression des parties en "prepare" depuis plus de 10 minutes
+                $deletePreparingGamesStatement = $mysqlClient->prepare("DELETE FROM jeuonline WHERE etat = 'prepare' AND date < NOW() - INTERVAL 10 MINUTE");
+                $deletePreparingGamesStatement->execute();
+
+                // Suppression des parties où user1 ou user2 sont en "waiting" ou "loading" depuis plus de 15 minutes
+                $deleteWaitingLoadingGamesStatement = $mysqlClient->prepare("DELETE FROM jeuonline WHERE (user1 = 'waiting' OR user1 = 'loading' OR user2 = 'waiting' OR user2 = 'loading') AND date < NOW() - INTERVAL 15 MINUTE");
+                $deleteWaitingLoadingGamesStatement->execute();
+
+                /*Phase de création*/
+                /*******************/
                 $date = $donnees['date'];
                 $user1 = $donnees['user1'];
                 $user2 = $donnees['user2'];
