@@ -25,6 +25,7 @@ header("Expires: 0");
     <!--Bouton de tri-->
     <select id="triScores">
         <option disabled selected>Trier par :</option>
+        <option value="modeJeu">Mode de jeu</option>
         <option value="chrono">Plus récents en premier</option>
         <option value="anteChrono">Plus anciens en premier</option>
         <option value="alphabetique">Ordre alphabétique</option>
@@ -41,6 +42,7 @@ header("Expires: 0");
                 <th>Date</th>
                 <th>Nom</th>
                 <th>Score</th>
+                <th>Mode</th>
             </tr>
         </thead>
         <tbody id="tableauBody">

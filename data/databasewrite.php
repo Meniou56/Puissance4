@@ -29,14 +29,16 @@ try {
         $date = $donnees['date'];
         $user = $donnees['user'];
         $coup = $donnees['coup'];
+        $mode = $donnees['mode'];
 
         // Requête SQL insertion de données
         try {
-            $statement = $mysqlClient->prepare("INSERT INTO scores (date, user, coup) VALUES (:date, :user, :coup)");
+            $statement = $mysqlClient->prepare("INSERT INTO scores (date, user, coup, mode) VALUES (:date, :user, :coup, :mode)");
             $statement->execute([
                 'date' => $date,
                 'user' => $user,
-                'coup' => $coup
+                'coup' => $coup,
+                'mode' => $mode
             ]);
 
         } catch (PDOException $exception) {

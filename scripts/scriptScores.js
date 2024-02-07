@@ -58,6 +58,9 @@ function trierEtAfficherScores(scores, critere) {
         case "anteAlphabetique":
             scores.sort((a, b) => b.user.toLowerCase().localeCompare(a.user.toLowerCase()))
             break
+        case "modeJeu":
+        scores.sort((a, b) => a.mode.localeCompare(b.mode, 'fr', { sensitivity: 'base' }))
+            break
     }
 
     //Creation du tableau

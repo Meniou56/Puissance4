@@ -544,11 +544,22 @@ function scoreFormat(winnerName) {
     const actualTime = new Date()
     const date = `${String(actualTime.getDate()).padStart(2, '0')}/${String(actualTime.getMonth() +1).padStart(2, '0')}/${String(actualTime.getFullYear()).padStart(2, '0')} @ ${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`
     
+    //On récupère le mode de jeu
+    let modeDeJeu
+    if(modeOnline){
+        modeDeJeu="Match en ligne"
+    } else if(modeSolo){
+        modeDeJeu="Défi IA"
+    } else {
+        modeDeJeu="Duel local"
+    }
+
     /* Construction de la charge utile */
     const newData = {
         "date": date,
         "user": winnerName,
-        "coup": coupPlayer //alternance à faire, ainsi que la réinitialisation, etc etc...
+        "coup": coupPlayer,
+        "mode": modeDeJeu
     }
 
     // On récupère le fichier des scores et on écrit dedans

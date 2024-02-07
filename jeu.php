@@ -320,11 +320,11 @@
 <!--Chargement des paramètres des variables superes gloables-->
 <?php include 'data/varModeJeu.php'?>
 
-<!-- Chargement du JS -->
+<!-- Chargement du JS si nécessaire -->
 <script src="scripts/affichage.js"></script>
-<script src="scripts/scriptOnline.js"></script>
+<?php if($mode === "online") { ?> <script src="scripts/scriptOnline.js"></script> <?php } ?>
 <script src="scripts/scriptJeu.js"></script>
-<script src="scripts/IA.js"></script>
+<?php if($mode === "solo") { ?> <script src="scripts/IA.js"></script> <?php } ?>
 
 </body>
 </html>

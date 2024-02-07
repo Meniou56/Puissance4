@@ -316,7 +316,6 @@ async function startCheckForGame(){
 
                 //La partie a été lancée pour jaune ?
                 if(serverSQL.etat !== "prepare"){
-                    console.log("désaffichage")
                     displayIDElement("popup", "none")
                     yellowGameActive = true
                     launchingOnlineGame()
