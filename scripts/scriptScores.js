@@ -1,160 +1,118 @@
 /************************************
 * CHARGEMENT DES SCORES ENREGISTRES *
 *************************************/
-// Fonction de chargement des scores JSON
+// Fonction de chargement des scores JSON et de conversion des dates
 async function chargerScores() {
-        try {
+    try {
+        // Chargement des données
+        const response = await fetch('../data/databaseread.php?_ts=' + new Date().getTime())
 
-            // Chargement des données de l'API
-            const response = await fetch('../data/databaseread.php?_ts=' + new Date().getTime());
-
-            if(!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`)
-            }
-
-            // Transformation en JSON
-            const scores = await response.json()
-            return scores
-    
-            // Si erreur :
-        } catch (erreur) {
-            console.error('Erreur lors du chargement des données', erreur)
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`)
         }
+
+        // Transformation en JSON
+        let scores = await response.json()
+
+        // Convertis les dates en objets Date pour chaque score
+        scores.forEach(score => {
+            const parts = score.date.split(' @ ')
+            const dateParts = parts[0].split('/')
+            const timeParts = parts[1].split(':')
+            score.dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], ...timeParts)
+        })
+
+        return scores
+
+    } catch (erreur) {
+        console.error('Erreur lors du chargement des données', erreur)
+    }
 }
 
 // Fonction pour attendre que les scores soient effectivement chargées avant de passer au chargement du tableau
 async function initialiserTableau(listeChronoOrdonne) {
     let scores = await chargerScores()
-    creerTableauScores(scores, listeChronoOrdonne)
+
+    if (scores) {
+        trierEtAfficherScores(scores, listeChronoOrdonne)
+    }
 }
 
 /***************************
 * TRI ET AFFICHAGE TABLEAU *
 ****************************/
 
-/* Fonction de choix du mode de tri */
-function choixTriScores(){
-
-    clickTriScores = document.querySelector("#triScores")
-    clickTriScores.addEventListener("click", (event) => {
-
-        /* Si ordonné par dates, on regarde dans quel sens et on réinitlialise le tableau */
-        if(clickTriScores.value==="anteChrono"){
-            listeChronoOrdonne=false
-            initialiserTableau(listeChronoOrdonne)
-        }else if(clickTriScores.value==="chrono"){
-            listeChronoOrdonne=true
-            initialiserTableau(listeChronoOrdonne)
-        }
-
-        /*Si ordonné par Scores */
-        else if(clickTriScores.value==="highScores"){
-            let triCoupInverse = true
-            triScoresCoup(triCoupInverse)}
-        else if(clickTriScores.value==="lowScores"){
-            let triCoupInverse = false
-            triScoresCoup(triCoupInverse)
-        }
-
-        /* Si ordonné par ordre alphabétique */
-        else if(clickTriScores.value==="alphabetique"){
-            let triAlphabetiqueInverse = -1
-            triScoresUser(triAlphabetiqueInverse)
-        }
-        else if(clickTriScores.value==="anteAlphabetique"){
-            let triAlphabetiqueInverse = 1
-            triScoresUser(triAlphabetiqueInverse)
-        }
-
-    })
-}
-
-/* Fonction de tri des scores par scores (coups) */
-async function triScoresCoup(triCoupInverse){
-    let scores = await chargerScores()
-    if(triCoupInverse){
-        scores.sort(function (a, b){return b.coup - a.coup})
-    }else{
-        scores.sort(function (a, b){return a.coup - b.coup})
+/* Fonction pour trier et afficher les scores selon le critère choisi */
+function trierEtAfficherScores(scores, listeChronoOrdonne) {
+    if (listeChronoOrdonne) {
+        // Tri chronologique
+        scores.sort((a, b) => a.dateObj - b.dateObj)
+    } else {
+        // Tri antéchronologique
+        scores.sort((a, b) => b.dateObj - a.dateObj)
     }
-
-    // On réordonne correctement & on crée avec les nouvelles données
-    listeChronoOrdonne=true
     creerTableauScores(scores)
 }
 
-/* Fonction de tri des scores par nom (user) */
-async function triScoresUser(triAlphabetiqueInverse){
-    let scores = await chargerScores()
+/* Fonction de choix du mode de tri */
+function choixTriScores() {
+    let clickTriScores = document.querySelector("#triScores")
+    clickTriScores.addEventListener("click", async () => {
+        let scores = await chargerScores()
+        if (!scores){return} // Stop si les scores n'est pas chargé
 
-    scores.sort(function (a, b){
-        if(a.user.toLowerCase() < b.user.toLowerCase()){return triAlphabetiqueInverse}
-        if(a.user.toLowerCase() > b.user.toLowerCase()){return -triAlphabetiqueInverse}
-        return 0
+        switch (clickTriScores.value) {
+            case "anteChrono":
+                listeChronoOrdonne = false
+                break
+            case "chrono":
+                listeChronoOrdonne = true
+                break
+            case "highScores":
+                scores.sort((a, b) => b.coup - a.coup)
+                break
+            case "lowScores":
+                scores.sort((a, b) => a.coup - b.coup)
+                break
+            case "alphabetique":
+                scores.sort((a, b) => a.user.toLowerCase().localeCompare(b.user.toLowerCase()))
+                break
+            case "anteAlphabetique":
+                scores.sort((a, b) => b.user.toLowerCase().localeCompare(a.user.toLowerCase()))
+                break
+        }
+
+        creerTableauScores(scores)
     })
-
-    // On réordonne correctement & on crée avec les nouvelles données
-    listeChronoOrdonne=true
-    creerTableauScores(scores)
 }
 
-// Fonction Création du tableau des scores
-function creerTableauScores(scores, listeChronoOrdonne) {
-
-    // On récupère l'emplacement du tableau dans le html
+// Fonction création du tableau des scores
+function creerTableauScores(scores) {
     let tableauBody = document.getElementById("tableauBody")
 
-    /*On commence par effacer le tableau */
-    eraseTableauScores()
+    eraseTableauScores() // Effacer le tableau existant avant d'afficher les nouveaux scores
 
-    // Boucle de creation des lignes (en fonction du nombre d'entrées dans scores)
-    // On commence par définir le sens de la boucle suivant si ordonné ou non
-    if(!listeChronoOrdonne){startBoucle=0}else{startBoucle=scores.length-1}
-    if(!listeChronoOrdonne){pasBoucle=+1}else{pasBoucle=-1}
-    if(!listeChronoOrdonne){endBoucle=scores.length}else{endBoucle=-1}
-
-    for (iRow=startBoucle; iRow!=endBoucle; iRow=iRow+pasBoucle) {
-
-        // creation d'une ligne
+    scores.forEach(score => {
         let tr = document.createElement("tr")
-
-        //Création des cellules avec leur contenu
-
-            // On récupère les clés de chaque objet
-            const objet = scores[iRow]
-
-            // Pour chaque clé on indique sa valeur dans une cellule
-            for(let key in objet) {
-                let td = document.createElement("td")
-                td.innerText = scores[iRow][key]
-                tr.appendChild(td)
-            }
-            
-        // On incropore la nouvelle ligne dans le html
+        Object.values(score).forEach(value => {
+            let td = document.createElement("td")
+            td.innerText = value instanceof Date ? value.toLocaleString() : value
+            tr.appendChild(td)
+        })
         tableauBody.appendChild(tr)
-
-    }
-
+    })
 }
 
 /* Fonction vidage du tableau de scores */
-function eraseTableauScores(){
-
-    /* On récupèe le tableau */
+function eraseTableauScores() {
     let tableauScores = document.getElementById("tableauBody")
-
-    /* Pour mieux le supprimer */
-    if(tableauScores){
-        while (tableauScores.firstChild) {
-            tableauScores.removeChild(tableauScores.firstChild)
-        }
+    while (tableauScores.firstChild) {
+        tableauScores.removeChild(tableauScores.firstChild)
     }
 }
 
 //LANCEMENT ET APPELS
-//Variable globale
-let listeChronoOrdonne=true
+let listeChronoOrdonne = true // Variable globale pour le sens du tri chronologique
 
-//Appel de la fonction d'initialisation du tableau
-initialiserTableau(listeChronoOrdonne)
-choixTriScores()
+initialiserTableau(listeChronoOrdonne) // Initialiser le tableau au chargement
+choixTriScores() // Activer le choix de tri
