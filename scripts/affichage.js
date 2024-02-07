@@ -122,7 +122,7 @@ function eraseMessage(){
 async function messageVictoire(winnerPopup) {
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){
+    if(gameOnOff){
         gameOnOff = false
         await paused(800)
     }
@@ -179,7 +179,7 @@ async function messageVictoireOnline(winnerPopup) {
     document.getElementById("popup").innerHTML = savePopup
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){
+    if(gameOnOff){
         gameOnOff = false
         await paused(800)
     }
@@ -318,7 +318,7 @@ async function messageWithButton(messageContent) {
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
     if(typeof gameOnOff !=="undefined"){
-            if(gameOnOff===true){
+            if(gameOnOff){
             gameOnOff = false
             await paused(800)
         }
