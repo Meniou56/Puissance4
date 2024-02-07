@@ -344,11 +344,11 @@ async function messageWithButton(messageContent) {
     /* Raccordement au DOM */
     showPopup.appendChild(h3Popup)
     showPopup.appendChild(saveButton)
-    //Si message perdu et en mode online, pas de bouton
-    if(messageContent!=="Perdu !" && modeOnline){
-        showPopup.appendChild(replayButton)
-    }else{
+    //Si message "Perdu !" et en mode online, pas de bouton
+    if(messageContent==="Perdu !" && modeOnline){
         showPopup.removeChild(replayButton)
+    }else{
+        showPopup.appendChild(replayButton)
     }
 
 
