@@ -25,9 +25,9 @@
 <!--POPUP PRINCIPAL-->
 <div id="popup" class="animate">
     <!--Contenu du pop-up-->
-    <button id="soloMode" class="animate" title="Contre l'ordinateur">Mode Solo</button>
-    <button id="duoMode" class="animate" title="À deux derrière un écran">Mode deux joueurs</button>
-    <button id="online" class="animate" title="En cours de développement">Mode online</button>
+    <button id="soloMode" class="animate" title="Seul contre l'ordinateur">Défi IA</button>
+    <button id="duoMode" class="animate" title="Face-à-Face derrière un même écran">Duel local</button>
+    <button id="online" class="animate" title="Affrontement via internet - Version beta">Match en ligne</button>
     <button id="configuration" class="animate" title="Pour changer les paramètres">Configuration</button>
     <button id="scoresPage" class="animate" title="Pour consulter les scores">Scores</button>
 </div> 

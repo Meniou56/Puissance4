@@ -8,36 +8,41 @@
 
 // Fonction pour charger les parties, en trouver une ou la créer, puis demander le nom de joueur
 async function initialiseLoadOnline() {
-    let jeuOnline = await readSQL("ALL")
+    try {
+        let jeuOnline = await readSQL("ALL")
 
-    //Si jeuOnline est vide ou si partie pleine, il faut créer une partie
-    if(jeuOnline.length === 0 
-        || (jeuOnline[jeuOnline.length-1].user1 !== "waiting" && jeuOnline[jeuOnline.length-1].user2 !== "waiting")){
-        let chargeUtile = chargeUtileNewParty()
-        await writingInSQL(chargeUtile)
-        initialiseLoadOnline() // On recharge à nouveau jeuOnline
-    }else{
-        // On enregistre la ligne qui servira pour toute la partie
-        serverSQL = jeuOnline[jeuOnline.length-1]
-        checkLastGame()
-    }
-
-    async function checkLastGame(){
-        // On check la dernière ligne de BDD (dernière partie créée)
-        if(serverSQL.user1 && serverSQL.user1 === "waiting"){
-            playerRed = true
-            await savingOnlineName("loading")//On informe que la place est prise
-            formNomJoueur("Nom de joueur")
-        } else if (serverSQL.user2 === "waiting"){
-            playerYellow = true
-            await savingOnlineName("loading")//On informe que la place est prise
-            formNomJoueur("Nom de joueur")
-        } else {
-            console.log("Erreur lors de l'adressage du joueur : rouge/jaune")
-            initialiseLoadOnline()
+        if (jeuOnline[jeuOnline.length - 1]) {
+            serverSQL = jeuOnline[jeuOnline.length - 1]
         }
-    }
 
+        //Création d'une partie
+        if (jeuOnline.length === 0 || !serverSQL || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") || serverSQL.row1>-1 || serverSQL.row2>-1) { //S'il s'agit d'une partie déjà joué
+            let chargeUtile = chargeUtileNewParty()
+            await writingInSQL(chargeUtile)
+            initialiseLoadOnline()
+        } else if (serverSQL && (serverSQL.user1 === "waiting" || serverSQL.user2 === "waiting")) {
+            window.addEventListener('beforeunload', releaseSpaceName)//écoute pour libérer les places si un joueur quitte
+            checkLastGame()
+        }
+    } catch (error) {
+        console.error("Erreur lors du chargement de la partie:", error)
+    }
+}
+
+async function checkLastGame(){
+    // On check la dernière ligne de BDD (dernière partie créée)
+    if(serverSQL.user1 && serverSQL.user1 === "waiting"){
+        playerRed = true
+        await savingOnlineName("loading")//On informe que la place est prise
+        formNomJoueur("Nom de joueur")
+    } else if (serverSQL.user2 === "waiting"){
+        playerYellow = true
+        await savingOnlineName("loading")//On informe que la place est prise
+        formNomJoueur("Nom de joueur")
+    } else {
+        console.log("Erreur lors de l'adressage du joueur : rouge/jaune")
+        initialiseLoadOnline()
+    }
 }
 
 /******************************************/
@@ -107,10 +112,13 @@ function chargeUtileNewParty(){
 
 /* Fonction d'initialisation d'enregistrement du nom dans la BDD */
 async function savingOnlineName(name){
-    let chargeUtile = chargeUtileName(name)
-    await writingInSQL(chargeUtile)
+    try {
+        let chargeUtile = chargeUtileName(name)
+        await writingInSQL(chargeUtile) 
+    } catch (error) {
+        console.error('Une erreur est survenue lors de la sauvegarde du nom :', error)
+    }
 }
-
 
 // Construction charge utile des noms dans la BDD
 function chargeUtileName(name){
@@ -158,9 +166,8 @@ function chargeUtileEtat(etat){
             "ID": serverSQL.ID
         }
     } else {
-        console.log("erreur lors de la mise à jour de l'état dans la BDD")
+        console.log("Erreur lors de la mise à jour de l'état dans la BDD")
     }
-    console.log(newData)
     return newData
 }
 
@@ -222,21 +229,22 @@ async function writingInSQL(newData) {
 /**********************************************************/
 // Fonction de mise à jour de la partie BDD
 async function checkBDDGame(){
-    let newServerSQL = await readSQL(serverSQL.ID)
-    serverSQL = newServerSQL[0]
-    return serverSQL
+    let newData = await readSQL(serverSQL.ID)
+    targetedData = newData[0]
+    return targetedData
 }
 
 //Moteur principal de jeu Online : établissement des fonctions de chaque joueur à chaque tour
 async function waitingTurn(who){
-    console.log("controle de la BDD")
+
+    //Variable et data
     serverSQL = await checkBDDGame()
 
     //A qui est-ce le tour ?
     if(serverSQL.etat === who){
 
         //On récupère les informations de jetons inséré
-        if(who==="yturn"){
+        if(playerYellow && who==="yturn" && aQuiLeTour==="--couleurJ1"){
 
             //Mise à jour des tableaux de jeux visuels et virtuels
             tablJeu[serverSQL.row1][serverSQL.col1] = "red"
@@ -245,7 +253,7 @@ async function waitingTurn(who){
             //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
             await updateClientPlayer()
 
-        } else if(who==="rturn"){
+        } else if(playerRed && who==="rturn" && aQuiLeTour==="--couleurJ2"){
 
             // Mise à jour du jeu
             tablJeu[serverSQL.row2][serverSQL.col2] = "yellow"
@@ -254,8 +262,15 @@ async function waitingTurn(who){
             //Mise à jour des autres données côtés clients (Y a-t-il un vainqueur, activation de la possibilité de jouer, etc)
             await updateClientPlayer()
 
+        //Activation rouge si 1er coup
+        } else if (playerRed && who==="launched"){
+            setTimeout( ()=> {
+                alertMessage("Vous commencez", "--couleurMenu")
+                activeClickOver()
+            }, 900)
+
         } else {
-            alertMessage("erreur BDD : insertion pion", "--couleurMenuAlerte")
+            pauseOnline()
         }
     } else {
         //Si ce n'est pas le tour de ce joueur, on patiente encore
@@ -263,10 +278,14 @@ async function waitingTurn(who){
 
         // Fonction pour la mise en pause puis retour à la fonction
         async function pauseOnline() {
-            console.log("Pause débutée");
-            await new Promise(resolve => setTimeout(resolve, 2500));
-            console.log("Pause terminée");
-            waitingTurn(who);
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            if(playerRed){
+                waitingTurn("rturn")
+            } else if(playerYellow){
+                waitingTurn("yturn")
+            } else {
+                console.log("erreur le joueur online n'est pas défini")
+            }
         }
     }
 }
@@ -274,45 +293,49 @@ async function waitingTurn(who){
 /* Fonction d'attente d'autres joueurs/maj joueurs */
 async function startCheckForGame(){
 
-    //Maj des informations pour avoir les noms
-    await checkBDDGame()
-    displayBoardName()
+    if(!yellowGameActive){
+        //Maj des informations pour avoir les noms
+        serverSQL = await checkBDDGame()
+        displayBoardName()
 
-    //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
-    if(serverSQL.etat ==="prepare"){
-        waitingOnlineWindow()
-    }
+        //Si on est encore dans la phase de préparation de partie, fenêtre d'attente
+        if(serverSQL.etat!=="waiting" && coupJ1<1){
+            waitingOnlineWindow()
+        }
 
-    //On vérifie si tout à été maj
-    if (serverSQL.user1 !== "waiting" && serverSQL.user1 !== "loading" 
-        && serverSQL.user2 !== "waiting" && serverSQL.user2 !== "loading"){
-        
-        //Si joueur jaune, maj du bouton d'attente
-        if(playerYellow){
-            let showPopup = document.getElementById("popup")
-            let replayButton = showPopup.querySelector("#replay")
-            replayButton.innerText = "Prêt ?"
-            replayButton.style.backgroundColor = "green"
+        //On vérifie si tout à été maj
+        if (serverSQL.user1 !== "waiting" && serverSQL.user1 !== "loading" 
+            && serverSQL.user2 !== "waiting" && serverSQL.user2 !== "loading"){
 
-            //La partie a été lancée pour jaune ?
-            if(serverSQL.etat !== "prepare"){
-                displayIDElement("popup", "none")
-                launchingOnlineGame()
-                } 
+            //Si joueur jaune, maj du bouton d'attente
+            if(playerYellow){
+                let showPopup = document.getElementById("popup")
+                let replayButton = showPopup.querySelector("#replay")
+                replayButton.innerText = "Prêt ?"
+                replayButton.style.backgroundColor = "green"
 
-            //Sinon, on recharge depuis la BDD après 2,5s
-            await paused(2500)
+                //La partie a été lancée pour jaune ?
+                if(serverSQL.etat !== "prepare"){
+                    console.log("désaffichage")
+                    displayIDElement("popup", "none")
+                    yellowGameActive = true
+                    launchingOnlineGame()
+                    } 
+
+                //Sinon, on recharge depuis la BDD
+                await paused(1500)
+                startCheckForGame()
+            }
+
+            //Si joueur rouge, prêt à lancer la partie
+            if(playerRed){
+                document.querySelector("#replay").disabled = false
+            }
+
+        } else {
+            await paused(1500)
             startCheckForGame()
         }
-
-        //Si joueur rouge, prêt à lancer la partie
-        if(playerRed){
-            document.querySelector("#replay").disabled = false
-        }
-
-    } else {
-        await paused(2500)
-        startCheckForGame()
     }
 }
 
@@ -340,8 +363,8 @@ async function launchingOnlineGame(){
         let chargeLaunch = chargeUtileEtat("launched")
         await writingInSQL(chargeLaunch)
         displayIDElement("popup", "none")
-        startingGame()
-    } else if (serverSQL.etat !== "prepare"){
+        waitingTurn("launched")
+    } else if (playerYellow && (serverSQL.etat!=="prepare" || serverSQL.etat!=="waiting")){
         displayIDElement("popup", "none")
         waitingTurn("yturn")
     }
@@ -349,14 +372,22 @@ async function launchingOnlineGame(){
 
 //Fonction de mise à jour de la partie (insertion d'un pion)
 async function updateGame(row, col, color){
+    try {
         let chargeGame = chargeUtileInGame(row, col, color)
         await writingInSQL(chargeGame)
+    }catch (error){
+        console.log("Erreur lors de l'écriture updateGame", error)
+    }
 }
 
 //Fonction de mise en attente de la partie
 async function updateEtatWaiting(etat){
-    let chargeUtileE = chargeUtileEtat(etat)
-    await writingInSQL(chargeUtileE)
+    try {
+        let chargeUtileE = chargeUtileEtat(etat)
+        await writingInSQL(chargeUtileE)
+    }catch (error){
+        console.log("Erreur lors de l'écriture de l'état du jeu", error)
+    }
 }
 
 /********************************/
@@ -366,10 +397,6 @@ async function updateEtatWaiting(etat){
 //Fonction de mise à jour de la partie côté client
 async function updateClientPlayer(){
     
-    //Réinitialisation pour éviter des erreurs asynchrones
-    await updateEtatWaiting("waitTurn")
-    who=""
-
     /* Et on change de joueur */
     changePlayer()
 
@@ -377,6 +404,9 @@ async function updateClientPlayer(){
     isTableFull()
     detectionAlignement()
 
-    /* Et on active notre tour */
+    //Réinitialisation pour éviter des erreurs asynchrones
+    await updateEtatWaiting("waitTurn")
+
+    /* Et on active notre tour, uniquement si toutes les opérations sont finis */
     activeClickOver()
 }

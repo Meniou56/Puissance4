@@ -23,6 +23,10 @@ let gameOnOff = true
 let playerRed = false
 let playerYellow = false
 let serverSQL
+let yellowGameActive = false
+
+/*Sauvegarde d'état initiaux*/
+const savePopup = document.getElementById("popup").innerHTML
 
 /**************
  * Démarrage  *
@@ -42,11 +46,11 @@ let serverSQL
     function startingGame(){
 
         //Rouge commence
-        if((modeOnline && playerRed) || modeSolo){
+        if(modeSolo){
             setTimeout( ()=> {
                 alertMessage("Vous commencez", "--couleurMenu")
+                activeClickOver()//activation si 1er coup, sinon activation par la boucle waitTurn
             }, 900)
-            activeClickOver()
 
         // Jaune commence
         } else if (!modeSolo){
@@ -57,6 +61,10 @@ let serverSQL
             //Si on est pas en mode Online, jaune doit pouvoir jouer aussi (playerYellow est défini uniquement en mode online)
             if(!playerYellow){
                 activeClickOver()
+            }
+            //Attendre que rouge ai joué
+             else {
+                waitingTurn("yturn")
             }
         }
     }
@@ -107,6 +115,7 @@ function whatTableColorIsThisCell(color){
 
 /* Activation click/over sur le jeu */
 function activeClickOver() {
+
     // Détection du clic ou survol
 let mouseClick = document.querySelectorAll("td")
 
@@ -122,6 +131,7 @@ let mouseClick = document.querySelectorAll("td")
 
 /* Désactivation click/over sur le jeu */
 function desactiveClickOver() {
+
     /* On désactive l'écoute d'événement sur le jeu*/
     let mouseClick = document.querySelectorAll("td")
 
@@ -204,7 +214,14 @@ function desactiverSouris(duration) {
 
                             /* On défini la couleur du futur pion*/
                             let nouvelleCouleur = getCouleurJoueurActuel()
+
+                            //Attribution de la couleur à la case
                             tablJeu[i][colonne] = nouvelleCouleur
+
+                            /*Si mode online on vérifie la couleur du joueur*/
+                            if(modeOnline){
+                                UpdateInsertionOnline()
+                            }
 
                             /* Puis on rafraichie le tableau de jeu */
                             rafraichirTablJeu(i,colonne, nouvelleCouleur)
@@ -217,22 +234,20 @@ function desactiverSouris(duration) {
                             detectionAlignement()
 
                             // Or if it's to online player
-                            if(playerRed || playerYellow){
-                                await updateGame(i, colonne, nouvelleCouleur)
+                            async function UpdateInsertionOnline(){
                                 desactiveClickOver()
-                                console.log("Je ne peux plus jouer")
+                                updateGame(i, colonne, nouvelleCouleur)
                                 if(playerRed){
-                                    console.log("fin de tour rouge")
-                                    waitingTurn("rturn")
+                                    await waitingTurn("rturn")
                                 }else if(playerYellow){
-                                    console.log("fin de tour jaune")
-                                    waitingTurn("yturn")
+                                    await waitingTurn("yturn")
                                 }else{
                                     console.log("problème dans la boucle de détection des tours online")
                                 }
-                          
+                            }
+
                             /* Check if it's to computer to play */
-                            } else if(gameOnOff){
+                            if(gameOnOff){
                                 isComputerTurn(nouvelleCouleur)
                             }
 
@@ -430,18 +445,28 @@ function detectionAlignement() {
 
     /* Fonction d'alternance des joueurs */
     function changePlayer() {
-        console.log("changement de joueur")
+
         if (aQuiLeTour === "--couleurJ1"){
             aQuiLeTour = "--couleurJ2"
 
             // On en profite pour compter un coup de plus pour le joueur 1 et indiquer le prochain joueur
             coupJ1++
-            if(!modeSolo){
+
+            // Message pour désigner les tours
+            if(!modeSolo && !modeOnline){
                 if(coupJ1<4){
                     setTimeout( ()=> {
                         alertMessage("Tour de jaune", "--couleurMenuYellow")
                     }, 750)
                 }
+            } else if (modeOnline && playerRed){
+                setTimeout( ()=> {
+                    alertMessage("Tour de jaune", "--couleurMenuYellow")
+                }, 750)
+            } else if (modeOnline && playerYellow){
+                setTimeout( ()=> {
+                    alertMessage("C'est votre tour", "--couleurMenuYellow")
+                }, 750)
             }
 
         } else {
@@ -452,7 +477,7 @@ function detectionAlignement() {
 
             // On en profite pour compter un coup de plus pour le joueur 2
             coupJ2++
-            if(!modeSolo){
+            if(!modeSolo && !modeOnline){
                 if(coupJ2<3){
                     setTimeout( ()=> {
                         alertMessage("Tour de rouge", "--couleurMenuRed")
@@ -463,7 +488,7 @@ function detectionAlignement() {
                         alertMessage("Jouez selon la couleur des flèches maintenant ;)", "--couleurMenu")
                     }, 750)
                 }
-            }else{
+            }else if(modeSolo){
                 if(coupJ2<4){
                     setTimeout( ()=> {
                         alertMessage("C'est votre tour", "--couleurMenu")
@@ -474,6 +499,14 @@ function detectionAlignement() {
                         alertMessage("Je vous laisse jouer maintenant ;)", "--couleurMenu")
                     }, 750)
                 }
+            }else if(modeOnline && playerRed){
+                setTimeout( ()=> {
+                    alertMessage("C'est votre tour", "--couleurMenuRed")
+                }, 750)
+            }else if(modeOnline && playerYellow){
+                setTimeout( ()=> {
+                    alertMessage("Tour de rouge", "--couleurMenuRed")
+                }, 750)
             }
         }
     }

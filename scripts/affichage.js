@@ -5,7 +5,6 @@
 /* Fonction de relance d'une partie */
 function playAgain() {
 
-
     /* On écoute le bouton rejouer */
     const buttonReplayClic = document.querySelector("#popup #replay")
         
@@ -20,7 +19,7 @@ function playAgain() {
                 }
             )
         } else {
-            alertMessage("Erreur : bouton rejouer n'ont récupéré", "--couleurMenuAlerte")
+            if(!modeOnline){alertMessage("Erreur : bouton rejouer n'ont récupéré", "--couleurMenuAlerte")}
         }
     }  
 
@@ -34,7 +33,7 @@ function validerNom(form, validerButton, input) {
         event.preventDefault()
 
         /*Si mode online, on revient au jeu*/
-        if(modeOnline && coupJ1<3){
+        if(modeOnline){
             if((input.value).trim()){
 
                 /* On inscrit le nom dans la BDD et on revient au jeu */
@@ -49,7 +48,7 @@ function validerNom(form, validerButton, input) {
         }
 
         /* On appel la fonction de validation du nom */
-        if(!modeOnline || coupJ1>2){
+        if(!modeOnline){
             valideName(input.value)
         }
     })
@@ -87,6 +86,7 @@ function annuler(cancelButton) {
 
             /*Si Online, retour au menu*/
             if(modeOnline){
+                releaseSpaceName()
                 window.location.href='index.php'
             }
 
@@ -122,7 +122,7 @@ function eraseMessage(){
 async function messageVictoire(winnerPopup) {
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){
+    if(gameOnOff){
         gameOnOff = false
         await paused(800)
     }
@@ -175,8 +175,11 @@ async function messageVictoire(winnerPopup) {
 /* Message en cas de victoire online*/
 async function messageVictoireOnline(winnerPopup) {
 
+    /*Réinitialisation du Popup*/
+    document.getElementById("popup").innerHTML = savePopup
+
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
-    if(gameOnOff===true){
+    if(gameOnOff){
         gameOnOff = false
         await paused(800)
     }
@@ -229,7 +232,6 @@ async function messageVictoireOnline(winnerPopup) {
 
     /* Appel de la fonction pour savoir si le joueur veut quitter */
     saveButton.addEventListener('click', () => leavingGame())
-
 }
 
 /* Message attente partie en ligne */
@@ -250,13 +252,6 @@ function waitingOnlineWindow() {
         replayButton.id = "replay"
     }
 
-    //Remise en forme si nécessaire
-    if(replayButton.style.border === "none" || replayButton.style.boxShadow === "none"){
-        replayButton.style.border = "3px solid RGBA(185, 159, 108, 0.8)"
-        replayButton.style.boxShadow = "5px 5px 20px 1px rgb(125, 125, 125)"
-        replayButton.style.backgroundColor = "RGB(205, 179, 128)"
-    }
-
     if(!saveButton){
         saveButton = document.createElement("button")
         saveButton.id = "save"
@@ -269,10 +264,10 @@ function waitingOnlineWindow() {
     showPopup.appendChild(saveButton)
 
     /* Incorporer les nouveaux textes et couleur */
-    h3Popup.innerText = "Partie en ligne"
+    h3Popup.innerText = "Match en ligne"
 
     //Nom des joueurs et boutons
-    pPopup.innerText = serverSQL.user1 + " VS " + serverSQL.user2
+    pPopup.innerHTML = "Partie " + serverSQL.ID + "<br>" + serverSQL.user1 + " VS " + serverSQL.user2
     if(playerRed){
             replayButton.innerText = "Lancer"
     }
@@ -323,7 +318,7 @@ async function messageWithButton(messageContent) {
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
     if(typeof gameOnOff !=="undefined"){
-            if(gameOnOff===true){
+            if(gameOnOff){
             gameOnOff = false
             await paused(800)
         }
@@ -348,12 +343,21 @@ async function messageWithButton(messageContent) {
 
     /* Raccordement au DOM */
     showPopup.appendChild(h3Popup)
-    showPopup.appendChild(replayButton)
     showPopup.appendChild(saveButton)
+    //Si message perdu et en mode online, pas de bouton
+    if(messageContent!=="Perdu !" && modeOnline){
+        showPopup.appendChild(replayButton)
+    }else{
+        showPopup.removeChild(replayButton)
+    }
+
 
     /* Incorporer les nouveaux textes et couleur */
     h3Popup.innerText = messageContent
-    replayButton.innerText = "Rejouer"
+    if(replayButton){
+        replayButton.innerText = "Rejouer"
+    }
+
     saveButton.innerText = "Quitter"
 
     /*Afficher le popup*/
@@ -379,6 +383,9 @@ function leavingGame() {
 
             /* S'il y a clic... on appel la fonction de réinitialisation de la partie */
             buttonLeavingClic.addEventListener("click", () => {
+
+                //En mode online, libération de la place
+                releaseSpaceName()
 
                 /*Mise en rechargement de la page en cas de "rejouer"*/
                 window.location.href = "index.php"
@@ -517,4 +524,16 @@ function countdown(number){
         setTimeout(() => {
             updateCountDown(number)
         }, 500)
+}
+
+
+/**********************************/
+/* FONCTIONS SPECIFIQUE AU ONLINE */
+/**********************************/
+
+// Fonction de libération d'une place réservé (si un joueur quitte)
+async function releaseSpaceName(){
+    if(modeOnline && (playerRed || playerYellow) ){
+            await savingOnlineName("waiting")
+        }
 }
