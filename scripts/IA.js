@@ -18,7 +18,7 @@
 
         /*Après une petite pause, on déterminer si l'IA à inséré un pion*/
         await paused(getRandomInt(250,2251))
-        await IAColChoice()
+        IAColChoice()
 
         /*On relance le jeu pour l'humain*/
         IAplaying = false
