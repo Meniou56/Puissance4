@@ -21,6 +21,7 @@ async function initialiseLoadOnline() {
             await writingInSQL(chargeUtile)
             initialiseLoadOnline()
         } else if (serverSQL && (serverSQL.user1 === "waiting" || serverSQL.user2 === "waiting")) {
+            window.addEventListener('beforeunload', releaseSpaceName)//écoute pour libérer les places si un joueur quitte
             checkLastGame()
         }
     } catch (error) {
