@@ -1,109 +1,98 @@
 /************************************
 * CHARGEMENT DES SCORES ENREGISTRES *
 *************************************/
-// Fonction de chargement des scores JSON et de conversion des dates
+
+// Fonction de chargement des scores JSON
 async function chargerScores() {
     try {
-        // Chargement des données
-        const response = await fetch('../data/databaseread.php?_ts=' + new Date().getTime())
 
+        //Chargement des données
+        const response = await fetch('../data/databaseread.php?_ts=' + new Date().getTime())
         if (!response.ok) {
             throw new Error(`Erreur HTTP: ${response.status}`)
         }
 
-        // Transformation en JSON
-        let scores = await response.json()
+        //Conversion JSON
+        const scores = await response.json()
 
-        // Convertis les dates en objets Date pour chaque score
-        scores.forEach(score => {
-            const parts = score.date.split(' @ ')
-            const dateParts = parts[0].split('/')
-            const timeParts = parts[1].split(':')
-            score.dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], ...timeParts)
-        })
-
+        // Renvoie
         return scores
 
+    //Gestion des erreurs
     } catch (erreur) {
         console.error('Erreur lors du chargement des données', erreur)
-    }
-}
-
-// Fonction pour attendre que les scores soient effectivement chargées avant de passer au chargement du tableau
-async function initialiserTableau(listeChronoOrdonne) {
-    let scores = await chargerScores()
-
-    if (scores) {
-        trierEtAfficherScores(scores, listeChronoOrdonne)
     }
 }
 
 /***************************
 * TRI ET AFFICHAGE TABLEAU *
 ****************************/
+// Fonction de conversion des dates pour le tri
+function convertirDatePourTri(dateStr) {
+    const [datePart, timePart] = dateStr.split(' @ ')
+    const [jour, mois, annee] = datePart.split('/')
+    const [heure, minutes] = timePart.split(':')
+    return `${annee}${mois.padStart(2, '0')}${jour.padStart(2, '0')}${heure}${minutes}`
+}
 
-/* Fonction pour trier et afficher les scores selon le critère choisi */
-function trierEtAfficherScores(scores, listeChronoOrdonne) {
-    if (listeChronoOrdonne) {
-        // Tri chronologique
-        scores.sort((a, b) => a.dateObj - b.dateObj)
-    } else {
-        // Tri antéchronologique
-        scores.sort((a, b) => b.dateObj - a.dateObj)
+//Fonction de tri et d'affichage des scores
+function trierEtAfficherScores(scores, critere) {
+
+    //Choix du mode de tri
+    switch (critere) {
+        case "chrono":
+            scores.sort((a, b) => convertirDatePourTri(b.date).localeCompare(convertirDatePourTri(a.date)))
+            break
+        case "anteChrono":
+            scores.sort((a, b) => convertirDatePourTri(a.date).localeCompare(convertirDatePourTri(b.date)))
+            break
+        case "highScores":
+            scores.sort((a, b) => b.coup - a.coup)
+            break
+        case "lowScores":
+            scores.sort((a, b) => a.coup - b.coup)
+            break
+        case "alphabetique":
+            scores.sort((a, b) => a.user.toLowerCase().localeCompare(b.user.toLowerCase()))
+            break
+        case "anteAlphabetique":
+            scores.sort((a, b) => b.user.toLowerCase().localeCompare(a.user.toLowerCase()))
+            break
     }
+
+    //Creation du tableau
     creerTableauScores(scores)
 }
 
-/* Fonction de choix du mode de tri */
+//Fonction pour détecter le choix du mode de tri
 function choixTriScores() {
     let clickTriScores = document.querySelector("#triScores")
     clickTriScores.addEventListener("click", async () => {
         let scores = await chargerScores()
-        if (!scores){return} // Stop si les scores n'est pas chargé
+        if (!scores) return // Si les scores n'ont pas été chargés
 
-        switch (clickTriScores.value) {
-            case "anteChrono":
-                listeChronoOrdonne = false
-                break
-            case "chrono":
-                listeChronoOrdonne = true
-                break
-            case "highScores":
-                scores.sort((a, b) => b.coup - a.coup)
-                break
-            case "lowScores":
-                scores.sort((a, b) => a.coup - b.coup)
-                break
-            case "alphabetique":
-                scores.sort((a, b) => a.user.toLowerCase().localeCompare(b.user.toLowerCase()))
-                break
-            case "anteAlphabetique":
-                scores.sort((a, b) => b.user.toLowerCase().localeCompare(a.user.toLowerCase()))
-                break
-        }
-
-        creerTableauScores(scores)
+        let critere = clickTriScores.value
+        trierEtAfficherScores(scores, critere)
     })
 }
 
-// Fonction création du tableau des scores
+// Fonction pour créer et afficher le tableau dans le DOM
 function creerTableauScores(scores) {
     let tableauBody = document.getElementById("tableauBody")
-
-    eraseTableauScores() // Effacer le tableau existant avant d'afficher les nouveaux scores
+    eraseTableauScores() // Effacer le tableau existant
 
     scores.forEach(score => {
         let tr = document.createElement("tr")
-        Object.values(score).forEach(value => {
+        Object.keys(score).forEach(key => {
             let td = document.createElement("td")
-            td.innerText = value instanceof Date ? value.toLocaleString() : value
+            td.innerText = score[key]
             tr.appendChild(td)
         })
         tableauBody.appendChild(tr)
     })
 }
 
-/* Fonction vidage du tableau de scores */
+//Fonction pour effacer l'affichage
 function eraseTableauScores() {
     let tableauScores = document.getElementById("tableauBody")
     while (tableauScores.firstChild) {
@@ -111,8 +100,14 @@ function eraseTableauScores() {
     }
 }
 
-//LANCEMENT ET APPELS
-let listeChronoOrdonne = true // Variable globale pour le sens du tri chronologique
+// LANCEMENT ET APPELS
+async function initialiser() {
+    let scores = await chargerScores()
+    if (scores) {
+        trierEtAfficherScores(scores, "chrono") // Tri initial chronologique
+        choixTriScores() // Activer le choix de tri
+    }
+}
 
-initialiserTableau(listeChronoOrdonne) // Initialiser le tableau au chargement
-choixTriScores() // Activer le choix de tri
+//Démarrage
+initialiser()

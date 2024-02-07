@@ -169,25 +169,25 @@ function desactiveClickOver() {
 
 /* Fonction pour mettre en pause souris/clavier */
 function desactiverSouris(duration) {
-    document.addEventListener('click', desactiverClics, true);
-    document.addEventListener('keydown', desactiverTouches, true);
+    document.addEventListener('click', desactiverClics, true)
+    document.addEventListener('keydown', desactiverTouches, true)
 
     setTimeout(() => {
-        document.removeEventListener('click', desactiverClics, true);
-        document.removeEventListener('keydown', desactiverTouches, true);
-    }, duration);
+        document.removeEventListener('click', desactiverClics, true)
+        document.removeEventListener('keydown', desactiverTouches, true)
+    }, duration)
 }
 
     /*Sous fonction pour la souris*/
     function desactiverClics(event) {
-        event.stopPropagation();
-        event.preventDefault();
+        event.stopPropagation()
+        event.preventDefault()
     }
 
     /*Sous fonction pour le clavier*/
     function desactiverTouches(event) {
-        event.stopPropagation();
-        event.preventDefault();
+        event.stopPropagation()
+        event.preventDefault()
     }
 
     /* Fonction pour "glisser" le pion dans la colonne
@@ -485,7 +485,7 @@ function detectionAlignement() {
                 }
                 if(coupJ2===3){
                     setTimeout( ()=> {
-                        alertMessage("Jouez selon la couleur des flèches maintenant ;)", "--couleurMenu")
+                        alertMessage("Jouez selon la couleur des flèches maintenant", "--couleurMenu")
                     }, 750)
                 }
             }else if(modeSolo){
@@ -496,7 +496,7 @@ function detectionAlignement() {
                 }
                 if(coupJ2===4){
                     setTimeout( ()=> {
-                        alertMessage("Je vous laisse jouer maintenant ;)", "--couleurMenu")
+                        alertMessage("Je vous laisse jouer maintenant", "--couleurMenu")
                     }, 750)
                 }
             }else if(modeOnline && playerRed){
