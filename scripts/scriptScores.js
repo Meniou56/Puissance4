@@ -67,7 +67,7 @@ function trierEtAfficherScores(scores, critere) {
 //Fonction pour détecter le choix du mode de tri
 function choixTriScores() {
     let clickTriScores = document.querySelector("#triScores")
-    clickTriScores.addEventListener("click", async () => {
+    clickTriScores.addEventListener("change", async () => {
         let scores = await chargerScores()
         if (!scores) return // Si les scores n'ont pas été chargés
 
