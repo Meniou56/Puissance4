@@ -11,17 +11,25 @@ async function initialiseLoadOnline() {
     try {
         let jeuOnline = await readSQL("ALL")
 
+        // On récupère la dernière ligne
         if (jeuOnline[jeuOnline.length - 1]) {
             serverSQL = jeuOnline[jeuOnline.length - 1]
         }
 
+        // On établie une date du jour et de comparaison
+        const serverSQLDate = new Date(serverSQL.date)
+        const now = new Date()
+        const minutesAgo = new Date(now.getTime() - (10*60*1000))
+
         //Création d'une partie
-        if (jeuOnline.length === 0 || !serverSQL || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") || serverSQL.row1>-1 || serverSQL.row2>-1) { //S'il s'agit d'une partie déjà joué
+        if (jeuOnline.length === 0 || !serverSQL 
+            || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") //Si aucune place disponible
+            || serverSQL.row1>-1 || serverSQL.row2>-1 //S'il s'agit d'une partie déjà joué
+            || serverSQLDate < minutesAgo) { //eviter de rejoindre une partie possiblement désertée
             let chargeUtile = chargeUtileNewParty()
             await writingInSQL(chargeUtile)
             initialiseLoadOnline()
         } else if (serverSQL && (serverSQL.user1 === "waiting" || serverSQL.user2 === "waiting")) {
-            window.addEventListener('beforeunload', releaseSpaceName)//écoute pour libérer les places si un joueur quitte
             checkLastGame()
         }
     } catch (error) {
@@ -34,10 +42,12 @@ async function checkLastGame(){
     if(serverSQL.user1 && serverSQL.user1 === "waiting"){
         playerRed = true
         await savingOnlineName("loading")//On informe que la place est prise
+        window.addEventListener('beforeunload', releaseSpaceName)//écoute pour libérer les places si un joueur quitte
         formNomJoueur("Nom de joueur")
     } else if (serverSQL.user2 === "waiting"){
         playerYellow = true
         await savingOnlineName("loading")//On informe que la place est prise
+        window.addEventListener('beforeunload', releaseSpaceName)//écoute pour libérer les places si un joueur quitte
         formNomJoueur("Nom de joueur")
     } else {
         console.log("Erreur lors de l'adressage du joueur : rouge/jaune")
