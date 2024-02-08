@@ -313,7 +313,7 @@ function waitLauningchOnlineGame() {
         }
     }  
 
-/* Message en cas d'égalité */
+/* Message sans bouton enregistrer */
 async function messageWithButton(messageContent) {
 
     /*Si en jeu, après X secondes on affiche le message (le temps que le jeton soit tombé)*/
