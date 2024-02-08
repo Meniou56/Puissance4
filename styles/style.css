@@ -64,7 +64,7 @@ html {
             text-align: center;
             font-weight: bolder;
             font-family: Georgia, 'Times New Roman', Times, serif;
-            font-size: 4rem;
+            font-size: 3.1rem;
             color: transparent;
             background-image: linear-gradient(to right, red, blue);
             text-shadow: 5px 5px 25px var(--ombre);
@@ -74,9 +74,13 @@ html {
         }
 
         /* Si petit écran */
-        @media screen and (max-width: 600px){
+        @media screen and (max-width: 920px){
             h1 {
+                font-size: 2.1rem;
                 display : block;
+            }
+            h6{
+                font-size: 0.1rem;
             }
         }
     
@@ -104,7 +108,7 @@ html {
         text-align: center;
         font-weight: bolder;
         font-family: Georgia, 'Times New Roman', Times, serif;
-        font-size: 0.8rem;
+        font-size: 0.6rem;
         margin: 0;
         color: transparent;
         background-image: linear-gradient(to right, red, blue);
