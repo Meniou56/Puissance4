@@ -247,7 +247,7 @@ function desactiverSouris(duration) {
                             }
 
                             /* Check if it's to computer to play */
-                            if(gameOnOff){
+                            if(gameOnOff && modeSolo){
                                 isComputerTurn(nouvelleCouleur)
                             }
 

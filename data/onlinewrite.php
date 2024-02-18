@@ -118,7 +118,7 @@ try {
                 $deleteStatement->execute();
 
                 // Suppression des parties où user1 ou user2 sont en "waiting" ou "loading" depuis plus de 20 minutes
-                $deleteWaitingLoadingGamesStatement = $mysqlClient->prepare("DELETE FROM jeuonline WHERE (user1 = 'waiting' OR user1 = 'loading' OR user2 = 'waiting' OR user2 = 'loading') AND date < NOW() - INTERVAL 20 MINUTE");
+                $deleteWaitingLoadingGamesStatement = $mysqlClient->prepare("DELETE FROM jeuonline WHERE (user1 = 'waiting' OR user1 = 'loading' OR user2 = 'waiting' OR user2 = 'loading') AND date < NOW() - INTERVAL 30 MINUTE");
                 $deleteWaitingLoadingGamesStatement->execute();
 
                 /*Phase de création*/

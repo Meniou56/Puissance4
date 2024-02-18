@@ -11,26 +11,31 @@ async function initialiseLoadOnline() {
     try {
         let jeuOnline = await readSQL("ALL")
 
-        // On récupère la dernière ligne
-        if (jeuOnline[jeuOnline.length - 1]) {
+        if (jeuOnline.length > 0) { // Vérifier si jeuOnline n'est pas vide
+            // On récupère la dernière ligne
             serverSQL = jeuOnline[jeuOnline.length - 1]
-        }
 
-        // On établie une date du jour et de comparaison
-        const serverSQLDate = new Date(serverSQL.date)
-        const now = new Date()
-        const minutesAgo = new Date(now.getTime() - (10*60*1000))
+            // On établie une date du jour et de comparaison
+            const serverSQLDate = new Date(serverSQL.date)
+            const now = new Date()
+            const minutesAgo = new Date(now.getTime() - (10*60*1000))
 
-        //Création d'une partie
-        if (jeuOnline.length === 0 || !serverSQL 
-            || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") //Si aucune place disponible
-            || serverSQL.row1>-1 || serverSQL.row2>-1 //S'il s'agit d'une partie déjà joué
-            || serverSQLDate < minutesAgo) { //eviter de rejoindre une partie possiblement désertée
+            // Vérification pour la création d'une nouvelle partie
+            if (!serverSQL 
+                || (serverSQL.user1 !== "waiting" && serverSQL.user2 !== "waiting") //Si aucune place disponible
+                || serverSQL.row1 > -1 || serverSQL.row2 > -1 //S'il s'agit d'une partie déjà jouée
+                || serverSQLDate < minutesAgo) { //Éviter de rejoindre une partie possiblement désertée
+                let chargeUtile = chargeUtileNewParty()
+                await writingInSQL(chargeUtile)
+                return initialiseLoadOnline()
+            } else if (serverSQL.user1 === "waiting" || serverSQL.user2 === "waiting") {
+                checkLastGame()
+            }
+        } else {
+            // Création d'une nouvelle partie si jeuOnline est vide
             let chargeUtile = chargeUtileNewParty()
             await writingInSQL(chargeUtile)
-            initialiseLoadOnline()
-        } else if (serverSQL && (serverSQL.user1 === "waiting" || serverSQL.user2 === "waiting")) {
-            checkLastGame()
+            return initialiseLoadOnline()
         }
     } catch (error) {
         console.error("Erreur lors du chargement de la partie:", error)
