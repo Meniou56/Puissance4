@@ -17,7 +17,7 @@
         desactiveClickOver()
 
         /*Après une petite pause, on déterminer si l'IA à inséré un pion*/
-        await paused(getRandomInt(250,2251))
+        await paused(getRandomInt(300,2251))
         IAColChoice()
 
         /*On relance le jeu pour l'humain*/
@@ -87,6 +87,7 @@
                     changePlayer()
 
                     /* On vérifie s'il y a un gagnant */
+                    isTableFull()
                     detectionAlignement()
 
                     break
