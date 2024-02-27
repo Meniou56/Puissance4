@@ -404,7 +404,7 @@ function detectionAlignement() {
                 
                 //Regarder pour chaque colonne si la dernière cellule est pleine
                 if(tablJeu[0][iCol]!==""){fullCol++}
-                if(fullCol===7){
+                if(fullCol===6){
                     messageWithButton("Égalité !")
                 }
             }
